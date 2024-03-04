@@ -11,6 +11,7 @@ BUILD_APPS = [
     cosmic_apps.COSMIC_APPLET_AUDIO,
     cosmic_apps.COSMIC_APPLET_BATTERY,
     cosmic_apps.COSMIC_APPLET_BLUETOOTH,
+    cosmic_apps.COSMIC_APPLET_MINIMIZE,
     cosmic_apps.COSMIC_APPLET_NETWORK,
     cosmic_apps.COSMIC_APPLET_NOTIFICATIONS,
     cosmic_apps.COSMIC_APPLET_POWER,

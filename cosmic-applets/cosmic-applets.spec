@@ -13,6 +13,7 @@ Requires:       cosmic-applet-app-list
 Requires:       cosmic-applet-audio
 Requires:       cosmic-applet-battery
 Requires:       cosmic-applet-bluetooth
+Requires:       cosmic-applet-minimize
 Requires:       cosmic-applet-network
 Requires:       cosmic-applet-notifications
 Requires:       cosmic-applet-panel-button

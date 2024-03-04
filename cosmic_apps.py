@@ -277,6 +277,29 @@ cargo build --frozen --offline --release --bin cosmic-applet-bluetooth
 """
 }
 
+COSMIC_APPLET_MINIMIZE = {
+"globals": "",
+"name": "cosmic-applet-minimize",
+"version": "0.1.0",
+"repo": "https://github.com/pop-os/cosmic-applets",
+"reposhort": "cosmic-applets",
+"commit": "latest",
+"summary": "WIP bluetooth applet for cosmic-panel",
+"license": GPL3,
+"sources": STANDARD_SOURCES,
+"buildrequires": STANDARD_BUILDREQUIRES,
+"requires": STANDARD_REQUIRES,
+"prep": STANDARD_PREP,
+"build": f"""
+just vendor=1 _extract_vendor
+cargo build --frozen --offline --release --bin cosmic-applet-minimize
+""",
+"install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} _install_minimize",
+"files": f"""
+{contains_app("cosmic-applet-bluetooth","com.system76.CosmicAppletMinimize",True, True, True, False, False, "cosmic-applet-minimize/")}
+"""
+}
+
 COSMIC_APPLET_NETWORK = {
 "globals": "",
 "name": "cosmic-applet-network",

@@ -5,7 +5,6 @@
 name='cosmic-greeter'
 version='0.1.0'
 
-repo='https://pagure.io/fedora-cosmic/cosmic-packaging'
 path_to_spec='cosmic-greeter/*'
 pop_repo='cosmic-greeter'
 

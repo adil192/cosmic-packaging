@@ -11,9 +11,9 @@ path_to_spec='cosmic-applets/cosmic-applets.spec'
 cd ../..
 # We should be in the base directory now
 
-cp cosmic-rpms/$path_to_spec .
+cp cosmic-packaging/$path_to_spec .
 
-rm -rf cosmic-rpms
+rm -rf cosmic-packaging
 
 current_date=$(date +'%Y%m%d.%H')
 

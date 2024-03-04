@@ -98,7 +98,6 @@ def make_build_srpm_script(specinfo):
 name='{specinfo["name"]}'
 version='{specinfo["version"]}'
 
-repo='https://pagure.io/fedora-cosmic/cosmic-packaging'
 path_to_spec='{specinfo["name"]}/*'
 pop_repo='{specinfo["reposhort"]}'
 

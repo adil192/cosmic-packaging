@@ -5,7 +5,6 @@
 name='cosmic-applet-power'
 version='0.1.0'
 
-repo='https://pagure.io/fedora-cosmic/cosmic-packaging'
 path_to_spec='cosmic-applet-power/*'
 pop_repo='cosmic-applets'
 

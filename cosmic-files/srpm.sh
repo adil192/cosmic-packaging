@@ -5,7 +5,6 @@
 name='cosmic-files'
 version='0.1.0'
 
-repo='https://pagure.io/fedora-cosmic/cosmic-packaging'
 path_to_spec='cosmic-files/*'
 pop_repo='cosmic-files'
 

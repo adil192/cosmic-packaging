@@ -5,7 +5,6 @@
 name='cosmic-settings-daemon'
 version='0.1.0'
 
-repo='https://pagure.io/fedora-cosmic/cosmic-packaging'
 path_to_spec='cosmic-settings-daemon/*'
 pop_repo='cosmic-settings-daemon'
 

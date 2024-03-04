@@ -36,7 +36,7 @@ git reset --hard $commit
 
 cd ..
 
-# Back into cosmic-rpms
+# Back into cosmic-packaging
 
 ls
 
@@ -50,9 +50,9 @@ tar -czf $name.tar.gz $name
 
 rm -rf $name
 
-cp cosmic-rpms/$path_to_spec .
+cp cosmic-packaging/$path_to_spec .
 
-rm -rf cosmic-rpms
+rm -rf cosmic-packaging
 
 current_date=$(date +'%Y%m%d.%H')
 

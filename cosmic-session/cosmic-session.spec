@@ -85,6 +85,7 @@ just rootdir=%{buildroot} install
 %{_bindir}/start-cosmic
 %{_userunitdir}/cosmic-session.target
 %{_datadir}/wayland-sessions/cosmic.desktop
+%{_datadir}/applications/cosmic-mimeapps.list
 
 
 %changelog

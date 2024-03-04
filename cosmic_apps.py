@@ -832,6 +832,7 @@ COSMIC_SESSION = {
 {contains_(f"%{{_bindir}}/start-cosmic")}
 {contains_(f"%{{_userunitdir}}/cosmic-session.target")}
 {contains_(f"%{{_datadir}}/wayland-sessions/cosmic.desktop")}
+{contains_(f"%{{_datadir}}/applications/cosmic-mimeapps.list")}
 """,
 }
 

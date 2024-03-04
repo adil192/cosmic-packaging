@@ -3,5 +3,5 @@
 PACKAGE=
 
 git clone --recurse-submodules https://pagure.io/fedora-cosmic/cosmic-packaging.git
-cd cosmic-rpms/$PACKAGE
+cd cosmic-packaging/$PACKAGE
 . ./srpm.sh

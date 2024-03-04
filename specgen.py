@@ -135,7 +135,7 @@ tar -pcf vendor.tar vendor && mv vendor.tar ../vendor.tar
 
 rm -rf vendor && cd ..
 
-# Back into cosmic-rpms
+# Back into cosmic-packaging
 
 ls
 
@@ -149,9 +149,9 @@ tar -czf $name.tar.gz $name
 
 rm -rf $name
 
-cp cosmic-rpms/$path_to_spec .
+cp cosmic-packaging/$path_to_spec .
 
-rm -rf cosmic-rpms
+rm -rf cosmic-packaging
 
 current_date=$(date +'%Y%m%d.%H')
 

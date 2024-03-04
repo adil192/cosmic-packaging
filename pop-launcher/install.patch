@@ -1,0 +1,11 @@
+--- a/justfile	2024-03-04 01:43:55.410055690 -0600
++++ b/justfile	2024-03-04 01:44:13.341056545 -0600
+@@ -67,7 +67,7 @@
+         dest={{plugin-dir}}${plugin}
+         mkdir -p ${dest}
+         install -Dm0644 plugins/src/${plugin}/*.ron ${dest}
+-        ln -sf {{bin-path}} {{plugin-dir}}${plugin}/$(echo ${plugin} | sed 's/_/-/')
++        ln -srf {{bin-path}} {{plugin-dir}}${plugin}/$(echo ${plugin} | sed 's/_/-/')
+     done
+ 
+ # Install pop-launcher scripts

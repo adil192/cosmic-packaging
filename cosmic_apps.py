@@ -967,7 +967,7 @@ POP_LAUNCHER = {
 "commit": "latest",
 "summary": "Modular IPC-based desktop launcher service ",
 "license": GPL3,
-"sources": STANDARD_SOURCES,
+"sources": STANDARD_SOURCES + f"\nPatch1: install.patch",
 "buildrequires": STANDARD_BUILDREQUIRES,
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP,

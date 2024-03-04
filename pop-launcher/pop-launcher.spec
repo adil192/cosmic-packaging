@@ -19,6 +19,7 @@ URL:            https://github.com/pop-os/launcher
 Source:         %{crate}.tar.gz
 Source:         vendor.tar
 
+Patch1: install.patch
 
 
 # For now, we require all deps for all of cosmic-epoch

@@ -972,7 +972,7 @@ POP_LAUNCHER = {
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP,
 "build": f"just build-vendored",
-"install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} install",
+"install": f"just rootdir=%{{buildroot}} install",
 "files": f"""
 {contains_(f"%{{_bindir}}/pop-launcher")}
 {contains_(f"%{{_prefix}}/lib/pop-launcher/*")}

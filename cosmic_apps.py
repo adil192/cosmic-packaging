@@ -284,7 +284,7 @@ COSMIC_APPLET_MINIMIZE = {
 "repo": "https://github.com/pop-os/cosmic-applets",
 "reposhort": "cosmic-applets",
 "commit": "latest",
-"summary": "WIP bluetooth applet for cosmic-panel",
+"summary": "WIP minimize applet for cosmic-panel",
 "license": GPL3,
 "sources": STANDARD_SOURCES,
 "buildrequires": STANDARD_BUILDREQUIRES,
@@ -296,7 +296,7 @@ cargo build --frozen --offline --release --bin cosmic-applet-minimize
 """,
 "install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} _install_minimize",
 "files": f"""
-{contains_app("cosmic-applet-bluetooth","com.system76.CosmicAppletMinimize",True, True, True, False, False, "cosmic-applet-minimize/")}
+{contains_app("cosmic-applet-minimize","com.system76.CosmicAppletMinimize",True, True, True, False, False, "cosmic-applet-minimize/")}
 """
 }
 

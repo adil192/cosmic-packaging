@@ -10,7 +10,7 @@ Name:           cosmic-applet-minimize
 Version:        # TO BE REPLACED AUTOMATICALLY
 
 Release:        %autorelease
-Summary:        WIP bluetooth applet for cosmic-panel
+Summary:        WIP minimize applet for cosmic-panel
 
 License:        GPL-3.0
 
@@ -82,7 +82,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} _install_minimize
 
 %files
 
-%{_bindir}/cosmic-applet-bluetooth
+%{_bindir}/cosmic-applet-minimize
 %{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppletMinimize.svg
 

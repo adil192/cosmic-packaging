@@ -1013,7 +1013,7 @@ SYSTEM76_POWER = {
 "summary": "System76 Power Management",
 "license": GPL3,
 "sources": STANDARD_SOURCES,
-"buildrequires": STANDARD_BUILDREQUIRES,
+"buildrequires": STANDARD_BUILDREQUIRES + "\nBuildRequires: rust-hidapi+linux-shared-libusb-devel",
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP + f"\ntar -pxf vendor.tar",
 "build": f"""cargo build --release --offline --frozen""",

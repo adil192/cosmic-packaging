@@ -45,6 +45,7 @@ BuildRequires:  libinput-devel
 BuildRequires:  pam-devel
 BuildRequires:  flatpak-devel
 
+BuildRequires: rust-hidapi+linux-shared-libusb-devel
 
 
 # For now, we require all deps for all of cosmic-epoch

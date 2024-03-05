@@ -46,6 +46,7 @@ BuildRequires:  pam-devel
 BuildRequires:  flatpak-devel
 
 BuildRequires: rust-hidapi+linux-shared-libusb-devel
+BuildRequires: libusb1-devel
 
 
 # For now, we require all deps for all of cosmic-epoch

@@ -1002,3 +1002,23 @@ POP_LAUNCHER = {
 {contains_(f"%{{_prefix}}/lib/pop-launcher/*")}
 """,
 }
+
+SYSTEM76_POWER = {
+"globals": "",
+"name": "system76-power",
+"version": "1.1.25",
+"repo": "https://github.com/pop-os/system76-power",
+"reposhort": "system76-power",
+"commit": "latest",
+"summary": "System76 Power Management",
+"license": GPL3,
+"sources": STANDARD_SOURCES,
+"buildrequires": STANDARD_BUILDREQUIRES,
+"requires": STANDARD_REQUIRES,
+"prep": STANDARD_PREP,
+"build": f"""make all VENDOR=1""",
+"install": f"""make install DESTDIR=%{{buildroot}} prefix=%{{_prefix}}""",
+"files": f"""
+
+"""
+}

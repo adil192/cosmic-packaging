@@ -31,6 +31,7 @@ Requires:       cosmic-store
 Requires:       cosmic-term
 Requires:       cosmic-workspaces
 Requires:       xdg-desktop-portal-cosmic
+Requires:       system76-power
 
 
 %global _description %{expand:

@@ -38,7 +38,8 @@ BUILD_APPS = [
     cosmic_apps.COSMIC_TERM,
     cosmic_apps.COSMIC_WORKSPACES,
     cosmic_apps.COSMIC_XDG_DESKTOP_PORTAL,
-    cosmic_apps.POP_LAUNCHER
+    cosmic_apps.POP_LAUNCHER,
+    cosmic_apps.SYSTEM76_POWER
 ]
 
 BUILD_ETC = [cosmic_apps.COSMIC_ICONS]

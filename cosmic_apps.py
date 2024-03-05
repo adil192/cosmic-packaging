@@ -1004,7 +1004,7 @@ POP_LAUNCHER = {
 }
 
 SYSTEM76_POWER = {
-"globals": "",
+"globals": f"%define debug_package %{{nil}}",
 "name": "system76-power",
 "version": "1.1.25",
 "repo": "https://github.com/pop-os/system76-power",
@@ -1013,12 +1013,16 @@ SYSTEM76_POWER = {
 "summary": "System76 Power Management",
 "license": GPL3,
 "sources": STANDARD_SOURCES,
-"buildrequires": STANDARD_BUILDREQUIRES + "\nBuildRequires: rust-hidapi+linux-shared-libusb-devel\nBuildRequires: libusb1-devel",
+"buildrequires": STANDARD_BUILDREQUIRES + "\nBuildRequires: rust-hidapi+linux-shared-libusb-devel\nBuildRequires: libusb1-devel\nBuildRequires: systemd-rpm-macros",
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP + f"\ntar -pxf vendor.tar",
 "build": f"""cargo build --release --offline --frozen""",
 "install": f"""make install DESTDIR=%{{buildroot}} prefix=%{{_prefix}}""",
 "files": f"""
-
+%{{_bindir}}/system76-power
+%{{_unitdir}}/com.system76.PowerDaemon.service
+%{{_datadir}}/dbus-1/interfaces/com.system76.PowerDaemon.xml
+%{{_datadir}}/dbus-1/system.d/com.system76.PowerDaemon.conf
+%{{_datadir}}/polkit-1/actions/com.system76.PowerDaemon.policy
 """
 }

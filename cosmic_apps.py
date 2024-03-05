@@ -1015,8 +1015,8 @@ SYSTEM76_POWER = {
 "sources": STANDARD_SOURCES,
 "buildrequires": STANDARD_BUILDREQUIRES,
 "requires": STANDARD_REQUIRES,
-"prep": STANDARD_PREP,
-"build": f"""make all VENDOR=1""",
+"prep": STANDARD_PREP + f"\ntar -pxf vendor.tar",
+"build": f"""cargo build --release --offline --frozen""",
 "install": f"""make install DESTDIR=%{{buildroot}} prefix=%{{_prefix}}""",
 "files": f"""
 

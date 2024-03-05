@@ -70,9 +70,10 @@ ls -a
 mkdir -p .cargo
 cp .vendor/config.toml .cargo/config.toml
 
+tar -pxf vendor.tar
 
 %build
-make all VENDOR=1
+cargo build --release --offline --frozen
 
 %install
 make install DESTDIR=%{buildroot} prefix=%{_prefix}

@@ -86,6 +86,8 @@ just rootdir=%{buildroot} prefix=%{_prefix} _install_app_list
 %{_datadir}/applications/com.system76.CosmicAppList.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppList.svg
 
+%{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
+%{_datadir}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
 
 
 %changelog

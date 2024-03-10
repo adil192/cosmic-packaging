@@ -163,6 +163,8 @@ cargo build --frozen --offline --release --bin cosmic-app-list
 "install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} _install_app_list",
 "files": f"""
 {contains_app("cosmic-app-list","com.system76.CosmicAppList",True, True, True, False, False, "cosmic-app-list/")}
+%{{_datadir}}/cosmic/com.system76.CosmicAppList/v1/favorites
+%{{_datadir}}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
 """
 }
 

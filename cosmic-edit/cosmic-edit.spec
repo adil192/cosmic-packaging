@@ -81,6 +81,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %{_bindir}/cosmic-edit
 %{_datadir}/applications/com.system76.CosmicEdit.desktop
+%{_metainfodir}/com.system76.CosmicEdit.metainfo.xml
 
 %{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicEdit.svg
 %{_datadir}/icons/hicolor/16x16/apps/com.system76.CosmicEdit.svg

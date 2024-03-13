@@ -588,7 +588,7 @@ COSMIC_FILES = {
 "build": f"just build-vendored",
 "install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} install",
 "files": f"""
-{contains_app("cosmic-files","com.system76.CosmicFiles",True, True, False, False, False, "")}
+{contains_app("cosmic-files","com.system76.CosmicFiles",True, True, False, False, True, "")}
 %{{_datadir}}/icons/hicolor/128x128/apps/com.system76.CosmicFiles.svg
 %{{_datadir}}/icons/hicolor/16x16/apps/com.system76.CosmicFiles.svg
 %{{_datadir}}/icons/hicolor/24x24/apps/com.system76.CosmicFiles.svg
@@ -927,7 +927,7 @@ COSMIC_TERM = {
 "build": f"just build-vendored",
 "install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} install",
 "files": f"""
-{contains_app("cosmic-term","com.system76.CosmicTerm",True, True, False, False, False, "")}
+{contains_app("cosmic-term","com.system76.CosmicTerm",True, True, False, False, True, "")}
 %{{_datadir}}/icons/hicolor/128x128/apps/com.system76.CosmicTerm.svg
 %{{_datadir}}/icons/hicolor/16x16/apps/com.system76.CosmicTerm.svg
 %{{_datadir}}/icons/hicolor/24x24/apps/com.system76.CosmicTerm.svg

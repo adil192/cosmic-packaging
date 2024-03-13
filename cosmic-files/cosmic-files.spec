@@ -81,6 +81,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %{_bindir}/cosmic-files
 %{_datadir}/applications/com.system76.CosmicFiles.desktop
+%{_metainfodir}/com.system76.CosmicFiles.metainfo.xml
 
 %{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicFiles.svg
 %{_datadir}/icons/hicolor/16x16/apps/com.system76.CosmicFiles.svg

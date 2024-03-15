@@ -144,7 +144,7 @@ COSMIC_APP_LIBRARY = {
 }
 
 COSMIC_APPLETS = {
-"globals": "",
+"globals": f"%define debug_package %{{nil}}",
 "name": "cosmic-applets",
 "version": "0.1.0",
 "repo": "https://github.com/pop-os/cosmic-applets",
@@ -152,7 +152,7 @@ COSMIC_APPLETS = {
 "commit": "latest",
 "summary": "WIP applets for cosmic-panel",
 "license": GPL3,
-"sources": STANDARD_SOURCES,
+"sources": STANDARD_SOURCES + "\nPatch1: better_compile.patch",
 "buildrequires": STANDARD_BUILDREQUIRES,
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP,
@@ -161,7 +161,84 @@ just build-vendored
 """,
 "install": f"just rootdir=%{{buildroot}} prefix=%{{_prefix}} install",
 "files": f"""
-
+%{{_bindir}}/cosmic-applets
+%{{_bindir}}/cosmic-panel-button
+%{{_datadir}}/applications/com.system76.CosmicAppList.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletAudio.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletBattery.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletBluetooth.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletMinimize.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletNetwork.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletNotifications.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletPower.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletStatusArea.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletTiling.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletTime.desktop
+%{{_datadir}}/applications/com.system76.CosmicAppletWorkspaces.desktop
+%{{_datadir}}/applications/com.system76.CosmicPanelAppButton.desktop
+%{{_datadir}}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+%{{_datadir}}/cosmic/com.system76.CosmicAppList/v1/favorites
+%{{_datadir}}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
+%{{_datadir}}/icons/hicolor/scalable/app/com.system76.CosmicAppletStatusArea.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppList.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletAudio.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletBattery.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletBluetooth.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletMinimize.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletNetwork.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletNotifications.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletPower.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletTiling.Off.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletTiling.On.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletTime.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicAppletWorkspaces.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicPanelAppButton.svg
+%{{_datadir}}/icons/hicolor/scalable/apps/com.system76.CosmicPanelWorkspacesButton.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-display-brightness-high-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-display-brightness-low-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-display-brightness-medium-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-display-brightness-off-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-0-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-0-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-0-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-0-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-10-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-10-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-10-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-10-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-100-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-100-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-20-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-20-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-20-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-20-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-35-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-35-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-35-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-35-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-5-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-5-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-5-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-5-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-50-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-50-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-50-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-50-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-65-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-65-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-65-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-65-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-80-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-80-limited-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-80-limited-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-80-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-90-charging-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-battery-level-90-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-bluetooth-active-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-bluetooth-disabled-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-notification-disabled-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-notification-new-symbolic.svg
+%{{_datadir}}/icons/hicolor/scalable/status/cosmic-applet-notification-symbolic.svg
 """
 }
 

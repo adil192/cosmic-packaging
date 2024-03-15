@@ -1,0 +1,19 @@
+--- ./justfile	2024-03-15 13:59:51.256329082 -0500
++++ ./justfile.new	2024-03-15 14:08:39.724372221 -0500
+@@ -12,6 +12,7 @@
+ sharedir := rootdir + prefix + '/share'
+ iconsdir := sharedir + '/icons/hicolor'
+ bindir := rootdir + prefix + '/bin'
++lndir := prefix + '/bin'
+ default-schema-target := sharedir / 'cosmic'
+ 
+ cosmic-applets-bin := bindir / 'cosmic-applets'
+@@ -29,7 +30,7 @@
+ build-vendored *args: vendor-extract (build-release '--frozen --offline' args)
+ 
+ _link_applet name:
+-    ln -sf {{cosmic-applets-bin}} {{bindir}}/{{name}}
++    ln -sf {{cosmic-applets-bin}} {{lndir}}/{{name}}
+ 
+ _install_icons name:
+     find {{name}}/'data'/'icons' -type f -exec echo {} \; | rev | cut -d'/' -f-3 | rev | xargs -d '\n' -I {} install -Dm0644 {{name}}/'data'/'icons'/{} {{iconsdir}}/{}

@@ -152,7 +152,7 @@ COSMIC_APPLETS = {
 "commit": "latest",
 "summary": "WIP applets for cosmic-panel",
 "license": GPL3,
-"sources": STANDARD_SOURCES + "\nPatch1: better_compile.patch",
+"sources": STANDARD_SOURCES + "\nPatch1: better_compile.patch\nPatch2: symlink.patch",
 "buildrequires": STANDARD_BUILDREQUIRES,
 "requires": STANDARD_REQUIRES,
 "prep": STANDARD_PREP,

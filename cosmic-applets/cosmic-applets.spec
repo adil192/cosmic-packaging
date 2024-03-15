@@ -20,6 +20,7 @@ Source:         %{crate}.tar.gz
 Source:         vendor.tar
 
 Patch1: better_compile.patch
+Patch2: symlink.patch
 
 
 # For now, we require all deps for all of cosmic-epoch

@@ -81,6 +81,7 @@ just rootdir=%{buildroot} install
 
 %{_bindir}/cosmic-settings
 %{_datadir}/applications/com.system76.CosmicSettings.desktop
+%{_metainfodir}/com.system76.CosmicSettings.metainfo.xml
 
 %{_datadir}/cosmic/com.system76.CosmicTheme.Dark.Builder/v1/*
 %{_datadir}/cosmic/com.system76.CosmicTheme.Dark/v1/*
@@ -95,6 +96,13 @@ just rootdir=%{buildroot} install
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-light-style-square.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-dark.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-light.svg
+%{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/16x16/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/24x24/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/256x256/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/32x32/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/48x48/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/64x64/apps/com.system76.CosmicSettings.svg
 
 
 %changelog

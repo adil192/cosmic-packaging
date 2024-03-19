@@ -628,7 +628,7 @@ COSMIC_SETTINGS = {
 "build": f"just build-vendored",
 "install": f"just rootdir=%{{buildroot}} install",
 "files": f"""
-{contains_app("cosmic-settings","com.system76.CosmicSettings",True, True, False, False, False, "")}
+{contains_app("cosmic-settings","com.system76.CosmicSettings",True, True, False, False, True, "")}
 {contains_(f"%{{_datadir}}/cosmic/com.system76.CosmicTheme.Dark.Builder/v1/*")}
 {contains_(f"%{{_datadir}}/cosmic/com.system76.CosmicTheme.Dark/v1/*")}
 {contains_(f"%{{_datadir}}/cosmic/com.system76.CosmicTheme.Light.Builder/v1/*")}
@@ -642,6 +642,13 @@ COSMIC_SETTINGS = {
 {contains_(f"%{{_datadir}}/icons/hicolor/scalable/status/illustration-appearance-light-style-square.svg")}
 {contains_(f"%{{_datadir}}/icons/hicolor/scalable/status/illustration-appearance-mode-dark.svg")}
 {contains_(f"%{{_datadir}}/icons/hicolor/scalable/status/illustration-appearance-mode-light.svg")}
+%{{_datadir}}/icons/hicolor/128x128/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/16x16/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/24x24/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/256x256/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/32x32/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/48x48/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/icons/hicolor/64x64/apps/com.system76.CosmicSettings.svg
 """,
 }
 

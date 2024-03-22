@@ -649,6 +649,21 @@ COSMIC_SETTINGS = {
 %{{_datadir}}/icons/hicolor/32x32/apps/com.system76.CosmicSettings.svg
 %{{_datadir}}/icons/hicolor/48x48/apps/com.system76.CosmicSettings.svg
 %{{_datadir}}/icons/hicolor/64x64/apps/com.system76.CosmicSettings.svg
+%{{_datadir}}/applications/com.system76.CosmicSettings.About.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Appearance.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.DateTime.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Desktop.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Displays.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Firmware.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Keyboard.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Mouse.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Notifications.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.RegionLanguage.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Sound.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Touchpad.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Users.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Wallpaper.desktop
+%{{_datadir}}/applications/com.system76.CosmicSettings.Workspaces.desktop
 """,
 }
 

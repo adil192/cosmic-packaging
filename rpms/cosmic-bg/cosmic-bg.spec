@@ -35,7 +35,7 @@ Requires:       cosmic-session
 
 %prep
 %autosetup -n cosmic-bg-%{ver} -p1 -a1
-%cargo_prep -v vendor
+%cargo_prep -N
 
 %build
 cat .cargo/config

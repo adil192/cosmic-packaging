@@ -20,7 +20,7 @@ License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-files
-Source:         cosmic-files-%{ver}.tar.xx
+Source:         cosmic-files-%{ver}.tar.xz
 Source:         cosmic-files-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26

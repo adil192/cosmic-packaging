@@ -176,3 +176,13 @@ rustc
 lld
 cargo
 just
+
+cosmic-settings
+rustc
+lld
+cargo
+libinput-devel
+wayland-devel
+libxkbcommon-devel
+systemd-devel
+just

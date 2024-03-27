@@ -6,21 +6,48 @@
 
 %global crate cosmic-session
 
+%global ver ###
+%global commit ###
+%global date ###
+
 Name:           cosmic-session
-Version:        0.1.0
+Version:        %{ver}~%{date}
 Release:        %autorelease
 Summary:        Session manager for the COSMIC desktop environment
 
 SourceLicense:  GPL-3.0-only
-# FIXME: paste output of %%cargo_license_summary here
-License:        # FIXME
+License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
-URL:            # FIXME
-Source:         # FIXME
-Source:         cosmic-session-0.1.0-vendor.tar.xz
+URL:            https://github.com/pop-os/cosmic-session
+Source:         cosmic-session-%{ver}.tar.xz
+Source:         cosmic-session-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  just
+
+
+Requires:       cosmic-app-library
+Requires:       cosmic-applets
+Requires:       cosmic-bg
+Requires:       cosmic-comp
+Requires:       cosmic-greeter
+Requires:       cosmic-icons
+Requires:       cosmic-launcher
+Requires:       cosmic-notifications
+Requires:       cosmic-osd
+Requires:       cosmic-panel
+Requires:       cosmic-randr
+Requires:       cosmic-screenshot
+Requires:       cosmic-settings
+Requires:       cosmic-settings-daemon
+Requires:       cosmic-workspaces
+Requires:       pop-fonts
+Requires:       xdg-desktop-portal-cosmic
+Requires:       xwayland
 
 %global _description %{expand:
 The session manager for the COSMIC desktop environment.}
@@ -28,8 +55,9 @@ The session manager for the COSMIC desktop environment.}
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{version} -p1 -a1
-%cargo_prep -v vendor
+%autosetup -n %{crate}-%{ver} -p1 -a1
+%cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
 %cargo_build
@@ -38,7 +66,7 @@ The session manager for the COSMIC desktop environment.}
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+just rootdir=%{buildroot} install
 
 %if %{with check}
 %check
@@ -48,8 +76,12 @@ The session manager for the COSMIC desktop environment.}
 %files
 %license LICENSE.md
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %{_bindir}/cosmic-session
+%{_bindir}/start-cosmic
+%{_userunitdir}/cosmic-session.target
+%{_datadir}/wayland-sessions/cosmic.desktop
+%{_datadir}/applications/cosmic-mimeapps.list
 
 %changelog
 %autochangelog

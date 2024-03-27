@@ -34,7 +34,6 @@ Recommends:     cosmic-files
 Recommends:     cosmic-greeter
 Recommends:     cosmic-store
 Recommends:     cosmic-term
-Recommends:     system76-power
 
 %global _description %{expand:
 %{summary}.}

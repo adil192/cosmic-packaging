@@ -186,3 +186,15 @@ wayland-devel
 libxkbcommon-devel
 systemd-devel
 just
+
+xdg-desktop-portal-cosmic
+rustc
+lld
+cargo
+libxkbcommon-devel
+wayland-devel
+pipewire-devel
+clang-devel
+mesa-libEGL-devel
+mesa-libgbm-devel
+just

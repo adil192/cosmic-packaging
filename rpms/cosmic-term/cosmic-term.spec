@@ -6,21 +6,31 @@
 
 %global crate cosmic-term
 
+%global ver ###
+%global commit ###
+%global date ###
+
 Name:           cosmic-term
-Version:        0.1.0
+Version:        %{ver}~%{date}
 Release:        %autorelease
-Summary:        # FIXME
+Summary:        Terminal emulator built with Libcosmic.
 
 SourceLicense:  GPL-3.0-only
 # FIXME: paste output of %%cargo_license_summary here
-License:        # FIXME
+License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
-URL:            # FIXME
-Source:         # FIXME
-Source:         cosmic-term-0.1.0-vendor.tar.xz
+URL:            https://github.com/pop-os/cosmic-term
+Source:         cosmic-term-%{ver}.tar.xz
+Source:         cosmic-term-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  just
+
+BuildRequires:  git-core
 
 %global _description %{expand:
 %{summary}.}
@@ -28,8 +38,9 @@ BuildRequires:  cargo-rpm-macros >= 26
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{version} -p1 -a1
-%cargo_prep -v vendor
+%autosetup -n %{crate}-%{ver} -p1 -a1
+%cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
 %cargo_build
@@ -38,7 +49,7 @@ BuildRequires:  cargo-rpm-macros >= 26
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}
 %check
@@ -48,9 +59,18 @@ BuildRequires:  cargo-rpm-macros >= 26
 %files
 %license LICENSE
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-term
+%{_datadir}/applications/com.system76.CosmicTerm.desktop
+%{_metainfodir}/com.system76.CosmicTerm.metainfo.xml
+%{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/16x16/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/24x24/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/256x256/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/32x32/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/48x48/apps/com.system76.CosmicTerm.svg
+%{_datadir}/icons/hicolor/64x64/apps/com.system76.CosmicTerm.svg
 
 %changelog
 %autochangelog

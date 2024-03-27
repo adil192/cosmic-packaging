@@ -4,39 +4,36 @@
 # prevent library files from being installed
 %global cargo_install_lib 0
 
-%global crate cosmic-workspaces
+%global crate xdg-desktop-portal-cosmic
 
 %global ver ###
 %global commit ###
 %global date ###
 
-Name:           cosmic-workspaces
+Name:           xdg-desktop-portal-cosmic
 Version:        %{ver}~%{date}
 Release:        %autorelease
-Summary:        Workspaces overview for the COSMIC Desktop Environment.
+Summary:        XDG Desktop Portals implementation for the COSMIC Desktop Environment.
 
-SourceLicense:  GPL-3.0
+SourceLicense:  GPL-3.0-or-later
 License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
-URL:            https://github.com/pop-os/cosmic-workspaces-epoch
-Source:         cosmic-workspaces-%{ver}.tar.xz
-Source:         cosmic-workspaces-%{ver}-vendor.tar.xz
+URL:            https://github.com/pop-os/xdg-desktop-portal-cosmic
+Source:         xdg-desktop-portal-cosmic-%{ver}.tar.xz
+Source:         xdg-desktop-portal-cosmic-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
-BuildRequires:  wayland-devel
-BuildRequires:  systemd-devel
 BuildRequires:  libxkbcommon-devel
-BuildRequires:  libglvnd-devel
-BuildRequires:  libseat-devel
-BuildRequires:  libinput-devel
+BuildRequires:  wayland-devel
+BuildRequires:  pipewire-devel
+BuildRequires:  clang-devel
+BuildRequires:  mesa-libEGL-devel
 BuildRequires:  mesa-libgbm-devel
-BuildRequires:  make
-
-Requires:       cosmic-comp
+BuildRequires:  just
 
 %global _description %{expand:
 %{summary}.}
@@ -66,9 +63,13 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %license LICENSE
 %license LICENSE.dependencies
 # %%license cargo-vendor.txt
-%{_bindir}/cosmic-workspaces
-%{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
-%{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicWorkspaces.svg
+%{_libexecdir}/xdg-desktop-portal-cosmic
+%{_datadir}/dbus-1/services/org.freedesktop.impl.portal.desktop.cosmic.service
+%{_datadir}/xdg-desktop-portal/portals/cosmic.portal
+%{_datadir}/xdg-desktop-portal/cosmic-portals.conf
+%{_datadir}/icons/hicolor/scalable/actions/screenshot-screen-symbolic.svg
+%{_datadir}/icons/hicolor/scalable/actions/screenshot-selection-symbolic.svg
+%{_datadir}/icons/hicolor/scalable/actions/screenshot-window-symbolic.svg
 
 %changelog
 %autochangelog

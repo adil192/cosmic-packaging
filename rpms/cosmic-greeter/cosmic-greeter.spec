@@ -52,8 +52,7 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_vendor_manifest}
 
 %install
-install -Dm0755 target/release/cosmic-greeter %{buildroot}/%{_bindir}/cosmic-greeter
-install -Dm0755 target/release/cosmic-greeter-daemon %{buildroot}/%{_bindir}/cosmic-greeter-daemon
+%cargo_install
 install -Dm0644 dbus/com.system76.CosmicGreeter.conf %{buildroot}/%{_datadir}/dbus-1/system.d/com.system76.CosmicGreeter.conf
 install -Dm0644 debian/cosmic-greeter.sysusers %{buildroot}/%{_sysusersdir}/cosmic-greeter.conf
 install -Dm0644 debian/cosmic-greeter.tmpfiles %{buildroot}/%{_tmpfilesdir}/cosmic-greeter.conf

@@ -1,7 +1,6 @@
 #!/bin/bash -x
 
 PACKAGE=
-
 REPO=https://github.com/pop-os/$PACKAGE
 
 git clone --recurse-submodules https://pagure.io/forks/ryanabx/fedora-cosmic/cosmic-packaging.git

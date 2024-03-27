@@ -43,7 +43,7 @@ rm -rf $name
 cp $path_to_spec $name.spec 2>/dev/null || :
 
 # Make replacements to specfile
-sed -i "/^%global ver / s/.*/%global ver $version/" $name.spec
-sed -i "/^%global commit / s/.*/%global commit $commit/" $name.spec
+sed -i "/^%%global ver / s/.*/%%global ver $version/" $name.spec
+sed -i "/^%%global commit / s/.*/%%global commit $commit/" $name.spec
 current_date=$(date +'%Y%m%d.%H')
-sed -i "/^%global date / s/.*/%global commit $current_date/" $name.spec
+sed -i "/^%%global date / s/.*/%%global commit $current_date/" $name.spec

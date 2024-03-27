@@ -29,6 +29,8 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
 
+BuildRequires:  git-core
+
 %global _description %{expand:
 %{summary}.}
 

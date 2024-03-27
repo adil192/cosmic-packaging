@@ -23,7 +23,7 @@ BuildRequires:  just
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-icons
+%autosetup -n cosmic-icons-%{ver}
 
 %build
 

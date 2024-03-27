@@ -24,6 +24,12 @@ Source:         cosmic-files-%{ver}.tar.xz
 Source:         cosmic-files-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  just
+
+BuildRequires:  git-core
 
 %global _description %{expand:
 %{summary}.}

@@ -46,7 +46,9 @@ Requires:       cosmic-comp
 cat .vendor/config.toml >> .cargo/config
 
 %build
-%cargo_build
+# FIXME: cargo_build doesn't compile greeter daemon
+# %%cargo_build
+cargo build --all --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}

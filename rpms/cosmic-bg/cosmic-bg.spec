@@ -38,13 +38,13 @@ Requires:       cosmic-session
 %cargo_prep -N
 
 %build
-cat .cargo/config
-cat .vendor/config.toml
-
 cat .vendor/config.toml >> .cargo/config
 %cargo_build
+echo "Cargo license summary"
 %{cargo_license_summary}
+echo "Cargo license"
 %{cargo_license} > LICENSE.dependencies
+echo "Cargo vendor manifest"
 %{cargo_vendor_manifest}
 
 %install

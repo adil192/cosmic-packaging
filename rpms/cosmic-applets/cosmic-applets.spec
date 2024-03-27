@@ -29,6 +29,7 @@ BuildRequires:  dbus-devel
 BuildRequires:  wayland-devel
 BuildRequires:  libinput-devel
 BuildRequires:  libudev-devel
+BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just

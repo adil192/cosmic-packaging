@@ -38,13 +38,16 @@ Requires:       cosmic-session
 %cargo_prep -v vendor
 
 %build
+cat .cargo/config
+cat .vendor/config.toml
+
+cat .vendor/config.toml >> .cargo/config
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
-# %%cargo_install
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}

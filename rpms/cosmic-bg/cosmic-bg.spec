@@ -36,12 +36,9 @@ Requires:       cosmic-session
 %prep
 %autosetup -n cosmic-bg-%{ver} -p1 -a1
 %cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
-cat .cargo/config
-echo "\n"
-cat .vendor/config.toml >> .cargo/config
-cat .cargo/config
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

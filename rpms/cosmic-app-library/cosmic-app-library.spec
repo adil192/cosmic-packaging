@@ -4,22 +4,24 @@
 # prevent library files from being installed
 %global cargo_install_lib 0
 
+%global ver ###
+%global commit ###
+%global date ###
+
 %global crate cosmic-app-library
 
 Name:           cosmic-app-library
-Version:        0.1.0
+Version:        %{ver}~%{date}
 Release:        %autorelease
-Summary:        # FIXME
+Summary:        App Library program for the COSMIC Desktop Environment.
 
-SourceLicense:  None
-# FIXME: paste output of %%cargo_license_summary here
-License:        # FIXME
+SourceLicense:  GPL-3.0
+License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
-# FIXME: No license information in crate metadata.
 
-URL:            # FIXME
-Source:         # FIXME
-Source:         cosmic-app-library-0.1.0-vendor.tar.xz
+URL:            https://github.com/pop-os/cosmic-applibrary
+Source:         cosmic-app-library-%{ver}.tar.xz
+Source:         cosmic-app-library-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
@@ -30,7 +32,8 @@ BuildRequires:  cargo-rpm-macros >= 26
 
 %prep
 %autosetup -n %{crate}-%{version} -p1 -a1
-%cargo_prep -v vendor
+%cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
 %cargo_build
@@ -49,9 +52,12 @@ BuildRequires:  cargo-rpm-macros >= 26
 %files
 %license LICENSE.md
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-app-library
+%{_datadir}/applications/com.system76.CosmicAppLibrary.desktop
+%{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppLibrary.svg
+%{_metainfodir}/com.system76.CosmicAppLibrary.metainfo.xml
 
 %changelog
 %autochangelog

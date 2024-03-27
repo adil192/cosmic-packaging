@@ -28,7 +28,6 @@ BuildRequires:  cargo
 BuildRequires:  dbus-devel
 BuildRequires:  wayland-devel
 BuildRequires:  libinput-devel
-BuildRequires:  libpulse-devel
 BuildRequires:  libudev-devel
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  libxkbcommon-devel
@@ -45,6 +44,7 @@ Requires:       cosmic-panel
 %prep
 %autosetup -n cosmic-applets-%{ver} -p1 -a1
 %cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
 %cargo_build

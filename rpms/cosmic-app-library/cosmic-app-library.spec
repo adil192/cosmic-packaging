@@ -24,6 +24,12 @@ Source:         cosmic-app-library-%{ver}.tar.xz
 Source:         cosmic-app-library-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  wayland-devel
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  just
 
 %global _description %{expand:
 %{summary}.}
@@ -42,7 +48,7 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}
 %check

@@ -33,6 +33,19 @@ Requires:       cage
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
 
+cosmic-app-library
+BR:
+rustc
+lld
+cargo
+wayland-devel
+libxkbcommon-devel
+just
+
+R:
+
+
+
 cosmic-applets
 
 Build Requirements:

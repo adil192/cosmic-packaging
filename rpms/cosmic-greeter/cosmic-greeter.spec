@@ -69,7 +69,7 @@ install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/co
 %files
 %license LICENSE
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-greeter
 %{_bindir}/cosmic-greeter-daemon

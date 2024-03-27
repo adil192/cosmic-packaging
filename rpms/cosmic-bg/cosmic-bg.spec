@@ -50,11 +50,13 @@ cat .cargo/config
 %install
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
+%if %{with check}
+%check
+%cargo_test
+%endif
+
 %files
-%license LICENSE.md
-%license LICENSE.dependencies
-%license cargo-vendor.txt
-%doc README.md
+
 %{_bindir}/cosmic-bg
 %{_datadir}/applications/com.system76.CosmicBackground.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicBackground.svg

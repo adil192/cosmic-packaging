@@ -36,7 +36,7 @@ tar -pcJf $name-$version-vendor.tar.xz vendor && mv $name-$version-vendor.tar.xz
 rm -rf vendor && cd ..
 
 # Zip source
-tar -czJf $name.tar.xz $name
+tar -pcJf $name.tar.xz $name
 rm -rf $name
 
 # Get specfile

@@ -62,7 +62,7 @@ install -Dm0644 config.ron %{buildroot}/%{_sysconfdir}/cosmic-comp/config.ron
 %files
 %license LICENSE
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %{_bindir}/cosmic-comp
 %{_sysconfdir}/cosmic-comp/config.ron
 

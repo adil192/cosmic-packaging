@@ -48,4 +48,8 @@ sed -i "/^%global commit / s/.*/%global commit $commit/" $name.spec
 current_date=$(date +'%Y%m%d.%H')
 sed -i "/^%global date / s/.*/%global date $current_date/" $name.spec
 
+
+ls -a
+pwd
+
 echo Done! $1 $2 $3 $4 $5

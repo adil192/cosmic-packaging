@@ -91,3 +91,10 @@ libseat-devel
 libinput-devel
 mesa-libgbm-devel
 make
+
+cosmic-edit
+
+rustc
+lld
+cargo
+just

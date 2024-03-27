@@ -29,6 +29,7 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
 
+BuildRequires:  systemd-rpm-macros
 
 Requires:       cosmic-app-library
 Requires:       cosmic-applets

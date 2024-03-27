@@ -14,7 +14,7 @@ repo=$5
 LATEST="latest"
 
 # Clone repo and cd into it
-mkdir $name && cd $name && git clone --recurse-submodules $repo .
+mkdir $name-$version && cd $name-$version && git clone --recurse-submodules $repo .
 
 # Get latest commit hash if commit is set to latest
 if [[ "$commit" == "$LATEST" ]]
@@ -36,8 +36,8 @@ tar -pcJf $name-$version-vendor.tar.xz vendor && mv $name-$version-vendor.tar.xz
 rm -rf vendor && cd ..
 
 # Zip source
-tar -pcJf $name.tar.xz $name
-rm -rf $name
+tar -pcJf $name-$version.tar.xz $name-$version
+rm -rf $name-$version
 
 # Get specfile
 cp $path_to_spec $name.spec 2>/dev/null || :

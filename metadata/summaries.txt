@@ -8,7 +8,7 @@ Applets for the COSMIC Desktop Environment.
 
 cosmic-bg
 
-Program that manages the background in the COSMIC Desktop Environment
+Background manager for the COSMIC Desktop Environment.
 
 cosmic-comp
 

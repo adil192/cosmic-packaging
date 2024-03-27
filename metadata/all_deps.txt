@@ -1,0 +1,50 @@
+Build Requirements
+
+make
+which
+git-core
+just
+rustc
+lld
+cargo
+glib2-devel
+gtk3-devel
+dbus-devel
+wayland-devel
+clang-devel
+libxkbcommon-devel
+mesa-libgbm-devel
+rust-rav1e+nasm-rs-devel
+libappstream-glib
+pipewire-devel
+libglvnd-devel
+libseat-devel
+libinput-devel
+pam-devel
+flatpak-devel
+
+Requirements
+
+Requires:       libseat
+Requires:       pop-icon-theme
+Requires:       greetd
+Requires:       greetd-selinux
+Requires:       cage
+Requires:       mozilla-fira-mono-fonts
+Requires:       mozilla-fira-sans-fonts
+
+
+cosmic-bg
+
+Build Requirements:
+
+rustc
+lld
+cargo
+wayland-devel
+libxkbcommon-devel
+just
+
+Requirements:
+
+cosmic-session

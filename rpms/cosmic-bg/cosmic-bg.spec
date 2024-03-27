@@ -8,10 +8,9 @@
 Name:           cosmic-bg
 Version:        %{ver}~%{date}
 Release:        %autorelease
-Summary:        # FIXME
+Summary:        Background manager for the COSMIC Desktop Environment.
 
-SourceLicense:  
-# FIXME: paste output of %%cargo_license_summary here
+SourceLicense:  MPL-2.0
 License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
@@ -20,6 +19,14 @@ Source:         cosmic-bg-%{ver}.tar.xz
 Source:         cosmic-bg-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  wayland-devel
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  just
+
+Requires:       cosmic-session
 
 %global _description %{expand:
 %{summary}.}

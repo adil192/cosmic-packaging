@@ -19,6 +19,20 @@ Source:         cosmic-comp-%{ver}.tar.xz
 Source:         cosmic-comp-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  wayland-devel
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  libglvnd-devel
+BuildRequires:  libseat-devel
+BuildRequires:  libinput-devel
+BuildRequires:  mesa-libgbm-devel
+BuildRequires:  make
+
+Requires:       libseat
+
+Recommends: cosmic-session
 
 %global _description %{expand:
 %{summary}.}

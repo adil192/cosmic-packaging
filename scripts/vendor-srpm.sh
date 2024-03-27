@@ -47,3 +47,5 @@ sed -i "/^%%global ver / s/.*/%%global ver $version/" $name.spec
 sed -i "/^%%global commit / s/.*/%%global commit $commit/" $name.spec
 current_date=$(date +'%Y%m%d.%H')
 sed -i "/^%%global date / s/.*/%%global commit $current_date/" $name.spec
+
+echo Done! $1 $2 $3 $4 $5

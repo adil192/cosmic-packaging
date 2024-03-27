@@ -21,6 +21,15 @@ Source:         pop-launcher-%{ver}-vendor.tar.xz
 Patch:          symlink.patch
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  mesa-libEGL-devel
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  just
+
+Requires:       libqalculate
+Requires:       rust-fd-find
 
 %global _description %{expand:
 %{summary}.}

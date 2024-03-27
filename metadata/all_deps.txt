@@ -198,3 +198,12 @@ clang-devel
 mesa-libEGL-devel
 mesa-libgbm-devel
 just
+
+pop-launcher
+
+rustc
+lld
+cargo
+mesa-libEGL-devel
+libxkbcommon-devel
+just

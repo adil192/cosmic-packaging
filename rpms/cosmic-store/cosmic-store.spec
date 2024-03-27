@@ -56,7 +56,6 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 # %%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-store
-%{_bindir}/flathub-stats
 %{_datadir}/applications/com.system76.CosmicStore.desktop
 %{_metainfodir}/com.system76.CosmicStore.metainfo.xml
 %{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicStore.svg

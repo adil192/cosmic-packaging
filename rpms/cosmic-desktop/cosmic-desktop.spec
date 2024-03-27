@@ -2,9 +2,8 @@
 %global commit ###
 %global date ###
 
-Name:           cosmic-epoch
-Version:        0.1.0~20240226
-
+Name:           cosmic-desktop
+Version:        %{ver}~%{date}
 Release:        %autorelease
 Summary:        The next generation COSMIC Desktop Environment
 
@@ -16,12 +15,8 @@ Requires:       cosmic-app-library
 Requires:       cosmic-applets
 Requires:       cosmic-bg
 Requires:       cosmic-comp
-Requires:       cosmic-edit
-Requires:       cosmic-files
-Requires:       cosmic-greeter
 Requires:       cosmic-icons
 Requires:       cosmic-launcher
-Requires:       pop-launcher
 Requires:       cosmic-notifications
 Requires:       cosmic-osd
 Requires:       cosmic-panel
@@ -30,12 +25,16 @@ Requires:       cosmic-screenshot
 Requires:       cosmic-session
 Requires:       cosmic-settings
 Requires:       cosmic-settings-daemon
-Requires:       cosmic-store
-Requires:       cosmic-term
 Requires:       cosmic-workspaces
+Requires:       pop-launcher
 Requires:       xdg-desktop-portal-cosmic
-Requires:       system76-power
 
+Recommends:     cosmic-edit
+Recommends:     cosmic-files
+Recommends:     cosmic-greeter
+Recommends:     cosmic-store
+Recommends:     cosmic-term
+Recommends:     system76-power
 
 %global _description %{expand:
 %{summary}.}
@@ -52,4 +51,3 @@ Requires:       system76-power
 
 %changelog
 %autochangelog
-    

@@ -31,7 +31,7 @@ git reset --hard $commit
 # Vendor dependencies and zip vendor
 mkdir .vendor
 cargo vendor > .vendor/config.toml
-tar -pcJf $name-vendor-$version.tar.xz vendor && mv $name-vendor-$version.tar.xz ../$name-vendor-$version.tar.xz
+tar -pcJf $name-$version-vendor.tar.xz vendor && mv $name-$version-vendor.tar.xz ../$name-$version-vendor.tar.xz
 # Back into parent directory
 rm -rf vendor && cd ..
 

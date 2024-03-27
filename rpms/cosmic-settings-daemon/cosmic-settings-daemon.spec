@@ -6,21 +6,29 @@
 
 %global crate cosmic-settings-daemon
 
+%global ver ###
+%global commit ###
+%global date ###
+
 Name:           cosmic-settings-daemon
-Version:        0.1.0
+Version:        %{ver}~%{date}
 Release:        %autorelease
 Summary:        # FIXME
 
 SourceLicense:  GPL-3.0-or-later
-# FIXME: paste output of %%cargo_license_summary here
-License:        # FIXME
+License:        GPL-3.0
 # LICENSE.dependencies contains a full license breakdown
 
-URL:            # FIXME
-Source:         # FIXME
-Source:         cosmic-settings-daemon-0.1.0-vendor.tar.xz
+URL:            https://github.com/pop-os/cosmic-settings-daemon
+Source:         cosmic-settings-daemon-%{ver}.tar.xz
+Source:         cosmic-settings-daemon-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  rustc
+BuildRequires:  lld
+BuildRequires:  cargo
+BuildRequires:  systemd-devel
+BuildRequires:  just
 
 %global _description %{expand:
 %{summary}.}
@@ -28,8 +36,9 @@ BuildRequires:  cargo-rpm-macros >= 26
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{version} -p1 -a1
-%cargo_prep -v vendor
+%autosetup -n %{crate}-%{ver} -p1 -a1
+%cargo_prep -N
+cat .vendor/config.toml >> .cargo/config
 
 %build
 %cargo_build
@@ -38,7 +47,7 @@ BuildRequires:  cargo-rpm-macros >= 26
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+make install DESTDIR=%{buildroot} prefix=%{_prefix}
 
 %if %{with check}
 %check
@@ -48,7 +57,7 @@ BuildRequires:  cargo-rpm-macros >= 26
 %files
 %license LICENSE
 %license LICENSE.dependencies
-%license cargo-vendor.txt
+# %%license cargo-vendor.txt
 %{_bindir}/cosmic-settings-daemon
 
 %changelog

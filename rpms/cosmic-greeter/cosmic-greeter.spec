@@ -30,6 +30,9 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  pam-devel
 BuildRequires:  just
 
+BuildRequires:   systemd-rpm-macros
+%{?sysusers_requires_compat}
+
 Requires:       dbus
 Requires:       greetd
 Requires:       greetd-selinux
@@ -66,6 +69,21 @@ install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/co
 %check
 %cargo_test
 %endif
+
+%pre
+%sysusers_create_compat debian/cosmic-greeter.sysusers
+
+%post
+%systemd_post cosmic-greeter.service
+%systemd_post cosmic-greeter-daemon.service
+
+%preun
+%systemd_preun cosmic-greeter.service
+%systemd_preun cosmic-greeter-daemon.service
+
+%postun
+%systemd_postun cosmic-greeter.service
+%systemd_postun cosmic-greeter-daemon.service
 
 %files
 %license LICENSE

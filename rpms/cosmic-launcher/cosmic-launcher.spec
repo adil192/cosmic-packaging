@@ -44,6 +44,7 @@ Requires:       pop-launcher
 cat .vendor/config.toml >> .cargo/config
 
 %build
+export RUSTFLAGS="$RUSTFLAGS --cfg tokio_unstable"
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

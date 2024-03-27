@@ -33,11 +33,28 @@ Requires:       cage
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
 
+cosmic-applets
+
+Build Requirements:
+rustc
+lld
+cargo
+dbus-devel
+wayland-devel
+libinput-devel
+libpulse-devel
+libudev-devel
+mesa-libEGL-devel
+libxkbcommon-devel
+just
+
+Requirements:
+cosmic-icons
+cosmic-panel
 
 cosmic-bg
 
 Build Requirements:
-
 rustc
 lld
 cargo
@@ -46,5 +63,4 @@ libxkbcommon-devel
 just
 
 Requirements:
-
 cosmic-session

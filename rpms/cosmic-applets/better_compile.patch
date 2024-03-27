@@ -1,0 +1,11 @@
+--- ./Cargo.toml	2024-03-15 12:13:48.916128075 -0500
++++ ./Cargo.toml.new	2024-03-15 12:14:58.707131403 -0500
+@@ -50,7 +50,7 @@
+ tracing-log = "0.2.0"
+ 
+ [profile.release]
+-lto = "fat"
++lto = "thin"
+ 
+ [workspace.metadata.cargo-machete]
+ ignored = ["libcosmic"]

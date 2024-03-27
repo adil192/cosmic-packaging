@@ -38,7 +38,10 @@ Requires:       cosmic-session
 %cargo_prep -N
 
 %build
+cat .cargo/config
+echo "\n"
 cat .vendor/config.toml >> .cargo/config
+cat .cargo/config
 %cargo_build
 echo "Cargo license summary"
 %{cargo_license_summary}

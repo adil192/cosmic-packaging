@@ -11,7 +11,32 @@ Release:        %autorelease
 Summary:        Compositor for the COSMIC Desktop Environment. Can also be used as a standalone compositor.
 
 SourceLicense:  GPL-3.0-only
-License:        GPL-3.0
+# (Apache-2.0 OR MIT) AND BSD-3-Clause
+# 0BSD OR MIT OR Apache-2.0
+# Apache-2.0
+# Apache-2.0 OR BSD-3-Clause
+# Apache-2.0 OR BSL-1.0
+# Apache-2.0 OR MIT
+# Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+# BSD-2-Clause
+# BSD-2-Clause OR Apache-2.0 OR MIT
+# BSD-3-Clause
+# BSD-3-Clause OR MIT OR Apache-2.0
+# BSL-1.0
+# CC0-1.0
+# GPL-3.0
+# GPL-3.0-only
+# ISC
+# MIT
+# MIT OR Apache-2.0
+# MIT OR Apache-2.0 OR CC0-1.0
+# MIT OR Apache-2.0 OR Zlib
+# MIT OR Zlib OR Apache-2.0
+# MPL-2.0
+# Unlicense OR MIT
+# Zlib
+# Zlib OR Apache-2.0 OR MIT
+License:        GPL-3.0 AND (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3-Clause AND Apache-2.0 OR BSL-1.0 AND Apache-2.0 OR MIT AND Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT AND BSD-2-Clause AND BSD-2-Clause OR Apache-2.0 OR MIT AND BSD-3-Clause AND BSD-3-Clause OR MIT OR Apache-2.0 AND BSL-1.0 AND CC0-1.0 AND GPL-3.0 AND GPL-3.0-only AND ISC AND MIT AND MIT OR Apache-2.0 AND MIT OR Apache-2.0 OR CC0-1.0 AND MIT OR Apache-2.0 OR Zlib AND MIT OR Zlib OR Apache-2.0 AND MPL-2.0 AND Unlicense OR MIT AND Zlib AND Zlib OR Apache-2.0 OR MIT
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-comp

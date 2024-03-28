@@ -51,6 +51,7 @@ BuildRequires:  cargo
 BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  systemd-devel
+BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  just
 
 %global _description %{expand:

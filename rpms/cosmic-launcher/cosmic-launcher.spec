@@ -68,7 +68,7 @@ cat .vendor/config.toml >> .cargo/config
 
 %build
 export RUSTFLAGS="$RUSTFLAGS --cfg tokio_unstable"
-cargo build --release --frozen --offline
+%cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}

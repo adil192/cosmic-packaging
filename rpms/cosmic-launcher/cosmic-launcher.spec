@@ -64,18 +64,16 @@ Requires:       pop-launcher
 %autosetup -n %{crate}-%{ver} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
-cat .cargo/config
-echo "[build]
-rustflags = [\"--cfg\", \"tokio_unstable\"]
-rustdocflags = [\"--cfg\", \"tokio_unstable\"]" >> .cargo/config
 
 %build
+export RUSTFLAGS := env_var_or_default('RUSTFLAGS', '') + ' --cfg tokio_unstable '
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
+export RUSTFLAGS := env_var_or_default('RUSTFLAGS', '') + ' --cfg tokio_unstable '
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}

@@ -43,7 +43,7 @@ cat .vendor/config.toml >> .cargo/config
 
 %build
 # %%cargo_build
-cargo build -p pop-launcher-bin --release --offline --frozen
+just build-release --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}

@@ -33,6 +33,7 @@ BuildRequires:  pipewire-devel
 BuildRequires:  clang-devel
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  mesa-libgbm-devel
+BuildRequires:  gstreamer-1.0-devel
 BuildRequires:  glib2-devel
 BuildRequires:  just
 

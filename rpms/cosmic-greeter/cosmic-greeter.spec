@@ -42,12 +42,11 @@ Source:         cosmic-greeter-%{ver}-vendor.tar.xz
 Patch:          service.patch
 
 BuildRequires:  cargo-rpm-macros >= 25
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  wayland-devel
-BuildRequires:  clang-devel
+BuildRequires:  clang-libs
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  pam-devel
 BuildRequires:  just

@@ -33,7 +33,7 @@ BuildRequires:  glib2-devel
 BuildRequires:  gtk3-devel
 BuildRequires:  dbus-devel
 BuildRequires:  wayland-devel
-BuildRequires:  clang-devel
+BuildRequires:  clang-libs
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  rust-rav1e+nasm-rs-devel

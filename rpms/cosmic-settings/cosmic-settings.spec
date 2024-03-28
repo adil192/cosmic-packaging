@@ -44,7 +44,6 @@ Source:         cosmic-settings-%{ver}.tar.xz
 Source:         cosmic-settings-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

@@ -11,7 +11,7 @@ glib2-devel
 gtk3-devel
 dbus-devel
 wayland-devel
-clang-devel
+clang-libs
 libxkbcommon-devel
 mesa-libgbm-devel
 rust-rav1e+nasm-rs-devel
@@ -112,7 +112,7 @@ rustc
 lld
 cargo
 wayland-devel
-clang-devel
+clang-libs
 libxkbcommon-devel
 pam-devel
 just
@@ -194,7 +194,7 @@ cargo
 libxkbcommon-devel
 wayland-devel
 pipewire-devel
-clang-devel
+clang-libs
 mesa-libEGL-devel
 mesa-libgbm-devel
 just

@@ -46,7 +46,6 @@ Source:         cosmic-term-%{ver}.tar.xz
 Source:         cosmic-term-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

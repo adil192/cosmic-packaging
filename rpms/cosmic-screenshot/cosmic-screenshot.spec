@@ -34,7 +34,6 @@ Source:         cosmic-screenshot-%{ver}.tar.xz
 Source:         cosmic-screenshot-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

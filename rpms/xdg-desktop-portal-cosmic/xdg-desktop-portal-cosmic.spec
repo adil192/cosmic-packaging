@@ -44,14 +44,13 @@ Source:         xdg-desktop-portal-cosmic-%{ver}.tar.xz
 Source:         xdg-desktop-portal-cosmic-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  wayland-devel
 BuildRequires:  pipewire-devel
-BuildRequires:  clang-devel
+BuildRequires:  clang-libs
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  gstreamer1-devel

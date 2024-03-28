@@ -43,7 +43,6 @@ Source:         cosmic-app-library-%{ver}.tar.xz
 Source:         cosmic-app-library-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
-BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

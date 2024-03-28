@@ -64,6 +64,7 @@ Requires:       pop-launcher
 %autosetup -n %{crate}-%{ver} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
+cat .cargo/config
 echo "[build]
 rustflags = [\"--cfg\", \"tokio_unstable\"]
 rustdocflags = [\"--cfg\", \"tokio_unstable\"]" >> .cargo/config

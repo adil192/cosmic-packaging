@@ -57,7 +57,7 @@ BuildRequires:  make
 
 Requires:       libseat
 
-Recommends: cosmic-session
+Recommends:     cosmic-session
 
 %global _description %{expand:
 %{summary}.}

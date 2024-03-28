@@ -38,6 +38,7 @@ Source:         cosmic-session-%{ver}.tar.xz
 Source:         cosmic-session-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

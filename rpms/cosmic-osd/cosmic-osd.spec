@@ -44,6 +44,7 @@ Source:         cosmic-osd-%{ver}.tar.xz
 Source:         cosmic-osd-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

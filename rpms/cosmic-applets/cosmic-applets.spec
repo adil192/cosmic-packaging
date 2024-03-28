@@ -42,6 +42,7 @@ Patch: better_compile.patch
 Patch: symlink.patch
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

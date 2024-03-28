@@ -3,3 +3,4 @@
 * xdg-desktop-portal-cosmic
 * cosmic-edit
 * cosmic-files
+* cosmic-randr

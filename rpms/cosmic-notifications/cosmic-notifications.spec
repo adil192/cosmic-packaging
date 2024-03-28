@@ -41,6 +41,7 @@ Source:         cosmic-notifications-%{ver}.tar.xz
 Source:         cosmic-notifications-%{ver}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
+BuildRequires:  gcc
 BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo

@@ -62,7 +62,7 @@ just rootdir=%{buildroot} install
 %license LICENSE.dependencies
 # %% license cargo-vendor.txt
 %doc README.md
-%{_bindir}/pop-launcher-bin
+%{_bindir}/pop-launcher
 %{_prefix}/lib/pop-launcher/*
 
 %changelog

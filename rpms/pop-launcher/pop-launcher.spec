@@ -42,7 +42,8 @@ Requires:       rust-fd-find
 cat .vendor/config.toml >> .cargo/config
 
 %build
-%cargo_build
+# %%cargo_build
+cargo build -p pop-launcher-bin --release --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
@@ -61,7 +62,7 @@ just rootdir=%{buildroot} install
 %license LICENSE.dependencies
 # %% license cargo-vendor.txt
 %doc README.md
-%{_bindir}/pop-launcher
+%{_bindir}/pop-launcher-bin
 %{_prefix}/lib/pop-launcher/*
 
 %changelog

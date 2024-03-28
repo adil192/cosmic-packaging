@@ -50,7 +50,7 @@ BuildRequires:  cargo
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  wayland-devel
 BuildRequires:  pipewire-devel
-BuildRequires:  clang-libs
+BuildRequires:  clang-devel
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  gstreamer1-devel

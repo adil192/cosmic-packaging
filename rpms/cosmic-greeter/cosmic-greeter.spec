@@ -46,7 +46,7 @@ BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  wayland-devel
-BuildRequires:  clang-libs
+BuildRequires:  clang-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  pam-devel
 BuildRequires:  just

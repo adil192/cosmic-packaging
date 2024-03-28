@@ -66,7 +66,6 @@ Requires:       pop-launcher
 cat .vendor/config.toml >> .cargo/config
 
 %build
-export RUSTFLAGS="$RUSTFLAGS --cfg tokio_unstable"
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
@@ -76,7 +75,6 @@ export RUSTFLAGS="$RUSTFLAGS --cfg tokio_unstable"
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}
-export RUSTFLAGS="$RUSTFLAGS --cfg tokio_unstable"
 %check
 %cargo_test
 %endif

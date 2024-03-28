@@ -64,7 +64,7 @@ Requires:       pop-launcher
 %autosetup -n %{crate}-%{ver} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
-cat "\n[build]\nrustflags = [\"--cfg\", "tokio_unstable\"]\nrustdocflags = [\"--cfg\", \"tokio_unstable\"]" >> .cargo/config
+cat "\n[build]\nrustflags = [\"--cfg\", \"tokio_unstable\"]\nrustdocflags = [\"--cfg\", \"tokio_unstable\"]" >> .cargo/config
 
 %build
 %cargo_build

@@ -1,6 +1,8 @@
-* cosmic-comp
 * cosmic-app-library
-* xdg-desktop-portal-cosmic
+* cosmic-comp
 * cosmic-edit
 * cosmic-files
 * cosmic-randr
+* cosmic-settings
+* cosmic-settings-daemon
+* xdg-desktop-portal-cosmic

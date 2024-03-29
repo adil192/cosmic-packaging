@@ -175,6 +175,8 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-disabled-symbolic.svg
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-new-symbolic.svg
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-symbolic.svg
+%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+%{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicPanelLauncherButton.svg
 
 %changelog
 %autochangelog

@@ -16,6 +16,7 @@ URL:            https://github.com/pop-os/cosmic-icons
 Source:         cosmic-icons-%{ver}.tar.xz
 
 BuildRequires:  just
+BuildRequires:  pop-icon-theme
 
 %global _description %{expand:
 %{summary}.}

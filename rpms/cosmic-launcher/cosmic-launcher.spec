@@ -66,14 +66,12 @@ Requires:       pop-launcher
 cat .vendor/config.toml >> .cargo/config
 
 %build
-export RUSTFLAGS := env_var_or_default('RUSTFLAGS', '') + ' --cfg tokio_unstable '
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
-export RUSTFLAGS := env_var_or_default('RUSTFLAGS', '') + ' --cfg tokio_unstable '
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}

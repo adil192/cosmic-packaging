@@ -49,7 +49,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 
 Requires:       libqalculate
-Requires:       rust-fd-find
+Requires:       fd-find
 
 %global _description %{expand:
 %{summary}.}

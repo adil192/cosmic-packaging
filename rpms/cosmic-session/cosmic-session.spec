@@ -60,9 +60,10 @@ Requires:       cosmic-screenshot
 Requires:       cosmic-settings
 Requires:       cosmic-settings-daemon
 Requires:       cosmic-workspaces
-Requires:       pop-fonts
+Requires:       mozilla-fira-mono-fonts
+Requires:       mozilla-fira-sans-fonts
 Requires:       xdg-desktop-portal-cosmic
-Requires:       xwayland
+Requires:       xorg-x11-server-Xwayland
 
 %global _description %{expand:
 The session manager for the COSMIC desktop environment.}

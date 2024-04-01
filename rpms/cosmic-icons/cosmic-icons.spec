@@ -9,14 +9,14 @@ Version:        %{ver}~%{date}
 Release:        %autorelease
 Summary:        Icon theme for the COSMIC Desktop Environment.
 
-SourceLicense:  CC-BY-SA-4.0
-License:        GPL-3.0
+License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-icons
 Source:         cosmic-icons-%{ver}.tar.xz
 
 BuildRequires:  just
-BuildRequires:  pop-icon-theme
+
+Requires:       pop-icon-theme
 
 %global _description %{expand:
 %{summary}.}

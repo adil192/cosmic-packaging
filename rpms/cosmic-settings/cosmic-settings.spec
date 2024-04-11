@@ -120,6 +120,7 @@ just rootdir=%{buildroot} install
 %{_datadir}/applications/com.system76.CosmicSettings.Users.desktop
 %{_datadir}/applications/com.system76.CosmicSettings.Wallpaper.desktop
 %{_datadir}/applications/com.system76.CosmicSettings.Workspaces.desktop
+%{_datadir}/polkit-1/rules.d/cosmic-settings.rules
 
 %changelog
 %autochangelog

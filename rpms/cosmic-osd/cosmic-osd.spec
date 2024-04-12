@@ -51,7 +51,7 @@ BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  systemd-devel
 BuildRequires:  pulseaudio-libs-devel
-BuildRequires:  just
+BuildRequires:  make
 
 %global _description %{expand:
 %{summary}.}
@@ -64,7 +64,8 @@ BuildRequires:  just
 cat .vendor/config.toml >> .cargo/config
 
 %build
-%cargo_build
+make all polkit-agent-helper-1=/usr/lib/polkit-1/polkit-agent-helper-1
+# %%cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}

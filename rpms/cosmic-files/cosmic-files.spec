@@ -2,7 +2,7 @@
 %bcond_without check
 
 # prevent library files from being installed
-%global cargo_install_lib 0
+# %%global cargo_install_lib 0
 
 %global crate cosmic-files
 

@@ -53,6 +53,7 @@ BuildRequires:  libglvnd-devel
 BuildRequires:  libseat-devel
 BuildRequires:  libinput-devel
 BuildRequires:  mesa-libgbm-devel
+BuildRequires:  pixman-devel
 BuildRequires:  make
 
 Requires:       libseat

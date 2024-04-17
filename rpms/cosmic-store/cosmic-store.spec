@@ -49,6 +49,8 @@ BuildRequires:  flatpak-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  just
 
+Requires:       PackageKit
+
 %global _description %{expand:
 %{summary}.}
 

@@ -47,7 +47,10 @@ BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  systemd-devel
+BuildRequires:  libudev-devel
 BuildRequires:  just
+
+Requires:       acpid
 
 %global _description %{expand:
 %{summary}.}

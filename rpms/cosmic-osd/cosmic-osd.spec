@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-osd
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        OSDs for the COSMIC Desktop Environment.
 
@@ -40,8 +40,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-osd
-Source:         cosmic-osd-%{ver}.tar.xz
-Source:         cosmic-osd-%{ver}-vendor.tar.xz
+Source:         cosmic-osd-%{commit}.tar.xz
+Source:         cosmic-osd-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

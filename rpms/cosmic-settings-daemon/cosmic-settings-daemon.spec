@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-settings-daemon
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Settings daemon for the COSMIC Desktop Environment.
 
@@ -39,8 +39,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-settings-daemon
-Source:         cosmic-settings-daemon-%{ver}.tar.xz
-Source:         cosmic-settings-daemon-%{ver}-vendor.tar.xz
+Source:         cosmic-settings-daemon-%{commit}.tar.xz
+Source:         cosmic-settings-daemon-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           pop-launcher
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Modular IPC-based desktop launcher service.
 
@@ -35,8 +35,8 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND Apache-2.0 AND Apache-2
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/launcher
-Source:         pop-launcher-%{ver}.tar.xz
-Source:         pop-launcher-%{ver}-vendor.tar.xz
+Source:         pop-launcher-%{commit}.tar.xz
+Source:         pop-launcher-%{commit}-vendor.tar.xz
 
 Patch:          symlink.patch
 

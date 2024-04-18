@@ -14,7 +14,7 @@ repo=$5
 LATEST="latest"
 
 # Clone repo and cd into it
-mkdir $name-$version && cd $name-$version && git clone --recurse-submodules $repo .
+mkdir $name-$commit && cd $name-$commit && git clone --recurse-submodules $repo .
 
 # Get latest commit hash if commit is set to latest
 if [[ "$commit" == "$LATEST" ]]
@@ -22,22 +22,19 @@ then
     commit=$(git rev-parse HEAD)
 fi
 
-# Short commit, used for versioning
-short_commit=${commit:0:6}
-
 # Reset to specified commit
 git reset --hard $commit
 
 # Vendor dependencies and zip vendor
 mkdir .vendor
 cargo vendor > .vendor/config.toml
-tar -pcJf $name-$version-vendor.tar.xz vendor && mv $name-$version-vendor.tar.xz ../$name-$version-vendor.tar.xz
+tar -pcJf $name-$commit-vendor.tar.xz vendor && mv $name-$commit-vendor.tar.xz ../$name-$commit-vendor.tar.xz
 # Back into parent directory
 rm -rf vendor && cd ..
 
 # Zip source
-tar -pcJf $name-$version.tar.xz $name-$version
-rm -rf $name-$version
+tar -pcJf $name-$commit.tar.xz $name-$commit
+rm -rf $name-$commit
 
 # Get specfile
 cp $path_to_spec $name.spec 2>/dev/null || :

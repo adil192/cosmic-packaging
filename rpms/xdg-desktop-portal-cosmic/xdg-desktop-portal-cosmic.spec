@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           xdg-desktop-portal-cosmic
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        XDG Desktop Portals implementation for the COSMIC Desktop Environment.
 
@@ -40,8 +40,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/xdg-desktop-portal-cosmic
-Source:         xdg-desktop-portal-cosmic-%{ver}.tar.xz
-Source:         xdg-desktop-portal-cosmic-%{ver}-vendor.tar.xz
+Source:         xdg-desktop-portal-cosmic-%{commit}.tar.xz
+Source:         xdg-desktop-portal-cosmic-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

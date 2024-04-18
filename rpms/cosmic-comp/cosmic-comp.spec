@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-comp
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Compositor for the COSMIC Desktop Environment. Can also be used as a standalone compositor.
 
@@ -40,8 +40,8 @@ License:        GPL-3.0 AND (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-comp
-Source:         cosmic-comp-%{ver}.tar.xz
-Source:         cosmic-comp-%{ver}-vendor.tar.xz
+Source:         cosmic-comp-%{commit}.tar.xz
+Source:         cosmic-comp-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

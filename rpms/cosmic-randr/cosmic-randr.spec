@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-randr
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Cosmic-randr command line interface
 
@@ -26,8 +26,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-randr
-Source:         cosmic-randr-%{ver}.tar.xz
-Source:         cosmic-randr-%{ver}-vendor.tar.xz
+Source:         cosmic-randr-%{commit}.tar.xz
+Source:         cosmic-randr-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

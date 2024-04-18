@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-notifications
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Notifications daemon for the COSMIC Desktop Environment.
 
@@ -37,8 +37,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-notifications
-Source:         cosmic-notifications-%{ver}.tar.xz
-Source:         cosmic-notifications-%{ver}-vendor.tar.xz
+Source:         cosmic-notifications-%{commit}.tar.xz
+Source:         cosmic-notifications-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

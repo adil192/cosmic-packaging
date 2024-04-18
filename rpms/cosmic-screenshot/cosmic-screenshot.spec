@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-screenshot
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Screenshot utility for the COSMIC Desktop Environment.
 
@@ -30,8 +30,8 @@ SourceLicense:  GPL-3.0
 License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 OR MIT AND Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT AND BSD-3-Clause AND MIT AND MIT OR Apache-2.0 AND MIT OR Apache-2.0 OR Zlib AND MIT OR Zlib OR Apache-2.0 AND MPL-2.0 AND Unlicense OR MIT AND Zlib OR Apache-2.0 OR MIT AND LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-screenshot
-Source:         cosmic-screenshot-%{ver}.tar.xz
-Source:         cosmic-screenshot-%{ver}-vendor.tar.xz
+Source:         cosmic-screenshot-%{commit}.tar.xz
+Source:         cosmic-screenshot-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

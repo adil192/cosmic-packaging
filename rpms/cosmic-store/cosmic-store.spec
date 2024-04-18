@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-store
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        App store for the COSMIC Desktop Environment.
 
@@ -38,8 +38,8 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT OR Apache-2
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-store
-Source:         cosmic-store-%{ver}.tar.xz
-Source:         cosmic-store-%{ver}-vendor.tar.xz
+Source:         cosmic-store-%{commit}.tar.xz
+Source:         cosmic-store-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

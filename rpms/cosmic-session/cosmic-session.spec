@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-session
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Session manager for the COSMIC desktop environment
 
@@ -34,8 +34,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 OR BSD-3-Clause AND Apa
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-session
-Source:         cosmic-session-%{ver}.tar.xz
-Source:         cosmic-session-%{ver}-vendor.tar.xz
+Source:         cosmic-session-%{commit}.tar.xz
+Source:         cosmic-session-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-panel
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Panel for the COSMIC Desktop Environment.
 
@@ -34,8 +34,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-panel
-Source:         cosmic-panel-%{ver}.tar.xz
-Source:         cosmic-panel-%{ver}-vendor.tar.xz
+Source:         cosmic-panel-%{commit}.tar.xz
+Source:         cosmic-panel-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

@@ -1,27 +1,6 @@
 Build Requirements
 
-make
-which
-git-core
-just
-rustc
-lld
-cargo
-glib2-devel
-gtk3-devel
-dbus-devel
-wayland-devel
-clang-devel
-libxkbcommon-devel
-mesa-libgbm-devel
-rust-rav1e+nasm-rs-devel
-libappstream-glib
-pipewire-devel
-libglvnd-devel
-libseat-devel
-libinput-devel
-pam-devel
-flatpak-devel
+sudo dnf install -y make which git-core just rustc lld cargo glib2-devel gtk3-devel dbus-devel wayland-devel clang-devel libxkbcommon-devel mesa-libgbm-devel rust-rav1e+nasm-rs-devel libappstream-glib pipewire-devel libglvnd-devel libseat-devel libinput-devel pam-devel flatpak-devel
 
 Requirements
 
@@ -32,6 +11,10 @@ Requires:       greetd-selinux
 Requires:       cage
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
+
+
+
+rustc lld cargo dbus-devel wayland-devel libinput-devel libudev-devel pulseaudio-libs-devel mesa-libEGL-devel libxkbcommon-devel just
 
 cosmic-app-library
 BR:

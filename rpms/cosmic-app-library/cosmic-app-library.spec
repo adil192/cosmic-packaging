@@ -11,7 +11,7 @@
 %global crate cosmic-app-library
 
 Name:           cosmic-app-library
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        App Library program for the COSMIC Desktop Environment.
 
@@ -39,8 +39,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-applibrary
-Source:         cosmic-app-library-%{ver}.tar.xz
-Source:         cosmic-app-library-%{ver}-vendor.tar.xz
+Source:         cosmic-app-library-%{commit}.tar.xz
+Source:         cosmic-app-library-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

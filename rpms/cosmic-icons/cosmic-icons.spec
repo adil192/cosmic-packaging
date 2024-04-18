@@ -5,14 +5,14 @@
 %global date ###
 
 Name:           cosmic-icons
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Icon theme for the COSMIC Desktop Environment.
 
 License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-icons
-Source:         cosmic-icons-%{ver}.tar.xz
+Source:         cosmic-icons-%{commit}.tar.xz
 
 BuildRequires:  just
 

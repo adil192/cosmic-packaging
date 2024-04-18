@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-files
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Libcosmic file manager.
 
@@ -42,8 +42,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSL-1
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-files
-Source:         cosmic-files-%{ver}.tar.xz
-Source:         cosmic-files-%{ver}-vendor.tar.xz
+Source:         cosmic-files-%{commit}.tar.xz
+Source:         cosmic-files-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

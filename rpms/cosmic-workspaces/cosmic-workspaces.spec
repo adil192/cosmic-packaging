@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-workspaces
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Workspaces overview for the COSMIC Desktop Environment.
 
@@ -40,8 +40,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-workspaces-epoch
-Source:         cosmic-workspaces-%{ver}.tar.xz
-Source:         cosmic-workspaces-%{ver}-vendor.tar.xz
+Source:         cosmic-workspaces-%{commit}.tar.xz
+Source:         cosmic-workspaces-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

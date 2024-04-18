@@ -11,7 +11,7 @@
 %global date ###
 
 Name:           cosmic-term
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Terminal emulator built with Libcosmic.
 
@@ -42,8 +42,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSL-1
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-term
-Source:         cosmic-term-%{ver}.tar.xz
-Source:         cosmic-term-%{ver}-vendor.tar.xz
+Source:         cosmic-term-%{commit}.tar.xz
+Source:         cosmic-term-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

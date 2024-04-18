@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-bg
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Background manager for the COSMIC Desktop Environment.
 
@@ -29,8 +29,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 OR MIT AND Apache-2.0 W
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-bg
-Source:         cosmic-bg-%{ver}.tar.xz
-Source:         cosmic-bg-%{ver}-vendor.tar.xz
+Source:         cosmic-bg-%{commit}.tar.xz
+Source:         cosmic-bg-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

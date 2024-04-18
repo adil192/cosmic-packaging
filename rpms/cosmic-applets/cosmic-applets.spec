@@ -6,7 +6,7 @@
 %global date ###
 
 Name:           cosmic-applets
-Version:        %{ver}~%{date}
+Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Applets for the COSMIC Desktop Environment.
 
@@ -35,8 +35,8 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-applets
-Source:         cosmic-applets-%{ver}.tar.xz
-Source:         cosmic-applets-%{ver}-vendor.tar.xz
+Source:         cosmic-applets-%{commit}.tar.xz
+Source:         cosmic-applets-%{commit}-vendor.tar.xz
 
 Patch: better_compile.patch
 Patch: symlink.patch

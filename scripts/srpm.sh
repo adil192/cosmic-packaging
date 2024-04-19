@@ -20,6 +20,7 @@ mkdir $name-$commit && cd $name-$commit && git clone --recurse-submodules $repo 
 if [[ "$commit" == "$LATEST" ]]
 then
     commit=$(git rev-parse HEAD)
+    cd .. && mv $name-latest $name-$commit && cd $name-$commit
 fi
 
 # Reset to specified commit

@@ -24,7 +24,7 @@ Requires:       pop-icon-theme
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-icons-%{ver}
+%autosetup -n cosmic-icons-%{commit}
 
 %build
 

@@ -63,7 +63,7 @@ Requires:       cosmic-panel
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-applets-%{ver} -p1 -a1
+%autosetup -n cosmic-applets-%{commit} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
 

@@ -51,7 +51,7 @@ BuildRequires:  just
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-panel-%{ver} -p1 -a1
+%autosetup -n cosmic-panel-%{commit} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
 

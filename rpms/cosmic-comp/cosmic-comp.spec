@@ -66,7 +66,7 @@ Recommends:     cosmic-session
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-comp-%{ver} -p1 -a1
+%autosetup -n cosmic-comp-%{commit} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
 

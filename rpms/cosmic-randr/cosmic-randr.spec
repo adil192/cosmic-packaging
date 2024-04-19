@@ -42,7 +42,7 @@ Cosmic-randr command line interface.}
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-randr-%{ver} -p1 -a1
+%autosetup -n cosmic-randr-%{commit} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
 

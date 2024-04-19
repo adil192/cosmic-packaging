@@ -58,7 +58,7 @@ Requires:       acpid
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{ver} -p1 -a1
+%autosetup -n %{crate}-%{commit} -p1 -a1
 %cargo_prep -N
 cat .vendor/config.toml >> .cargo/config
 

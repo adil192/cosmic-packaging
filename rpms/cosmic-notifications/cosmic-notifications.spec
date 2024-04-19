@@ -37,6 +37,13 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-notifications
+
+# To create these sources:
+# * git clone the repository
+# * cargo vendor > .vendor/config.toml
+# * tar -pcJf $name-$commit-vendor.tar.xz and move
+#     the tar out of the repo directory
+# * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-notifications-%{commit}.tar.xz
 Source:         cosmic-notifications-%{commit}-vendor.tar.xz
 

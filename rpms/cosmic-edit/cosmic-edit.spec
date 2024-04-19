@@ -43,6 +43,13 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT OR Apache-2
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/cosmic-edit
+
+# To create these sources:
+# * git clone the repository
+# * cargo vendor > .vendor/config.toml
+# * tar -pcJf $name-$commit-vendor.tar.xz and move
+#     the tar out of the repo directory
+# * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-edit-%{commit}.tar.xz
 Source:         cosmic-edit-%{commit}-vendor.tar.xz
 

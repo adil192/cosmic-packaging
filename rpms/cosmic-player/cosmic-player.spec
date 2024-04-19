@@ -18,6 +18,13 @@ License:        # FIXME
 # FIXME: No license information in crate metadata.
 
 URL:            # FIXME
+
+# To create these sources:
+# * git clone the repository
+# * cargo vendor > .vendor/config.toml
+# * tar -pcJf $name-$commit-vendor.tar.xz and move
+#     the tar out of the repo directory
+# * tar -pcJf $name-$commit.tar.xz
 Source:         # FIXME
 Source:         cosmic-player-0.1.0-vendor.tar.xz
 

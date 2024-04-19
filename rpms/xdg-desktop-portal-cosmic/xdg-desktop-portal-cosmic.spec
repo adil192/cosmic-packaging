@@ -40,6 +40,13 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 # LICENSE.dependencies contains a full license breakdown
 
 URL:            https://github.com/pop-os/xdg-desktop-portal-cosmic
+
+# To create these sources:
+# * git clone the repository
+# * cargo vendor > .vendor/config.toml
+# * tar -pcJf $name-$commit-vendor.tar.xz and move
+#     the tar out of the repo directory
+# * tar -pcJf $name-$commit.tar.xz
 Source:         xdg-desktop-portal-cosmic-%{commit}.tar.xz
 Source:         xdg-desktop-portal-cosmic-%{commit}-vendor.tar.xz
 

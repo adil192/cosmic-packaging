@@ -80,6 +80,7 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
+sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
 
 %install
 make install DESTDIR=%{buildroot} prefix=%{_prefix}
@@ -92,7 +93,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %files
 %license LICENSE
 %license LICENSE.dependencies
-# %%license cargo-vendor.txt
+%license cargo-vendor.txt
 %{_bindir}/cosmic-workspaces
 %{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicWorkspaces.svg

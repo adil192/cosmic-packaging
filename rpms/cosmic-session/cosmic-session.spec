@@ -87,6 +87,7 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
+sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
 
 %install
 just rootdir=%{buildroot} install
@@ -99,7 +100,7 @@ just rootdir=%{buildroot} install
 %files
 %license LICENSE.md
 %license LICENSE.dependencies
-# %%license cargo-vendor.txt
+%license cargo-vendor.txt
 %{_bindir}/cosmic-session
 %{_bindir}/start-cosmic
 %{_userunitdir}/cosmic-session.target

@@ -83,6 +83,7 @@ cargo build --release --all --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
+sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
 
 %install
 install -Dm0755 target/release/cosmic-greeter %{buildroot}/%{_bindir}/cosmic-greeter
@@ -117,7 +118,7 @@ install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/co
 %files
 %license LICENSE
 %license LICENSE.dependencies
-# %%license cargo-vendor.txt
+%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-greeter
 %{_bindir}/cosmic-greeter-daemon

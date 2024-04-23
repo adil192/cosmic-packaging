@@ -82,8 +82,7 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}
-# %% check TODO: Fix --lib
-# %%cargo_test
+%cargo_test
 %endif
 
 %files

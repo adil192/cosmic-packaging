@@ -57,6 +57,7 @@ BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
+BuildRequires:  glib2-devel
 
 BuildRequires:  git-core
 

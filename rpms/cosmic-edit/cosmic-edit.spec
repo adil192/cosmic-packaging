@@ -76,7 +76,7 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
-sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
+sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
 just rootdir=%{buildroot} prefix=%{_prefix} install

@@ -76,7 +76,7 @@ make all polkit-agent-helper-1=/usr/lib/polkit-1/polkit-agent-helper-1
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
-sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
+sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
 make install DESTDIR=%{buildroot} prefix=%{_prefix}

@@ -44,7 +44,7 @@ BuildRequires:  cargo-rpm-macros >= 26
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
-sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
+sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
 %cargo_install

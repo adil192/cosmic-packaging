@@ -83,7 +83,7 @@ cargo build --release --all --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
-sed 's/\(.*\) (.*#\(.*\))/\1^git\2/' -i cargo-vendor.txt
+sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
 install -Dm0755 target/release/cosmic-greeter %{buildroot}/%{_bindir}/cosmic-greeter

@@ -72,6 +72,8 @@ Recommends:     cosmic-session
 
 %description %{_description}
 
+%define git_versioning sed 's/\([[:alnum:][:punct:]]* v[0-9.]*\) (https:\/\/github.com\/[^#]*#\([a-f0-9]*\))/\1^git\2/' -i cargo-vendor.txt
+
 %prep
 %autosetup -n cosmic-comp-%{commit} -p1 -a1
 %cargo_prep -N
@@ -82,6 +84,8 @@ cat .vendor/config.toml >> .cargo/config
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
+%{git_versioning}
+
 
 %install
 make install DESTDIR=%{buildroot} prefix=%{_prefix}
@@ -95,7 +99,7 @@ install -Dm0644 config.ron %{buildroot}/%{_sysconfdir}/cosmic-comp/config.ron
 %files
 %license LICENSE
 %license LICENSE.dependencies
-# %%license cargo-vendor.txt
+%license cargo-vendor.txt
 %{_bindir}/cosmic-comp
 %config(noreplace) %{_sysconfdir}/cosmic-comp/config.ron
 

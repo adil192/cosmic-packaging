@@ -8,7 +8,7 @@
 Name:           cosmic-randr
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Cosmic-randr command line interface
+Summary:        Display configuration command line tool
 
 SourceLicense:  MPL-2.0
 # 0BSD OR MIT OR Apache-2.0

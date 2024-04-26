@@ -8,7 +8,7 @@
 Name:           cosmic-store
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        App store for the COSMIC Desktop Environment.
+Summary:        App store for the COSMIC Desktop Environment
 
 SourceLicense:  GPL-3.0
 # (Apache-2.0 OR MIT) AND BSD-3-Clause

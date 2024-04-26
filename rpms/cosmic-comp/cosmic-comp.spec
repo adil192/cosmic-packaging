@@ -8,7 +8,7 @@
 Name:           cosmic-comp
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Compositor for the COSMIC Desktop Environment. Can also be used as a standalone compositor.
+Summary:        Compositor for the COSMIC Desktop Environment
 
 SourceLicense:  GPL-3.0-only
 # (Apache-2.0 OR MIT) AND BSD-3-Clause

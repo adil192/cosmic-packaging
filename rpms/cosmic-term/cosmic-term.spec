@@ -13,7 +13,7 @@
 Name:           cosmic-term
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Terminal emulator built with Libcosmic.
+Summary:        Terminal emulator built with alacritty and Libcosmic
 
 SourceLicense:  GPL-3.0-only
 # 0BSD OR MIT OR Apache-2.0

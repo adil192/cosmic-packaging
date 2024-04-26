@@ -8,7 +8,7 @@
 Name:           cosmic-bg
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Background manager for the COSMIC Desktop Environment.
+Summary:        Background manager for the COSMIC Desktop Environment
 
 SourceLicense:  MPL-2.0
 # 0BSD OR MIT OR Apache-2.0

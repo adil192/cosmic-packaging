@@ -13,7 +13,7 @@
 Name:           cosmic-workspaces
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Workspaces overview for the COSMIC Desktop Environment.
+Summary:        Workspaces overview for the COSMIC Desktop Environment
 
 SourceLicense:  GPL-3.0
 # 0BSD OR MIT OR Apache-2.0

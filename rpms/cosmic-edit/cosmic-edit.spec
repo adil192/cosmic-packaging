@@ -13,7 +13,7 @@
 Name:           cosmic-edit
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Libcosmic text editor.
+Summary:        Libcosmic text editor
 
 SourceLicense:  GPL-3.0-only
 # (Apache-2.0 OR MIT) AND BSD-3-Clause

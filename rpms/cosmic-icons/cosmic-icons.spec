@@ -7,7 +7,7 @@
 Name:           cosmic-icons
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Icon theme for the COSMIC Desktop Environment.
+Summary:        Icon theme for the COSMIC Desktop Environment
 
 License:        CC-BY-SA-4.0
 

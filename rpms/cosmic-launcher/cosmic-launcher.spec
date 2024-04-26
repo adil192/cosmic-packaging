@@ -13,7 +13,7 @@
 Name:           cosmic-launcher
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
-Summary:        Pop launcher frontend for the COSMIC Desktop Environment.
+Summary:        Pop launcher frontend for the COSMIC Desktop Environment
 
 SourceLicense:  GPL-3.0
 # 0BSD OR MIT OR Apache-2.0

@@ -48,6 +48,10 @@ URL:            https://github.com/pop-os/cosmic-comp
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-comp-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-comp-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
@@ -98,6 +102,7 @@ install -Dm0644 config.ron %{buildroot}/%{_sysconfdir}/cosmic-comp/config.ron
 %license LICENSE.dependencies
 %license cargo-vendor.txt
 %{_bindir}/cosmic-comp
+%dir %{_sysconfdir}/cosmic-comp
 %config(noreplace) %{_sysconfdir}/cosmic-comp/config.ron
 
 %changelog

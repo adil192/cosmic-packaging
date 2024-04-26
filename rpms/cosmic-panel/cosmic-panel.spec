@@ -42,6 +42,10 @@ URL:            https://github.com/pop-os/cosmic-panel
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-panel-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-panel-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
@@ -83,6 +87,9 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-panel
+%dir %{_datadir}/cosmic/com.system76.CosmicPanel.Dock
+%dir %{_datadir}/cosmic/com.system76.CosmicPanel.Panel
+%dir %{_datadir}/cosmic/com.system76.CosmicPanel
 %{_datadir}/cosmic/com.system76.CosmicPanel.Dock/*
 %{_datadir}/cosmic/com.system76.CosmicPanel.Panel/*
 %{_datadir}/cosmic/com.system76.CosmicPanel/*

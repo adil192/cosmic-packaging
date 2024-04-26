@@ -48,6 +48,10 @@ URL:            https://github.com/pop-os/cosmic-settings
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-settings-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-settings-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
@@ -93,10 +97,15 @@ just rootdir=%{buildroot} install
 %{_bindir}/cosmic-settings
 %{_datadir}/applications/com.system76.CosmicSettings.desktop
 %{_metainfodir}/com.system76.CosmicSettings.metainfo.xml
+%dir %{_datadir}/cosmic/com.system76.CosmicTheme.Dark.Builder
 %{_datadir}/cosmic/com.system76.CosmicTheme.Dark.Builder/v1/*
+%dir %{_datadir}/cosmic/com.system76.CosmicTheme.Dark
 %{_datadir}/cosmic/com.system76.CosmicTheme.Dark/v1/*
+%dir %{_datadir}/cosmic/com.system76.CosmicTheme.Light.Builder
 %{_datadir}/cosmic/com.system76.CosmicTheme.Light.Builder/v1/*
+%dir %{_datadir}/cosmic/com.system76.CosmicTheme.Light
 %{_datadir}/cosmic/com.system76.CosmicTheme.Light/v1/*
+%dir %{_datadir}/cosmic/com.system76.CosmicTheme.Mode
 %{_datadir}/cosmic/com.system76.CosmicTheme.Mode/v1/*
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-round.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-slightly-round.svg

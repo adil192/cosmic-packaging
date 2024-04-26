@@ -37,6 +37,10 @@ URL:            https://github.com/pop-os/cosmic-bg
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-bg-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-bg-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
@@ -83,6 +87,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %{_datadir}/applications/com.system76.CosmicBackground.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicBackground.svg
 %{_datadir}/icons/hicolor/symbolic/apps/com.system76.CosmicBackground-symbolic.svg
+%dir %{_datadir}/cosmic/com.system76.CosmicBackground
 %{_datadir}/cosmic/com.system76.CosmicBackground/*
 %{_metainfodir}/com.system76.CosmicBackground.metainfo.xml
 

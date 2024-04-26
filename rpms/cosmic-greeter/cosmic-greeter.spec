@@ -44,6 +44,10 @@ URL:            https://github.com/pop-os/cosmic-greeter
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-greeter-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-greeter-%{commit}-vendor.tar.xz
 
 Patch:          service.patch

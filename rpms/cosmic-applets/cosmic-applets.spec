@@ -43,6 +43,10 @@ URL:            https://github.com/pop-os/cosmic-applets
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-applets-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-applets-%{commit}-vendor.tar.xz
 
 Patch: better_compile.patch
@@ -121,6 +125,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
 %{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 %{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+%dir %{_datadir}/cosmic/com.system76.CosmicAppList
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
 %{_datadir}/icons/hicolor/scalable/app/com.system76.CosmicAppletStatusArea.svg

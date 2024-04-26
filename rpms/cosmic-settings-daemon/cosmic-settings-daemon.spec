@@ -47,6 +47,10 @@ URL:            https://github.com/pop-os/cosmic-settings-daemon
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-settings-daemon-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         cosmic-settings-daemon-%{commit}-vendor.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 26

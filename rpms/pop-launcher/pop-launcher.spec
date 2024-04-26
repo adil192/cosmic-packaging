@@ -43,6 +43,10 @@ URL:            https://github.com/pop-os/launcher
 #     the tar out of the repo directory
 # * tar -pcJf $name-$commit.tar.xz
 Source:         pop-launcher-%{commit}.tar.xz
+# To create the vendor tarball:
+# * git clone the repository
+# * cargo vendor
+# * tar -pcJf $name-$commit-vendor.tar.xz
 Source:         pop-launcher-%{commit}-vendor.tar.xz
 
 Patch:          symlink.patch
@@ -69,7 +73,6 @@ Requires:       fd-find
 cat .vendor/config.toml >> .cargo/config
 
 %build
-# %%cargo_build
 just build-release --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
@@ -88,9 +91,10 @@ just rootdir=%{buildroot} install
 %license LICENSE
 %license plugins/COPYING
 %license LICENSE.dependencies
-# %% license cargo-vendor.txt
+%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/pop-launcher
+%dir %{_prefix}/lib/pop-launcher
 %{_prefix}/lib/pop-launcher/*
 
 %changelog

@@ -46,8 +46,7 @@ URL:            https://github.com/pop-os/cosmic-files
 # To create these sources:
 # * git clone the repository
 # * cargo vendor > .vendor/config.toml
-# * tar -pcJf $name-$commit-vendor.tar.xz and move
-#     the tar out of the repo directory
+# * rm -rf vendor
 # * tar -pcJf $name-$commit.tar.xz
 Source:         cosmic-files-%{commit}.tar.xz
 # To create the vendor tarball:

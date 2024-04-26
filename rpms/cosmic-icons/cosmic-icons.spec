@@ -36,6 +36,7 @@ Requires:       pop-icon-theme
 just rootdir=%{buildroot} install
 
 %files
+%dir %{_datadir}/icons/Cosmic
 %{_datadir}/icons/Cosmic/scalable/*
 %{_datadir}/icons/Cosmic/index.theme
 

@@ -12,7 +12,7 @@ Requires:       cage
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
 
-
+lld cargo wayland-devel libxkbcommon-devel libglvnd-devel libseat-devel libinput-devel mesa-libgbm-devel pixman-devel make dbus-devel just libudev-devel pulseaudio-libs-devel mesa-libEGL-devel
 
 rustc lld cargo dbus-devel wayland-devel libinput-devel libudev-devel pulseaudio-libs-devel mesa-libEGL-devel libxkbcommon-devel just
 

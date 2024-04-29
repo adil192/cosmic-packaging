@@ -67,6 +67,8 @@ BuildRequires:   systemd-rpm-macros
 Requires:       dbus
 Requires:       greetd
 Requires:       greetd-selinux
+Requires:       fprintd-pam
+Requires:       pam
 Requires:       cosmic-comp
 
 %global _description %{expand:

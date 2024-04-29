@@ -67,6 +67,7 @@ BuildRequires:   systemd-rpm-macros
 Requires:       dbus
 Requires:       greetd
 Requires:       greetd-selinux
+# fprintd-pam is required to start sessions (unclear why)
 Requires:       fprintd-pam
 Requires:       pam
 Requires:       cosmic-comp

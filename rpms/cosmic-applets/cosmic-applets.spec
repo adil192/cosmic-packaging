@@ -103,6 +103,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %{_bindir}/cosmic-applet-audio
 %{_bindir}/cosmic-applet-battery
 %{_bindir}/cosmic-applet-bluetooth
+%{_bindir}/cosmic-applet-input-sources
 %{_bindir}/cosmic-applet-minimize
 %{_bindir}/cosmic-applet-network
 %{_bindir}/cosmic-applet-notifications
@@ -115,6 +116,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 %{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
 %{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
+%{_datadir}/applications/com.system76.CosmicAppletInputSources.desktop
 %{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
 %{_datadir}/applications/com.system76.CosmicAppletNetwork.desktop
 %{_datadir}/applications/com.system76.CosmicAppletNotifications.desktop

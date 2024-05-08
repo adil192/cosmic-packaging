@@ -130,7 +130,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 %dir %{_datadir}/cosmic/com.system76.CosmicAppList
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
-%{_datadir}/icons/hicolor/scalable/app/com.system76.CosmicAppletStatusArea.svg
+%{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppletStatusArea.svg
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppList.svg
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppletAudio.svg
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicAppletBattery.svg

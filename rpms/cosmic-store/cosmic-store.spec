@@ -59,6 +59,7 @@ BuildRequires:  cargo
 BuildRequires:  flatpak-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  just
+BuildRequires:  libxkbcommon-devel
 
 Requires:       PackageKit
 Requires:       flatpak-libs

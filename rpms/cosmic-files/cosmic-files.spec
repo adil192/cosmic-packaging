@@ -62,6 +62,7 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  glib2-devel
+BuildRequires:  libxkbcommon-devel
 
 BuildRequires:  git-core
 

@@ -61,6 +61,7 @@ BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
+BuildRequires:  libxkbcommon-devel
 
 BuildRequires:  git-core
 

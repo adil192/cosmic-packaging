@@ -72,7 +72,7 @@ Requires:       flatpak-libs
 %prep
 %autosetup -n cosmic-store-%{commit} -p1 -a1
 %cargo_prep -N
-cat .vendor/config.toml >> .cargo/config
+cat .vendor/config.toml >> .cargo/config.toml
 
 %build
 %cargo_build

@@ -61,7 +61,7 @@ Requires:       cosmic-session
 %prep
 %autosetup -n cosmic-bg-%{commit} -p1 -a1
 %cargo_prep -N
-cat .vendor/config.toml >> .cargo/config
+cat .vendor/config.toml >> .cargo/config.toml
 
 %build
 %cargo_build

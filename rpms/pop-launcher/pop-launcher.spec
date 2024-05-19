@@ -70,7 +70,7 @@ Requires:       fd-find
 %prep
 %autosetup -n pop-launcher-%{commit} -p1 -a1
 %cargo_prep -N
-cat .vendor/config.toml >> .cargo/config
+cat .vendor/config.toml >> .cargo/config.toml
 
 %build
 just build-release --offline --frozen

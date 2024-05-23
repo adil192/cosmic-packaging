@@ -84,7 +84,16 @@ The session manager for the COSMIC desktop environment.}
 %prep
 %autosetup -n %{crate}-%{commit} -p1 -a1
 %cargo_prep -N
-cat .vendor/config.toml >> .cargo/config.toml
+# Check if .cargo/config.toml exists
+if [ -f .cargo/config.toml ]; then
+  # If it exists, append the contents of .vendor/config.toml to .cargo/config.toml
+  cat .vendor/config.toml >> .cargo/config.toml
+  echo "Appended .vendor/config.toml to .cargo/config.toml"
+else
+  # If it does not exist, append the contents of .vendor/config.toml to .cargo/config
+  cat .vendor/config.toml >> .cargo/config
+  echo "Appended .vendor/config.toml to .cargo/config"
+fi
 
 %build
 %cargo_build

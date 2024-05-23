@@ -70,7 +70,16 @@ Requires:       fd-find
 %prep
 %autosetup -n pop-launcher-%{commit} -p1 -a1
 %cargo_prep -N
-cat .vendor/config.toml >> .cargo/config.toml
+# Check if .cargo/config.toml exists
+if [ -f .cargo/config.toml ]; then
+  # If it exists, append the contents of .vendor/config.toml to .cargo/config.toml
+  cat .vendor/config.toml >> .cargo/config.toml
+  echo "Appended .vendor/config.toml to .cargo/config.toml"
+else
+  # If it does not exist, append the contents of .vendor/config.toml to .cargo/config
+  cat .vendor/config.toml >> .cargo/config
+  echo "Appended .vendor/config.toml to .cargo/config"
+fi
 
 %build
 just build-release --offline --frozen

@@ -16,7 +16,7 @@ URL:            https://github.com/pop-os/cosmic-icons
 # To create this source:
 # * git clone the repository
 # * tar -pcJf $name-$commit.tar.xz
-Source:         cosmic-icons-%{commit}.tar.xz
+Source:         cosmic-icon-theme-%{commit}.tar.xz
 
 BuildRequires:  just
 

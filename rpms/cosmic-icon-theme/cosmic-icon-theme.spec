@@ -4,7 +4,7 @@
 %global commit ###
 %global date ###
 
-Name:           cosmic-icons
+Name:           cosmic-icon-theme
 Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Icon theme for the COSMIC Desktop Environment
@@ -21,6 +21,9 @@ Source:         cosmic-icons-%{commit}.tar.xz
 BuildRequires:  just
 
 Requires:       pop-icon-theme
+
+Obsoletes: cosmic-icons < 0.1.0~git20240526.04.9aad1ab-2
+Provides:  cosmic-icons = %{version}-%{release}
 
 %global _description %{expand:
 %{summary}.}

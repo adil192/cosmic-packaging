@@ -15,7 +15,7 @@ Requires:       cosmic-app-library
 Requires:       cosmic-applets
 Requires:       cosmic-bg
 Requires:       cosmic-comp
-Requires:       cosmic-icons
+Requires:       cosmic-icon-theme
 Requires:       cosmic-launcher
 Requires:       cosmic-notifications
 Requires:       cosmic-osd

@@ -37,17 +37,14 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND Apache-2.0 AND Apache-2
 
 URL:            https://github.com/pop-os/launcher
 
-# To create these sources:
-# * git clone the repository
-# * cargo vendor > .vendor/config.toml
-# * rm -rf vendor
-# * tar -pcJf $name-$commit.tar.xz
-Source:         pop-launcher-%{commit}.tar.xz
-# To create the vendor tarball:
-# * git clone the repository
-# * cargo vendor
-# * tar -pcJf $name-$commit-vendor.tar.xz
-Source:         pop-launcher-%{commit}-vendor.tar.xz
+Source:         https://github.com/pop-os/launcher/archive/%{commit}.tar.gz
+# To create the below sources:
+# * git clone https://github.com/pop-os/launcher at the specified commit
+# * cargo vendor > vendor-config.toml
+# * tar -pczf vendor.tar.gz vendor
+Source:         vendor.tar.gz
+# * mv vendor-config.toml ..
+Source:         vendor-config.toml
 
 Patch:          symlink.patch
 

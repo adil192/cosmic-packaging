@@ -32,17 +32,14 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 OR MIT AND Apache-2.0 W
 
 URL:            https://github.com/pop-os/cosmic-screenshot
 
-# To create these sources:
-# * git clone the repository
-# * cargo vendor > .vendor/config.toml
-# * rm -rf vendor
-# * tar -pcJf $name-$commit.tar.xz
-Source:         cosmic-screenshot-%{commit}.tar.xz
-# To create the vendor tarball:
-# * git clone the repository
-# * cargo vendor
-# * tar -pcJf $name-$commit-vendor.tar.xz
-Source:         cosmic-screenshot-%{commit}-vendor.tar.xz
+Source:         https://github.com/pop-os/cosmic-screenshot/archive/%{commit}.tar.gz
+# To create the below sources:
+# * git clone https://github.com/pop-os/cosmic-screenshot at the specified commit
+# * cargo vendor > vendor-config.toml
+# * tar -pczf vendor.tar.gz vendor
+Source:         vendor.tar.gz
+# * mv vendor-config.toml ..
+Source:         vendor-config.toml
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

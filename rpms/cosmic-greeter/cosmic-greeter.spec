@@ -38,17 +38,14 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSL-1
 
 URL:            https://github.com/pop-os/cosmic-greeter
 
-# To create these sources:
-# * git clone the repository
-# * cargo vendor > .vendor/config.toml
-# * rm -rf vendor
-# * tar -pcJf $name-$commit.tar.xz
-Source:         cosmic-greeter-%{commit}.tar.xz
-# To create the vendor tarball:
-# * git clone the repository
-# * cargo vendor
-# * tar -pcJf $name-$commit-vendor.tar.xz
-Source:         cosmic-greeter-%{commit}-vendor.tar.xz
+Source:         https://github.com/pop-os/cosmic-greeter/archive/%{commit}.tar.gz
+# To create the below sources:
+# * git clone https://github.com/pop-os/cosmic-greeter at the specified commit
+# * cargo vendor > vendor-config.toml
+# * tar -pczf vendor.tar.gz vendor
+Source:         vendor.tar.gz
+# * mv vendor-config.toml ..
+Source:         vendor-config.toml
 
 Patch:          service.patch
 

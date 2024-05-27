@@ -40,17 +40,14 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT OR Apache-2
 
 URL:            https://github.com/pop-os/cosmic-store
 
-# To create these sources:
-# * git clone the repository
-# * cargo vendor > .vendor/config.toml
-# * rm -rf vendor
-# * tar -pcJf $name-$commit.tar.xz
-Source:         cosmic-store-%{commit}.tar.xz
-# To create the vendor tarball:
-# * git clone the repository
-# * cargo vendor
-# * tar -pcJf $name-$commit-vendor.tar.xz
-Source:         cosmic-store-%{commit}-vendor.tar.xz
+Source:         https://github.com/pop-os/cosmic-store/archive/%{commit}.tar.gz
+# To create the below sources:
+# * git clone https://github.com/pop-os/cosmic-store at the specified commit
+# * cargo vendor > vendor-config.toml
+# * tar -pczf vendor.tar.gz vendor
+Source:         vendor.tar.gz
+# * mv vendor-config.toml ..
+Source:         vendor-config.toml
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

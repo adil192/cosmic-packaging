@@ -28,7 +28,7 @@ Provides:  cosmic-icons = %{version}-%{release}
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-icon-theme-%{commit}
+%autosetup -n cosmic-icons-%{commit}
 
 %build
 

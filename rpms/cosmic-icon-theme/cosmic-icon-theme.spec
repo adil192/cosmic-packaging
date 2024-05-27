@@ -1,4 +1,4 @@
-%define debug_package %{nil}
+BuildArch:      noarch
 
 %global ver ###
 %global commit ###
@@ -13,10 +13,7 @@ License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-icons
 
-# To create this source:
-# * git clone the repository
-# * tar -pcJf $name-$commit.tar.xz
-Source:         cosmic-icon-theme-%{commit}.tar.xz
+Source:         https://github.com/pop-os/cosmic-icons/archive/%{commit}.tar.xz
 
 BuildRequires:  just
 

@@ -33,8 +33,8 @@ cd ..
 tar -pcJf $name-$commit.tar.xz $name-$commit
 rm -rf $name-$commit
 
-# Get specfile
-mv $path_to_spec $name.spec 2>/dev/null || :
+# # Get specfile
+# mv $path_to_spec $name.spec 2>/dev/null || :
 
 # Make replacements to specfile
 sed -i "/^%global ver / s/.*/%global ver $version/" $name.spec

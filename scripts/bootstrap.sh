@@ -1,11 +1,25 @@
 #!/bin/bash -x
 
-PACKAGE=
+VENDOR=1
+# Names (Source name can sometimes be the same as name)
+NAME=
+SOURCE_NAME=
+# Version and commit (latest if using master)
 VERSION=0.1.0
-COMMIT=latest
-REPO=https://github.com/pop-os/$PACKAGE
+COMMIT=LATEST
+# Repos
+REPO=https://github.com/pop-os/$SOURCE_NAME
+RPM_REPO=https://pagure.io/forks/ryanabx/fedora-cosmic/cosmic-packaging.git
+# Paths to files
+RPM_FILES=cosmic-packaging/rpms/$SOURCE_NAME/*
+SCRIPT_FILE=srpm.sh
+SCRIPT_DIR=cosmic-packaging/scripts/$SCRIPT_FILE
 
-git clone --recurse-submodules https://pagure.io/forks/ryanabx/fedora-cosmic/cosmic-packaging.git
-cp cosmic-packaging/rpms/$PACKAGE/* .
-cp cosmic-packaging/scripts/vendor-srpm.sh .
-. vendor-srpm.sh $PACKAGE $VERSION $COMMIT $PACKAGE.spec $REPO
+# Clone the RPM repo
+git clone --recurse-submodules $RPM_REPO
+# Get extra RPM files
+cp $RPM_FILES .
+# Get script file
+cp $SCRIPT_FILE .
+# Run script file
+. $SCRIPT_FILE $PACKAGE $VERSION $COMMIT $REPO $VENDOR

@@ -1,49 +1,55 @@
 #!/bin/bash -x
 
-# name of the crate/package
-name=$1
-# version of the crate/package
-version=$2
-# commit to target (latest == master)
-commit=$3
-# path to the spec file on the pc
-path_to_spec=$4
-# repo link
-repo=$5
+# NAME of the crate/package
+NAME=$1
+SOURCE-NAME=$2
+# VERSION of the crate/package
+VERSION=$3
+# COMMIT to target (latest == master)
+COMMIT=$4
+# REPO link
+REPO=$5
+# VENDOR?
+VENDOR=$6
 
-LATEST="latest"
+LATEST="LATEST"
 
-# Clone repo and cd into it
-mkdir $name-$commit && cd $name-$commit && git clone --recurse-submodules $repo .
+# Clone REPO and cd into it
+mkdir $NAME-$COMMIT && cd $NAME-$COMMIT && git clone --recurse-submodules $REPO .
 
-# Get latest commit hash if commit is set to latest
-if [[ "$commit" == "$LATEST" ]]
+# Get latest COMMIT hash if COMMIT is set to latest
+if [[ "$COMMIT" == "$LATEST" ]]
 then
-    commit=$(git rev-parse HEAD)
-    cd .. && mv $name-latest $name-$commit && cd $name-$commit
+    COMMIT=$(git rev-parse HEAD)
+    cd .. && mv $NAME-latest $NAME-$COMMIT && cd $NAME-$COMMIT
 fi
 
-# Reset to specified commit
-git reset --hard $commit
+# Reset to specified COMMIT
+git reset --hard $COMMIT
 
-# Go back to parent directory
-cd ..
+if [ "$VENDOR" -eq 1 ]; then
+    echo "VENDOR=1"
+    # Vendor dependencies and zip vendor
+    cargo vendor > ../vendor-config.toml
+    tar -pczf $NAME-$COMMIT-vendor.tar.gz vendor && mv $NAME-$COMMIT-vendor.tar.gz ../$NAME-$COMMIT-vendor.tar.gz
+    # Back into parent directory
+    rm -rf vendor
+    cd ..
+else
+    cd ..
+fi
 
-# Zip source
-tar -pcJf $name-$commit.tar.xz $name-$commit
-rm -rf $name-$commit
-
-# Get specfile
-mv $path_to_spec $name.spec 2>/dev/null || :
+# Zip SOURCE
+tar -pczf $NAME-$COMMIT.tar.xz $NAME-$COMMIT
+rm -rf $NAME-$COMMIT
 
 # Make replacements to specfile
-sed -i "/^%global ver / s/.*/%global ver $version/" $name.spec
-sed -i "/^%global commit / s/.*/%global commit $commit/" $name.spec
+sed -i "/^%global ver / s/.*/%global ver $VERSION/" $NAME.spec
+sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 current_date=$(date +'%Y%m%d.%H')
-sed -i "/^%global date / s/.*/%global date $current_date/" $name.spec
+sed -i "/^%global date / s/.*/%global date $current_date/" $NAME.spec
 
-
-ls -a
-pwd
-
-echo Done! $1 $2 $3 $4 $5
+# Should have these sources
+# NAME-COMMIT.tar.gz
+# vendor.tar.gz
+# vendor-config.toml

@@ -64,7 +64,7 @@ BuildRequires:  just
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{commit} -p1 -a1
+%autosetup -n cosmic-applibrary-%{commit} -p1 -a1 -a2
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

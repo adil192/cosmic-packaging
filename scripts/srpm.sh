@@ -21,7 +21,7 @@ mkdir $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT && git clone --recurse-sub
 if [[ "$COMMIT" == "$LATEST" ]]
 then
     COMMIT=$(git rev-parse HEAD)
-    cd .. && mv $SOURCE_NAME-latest $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT
+    cd .. && mv $SOURCE_NAME-LATEST $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT
 fi
 
 # Reset to specified COMMIT

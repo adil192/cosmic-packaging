@@ -65,17 +65,16 @@ BuildRequires:  just
 
 %prep
 %autosetup -n cosmic-applibrary-%{commit} -p1 -a1
-cp %{SOURCE2} .
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then
-  # If it exists, append the contents of .vendor/config.toml to .cargo/config.toml
-  cat .vendor/config.toml >> .cargo/config.toml
-  echo "Appended .vendor/config.toml to .cargo/config.toml"
+  # If it exists, append the contents of ../vendor-config.toml to .cargo/config.toml
+  cat ../vendor-config.toml >> .cargo/config.toml
+  echo "Appended ../vendor-config.toml to .cargo/config.toml"
 else
-  # If it does not exist, append the contents of .vendor/config.toml to .cargo/config
-  cat .vendor/config.toml >> .cargo/config
-  echo "Appended .vendor/config.toml to .cargo/config"
+  # If it does not exist, append the contents of ../vendor-config.toml to .cargo/config
+  cat ../vendor-config.toml >> .cargo/config
+  echo "Appended ../vendor-config.toml to .cargo/config"
 fi
 
 %build

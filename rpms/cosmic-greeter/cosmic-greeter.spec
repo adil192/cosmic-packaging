@@ -45,7 +45,7 @@ Source:         https://github.com/pop-os/cosmic-greeter/archive/%{commit}.tar.g
 # * tar -pczf vendor.tar.gz vendor
 Source:         vendor.tar.gz
 # * mv vendor-config.toml ..
-Source:         vendor-config.toml
+Source2:         vendor-config.toml
 
 Patch:          service.patch
 

@@ -43,7 +43,7 @@ Source:         https://github.com/pop-os/cosmic-panel/archive/%{commit}.tar.gz
 # * tar -pczf vendor.tar.gz vendor
 Source:         vendor.tar.gz
 # * mv vendor-config.toml ..
-Source:         vendor-config.toml
+Source2:         vendor-config.toml
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

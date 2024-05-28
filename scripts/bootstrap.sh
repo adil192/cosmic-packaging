@@ -20,6 +20,6 @@ git clone --recurse-submodules $RPM_REPO
 # Get extra RPM files
 cp $RPM_FILES .
 # Get script file
-cp $SCRIPT_FILE .
+cp $SCRIPT_DIR .
 # Run script file
 . $SCRIPT_FILE $NAME $SOURCE_NAME $VERSION $COMMIT $REPO $VENDOR

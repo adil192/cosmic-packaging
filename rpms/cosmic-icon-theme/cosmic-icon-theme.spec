@@ -1,5 +1,3 @@
-BuildArch:      noarch
-
 %global ver ###
 %global commit ###
 %global date ###
@@ -15,7 +13,10 @@ URL:            https://github.com/pop-os/cosmic-icons
 
 Source:         https://github.com/pop-os/cosmic-icons/archive/%{commit}.tar.gz
 
+BuildArch:      noarch
+
 BuildRequires:  just
+
 
 Requires:       pop-icon-theme
 
@@ -37,9 +38,7 @@ just rootdir=%{buildroot} install
 
 %files
 %dir %{_datadir}/icons/Cosmic
-%{_datadir}/icons/Cosmic/scalable/*
-%{_datadir}/icons/Cosmic/index.theme
-
+%{_datadir}/icons/Cosmic/*
 
 %changelog
 %autochangelog

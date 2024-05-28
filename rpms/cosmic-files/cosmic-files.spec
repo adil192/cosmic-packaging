@@ -61,7 +61,8 @@ BuildRequires:  just
 BuildRequires:  glib2-devel
 BuildRequires:  libxkbcommon-devel
 
-BuildRequires:  git-core
+# BuildRequires:  git-core
+BuildRequires:  git
 
 %global _description %{expand:
 %{summary}.}

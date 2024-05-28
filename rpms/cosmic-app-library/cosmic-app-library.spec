@@ -48,7 +48,7 @@ Source:         https://github.com/pop-os/cosmic-applibrary/archive/%{commit}.ta
 # * tar -pczf vendor.tar.gz vendor
 Source:         vendor.tar.gz
 # * mv vendor-config.toml ..
-Source:         vendor-config.toml
+Source2:         vendor-config.toml
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
@@ -64,7 +64,8 @@ BuildRequires:  just
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-applibrary-%{commit} -p1 -a1 -a2
+%autosetup -n cosmic-applibrary-%{commit} -p1 -a1
+cp %{SOURCE2} .
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

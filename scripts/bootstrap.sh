@@ -11,7 +11,7 @@ COMMIT=LATEST
 REPO=https://github.com/pop-os/$SOURCE_NAME
 RPM_REPO=https://pagure.io/forks/ryanabx/fedora-cosmic/cosmic-packaging.git
 # Paths to files
-RPM_FILES=cosmic-packaging/rpms/$SOURCE_NAME/*
+RPM_FILES=cosmic-packaging/rpms/$NAME/*
 SCRIPT_FILE=srpm.sh
 SCRIPT_DIR=cosmic-packaging/scripts/$SCRIPT_FILE
 

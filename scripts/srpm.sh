@@ -40,7 +40,7 @@ else
 fi
 
 # Zip SOURCE
-tar -pczf $SOURCE_NAME-$COMMIT.tar.xz $SOURCE_NAME-$COMMIT
+tar -pczf $SOURCE_NAME-$COMMIT.tar.gz $SOURCE_NAME-$COMMIT
 rm -rf $SOURCE_NAME-$COMMIT
 
 # Make replacements to specfile

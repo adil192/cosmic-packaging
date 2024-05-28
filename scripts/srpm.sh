@@ -30,7 +30,7 @@ git reset --hard $COMMIT
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
-    cargo vendor > ../vendor-config.toml
+    cargo vendor > %{SOURCE2}
     tar -pczf vendor.tar.gz vendor && mv vendor.tar.gz ../vendor.tar.gz
     # Back into parent directory
     rm -rf vendor

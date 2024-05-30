@@ -82,14 +82,19 @@ else
 fi
 
 %build
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
 make all polkit-agent-helper-1=/usr/lib/polkit-1/polkit-agent-helper-1
-# %%cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
 make install DESTDIR=%{buildroot} prefix=%{_prefix}
 
 %if %{with check}

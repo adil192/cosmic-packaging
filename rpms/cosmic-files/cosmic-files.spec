@@ -93,6 +93,8 @@ export VERGEN_GIT_SHA="%{commit}"
 sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 
 %install
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}

@@ -1,9 +1,10 @@
 %global ver ###
 %global commit ###
-%global date ###
+%global commitdatestring ###
+%global commitdate ###
 
 Name:           cosmic-epoch
-Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
+Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        The next generation COSMIC Desktop Environment
 

@@ -27,6 +27,9 @@ fi
 # Reset to specified COMMIT
 git reset --hard $COMMIT
 
+COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d.%H%M%S)
+COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
+
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
@@ -46,8 +49,9 @@ rm -rf $SOURCE_NAME-$COMMIT
 # Make replacements to specfile
 sed -i "/^%global ver / s/.*/%global ver $VERSION/" $NAME.spec
 sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
-current_date=$(date +'%Y%m%d.%H')
-sed -i "/^%global date / s/.*/%global date $current_date/" $NAME.spec
+
+sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
+sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec
 
 # Should have these sources
 # SOURCE_NAME-COMMIT.tar.gz

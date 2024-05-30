@@ -9,10 +9,11 @@ ExcludeArch: %{ix86}
 
 %global ver ###
 %global commit ###
-%global date ###
+%global commitdatestring ###
+%global commitdate ###
 
 Name:           cosmic-files
-Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
+Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        Libcosmic file manager
 
@@ -83,7 +84,7 @@ else
 fi
 
 %build
-export VERGEN_GIT_COMMIT_DATE="date --utc '%{date}'"
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_build
 %{cargo_license_summary}

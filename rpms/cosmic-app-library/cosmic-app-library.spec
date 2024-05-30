@@ -7,12 +7,13 @@ ExcludeArch: %{ix86}
 
 %global ver ###
 %global commit ###
-%global date ###
+%global commitdatestring ###
+%global commitdate ###
 
 %global crate cosmic-app-library
 
 Name:           cosmic-app-library
-Version:        %{ver}~git%{date}.%{sub %{commit} 1 7}
+Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
 Release:        %autorelease
 Summary:        App Library program for the COSMIC Desktop Environment
 

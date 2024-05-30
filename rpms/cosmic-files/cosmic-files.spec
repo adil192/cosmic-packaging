@@ -61,8 +61,7 @@ BuildRequires:  just
 BuildRequires:  glib2-devel
 BuildRequires:  libxkbcommon-devel
 
-# BuildRequires:  git-core
-BuildRequires:  git
+BuildRequires:  git-core
 
 %global _description %{expand:
 %{summary}.}
@@ -84,6 +83,8 @@ else
 fi
 
 %build
+export VERGEN_GIT_COMMIT_DATE=
+export VERGEN_GIT_SHA=
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

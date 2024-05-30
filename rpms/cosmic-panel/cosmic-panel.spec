@@ -91,6 +91,9 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %if %{with check}
 %check
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
 %endif
 

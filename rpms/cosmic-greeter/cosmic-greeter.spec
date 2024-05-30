@@ -115,6 +115,9 @@ install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/co
 
 %if %{with check}
 %check
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
 %endif
 

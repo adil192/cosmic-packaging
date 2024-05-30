@@ -83,8 +83,8 @@ else
 fi
 
 %build
-export VERGEN_GIT_COMMIT_DATE=
-export VERGEN_GIT_SHA=
+export VERGEN_GIT_COMMIT_DATE=%{date}
+export VERGEN_GIT_SHA=%{commit}
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

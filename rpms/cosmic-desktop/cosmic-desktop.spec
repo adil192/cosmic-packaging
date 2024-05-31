@@ -12,6 +12,8 @@ License:        GPL-3.0
 
 URL:            https://github.com/pop-os/cosmic-epoch
 
+BuildArch:      noarch
+
 Requires:       cosmic-app-library
 Requires:       cosmic-applets
 Requires:       cosmic-bg

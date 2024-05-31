@@ -64,6 +64,8 @@ BuildRequires:  libxkbcommon-devel
 
 BuildRequires:  git-core
 
+Requires:       gvfs
+
 %global _description %{expand:
 %{summary}.}
 

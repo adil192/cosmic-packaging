@@ -59,6 +59,7 @@ BuildRequires:  clang-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  pam-devel
 BuildRequires:  just
+BuildRequires:  libudev-devel
 
 BuildRequires:   systemd-rpm-macros
 %{?sysusers_requires_compat}

@@ -57,6 +57,11 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  systemd-devel
 BuildRequires:  libudev-devel
+BuildRequires:  libinput-devel
+BuildRequires:  wayland-devel
+BuildRequires:  clang-devel
+BuildRequires:  libxkbcommon-devel
+BuildRequires:  pam-devel
 BuildRequires:  just
 
 Requires:       acpid

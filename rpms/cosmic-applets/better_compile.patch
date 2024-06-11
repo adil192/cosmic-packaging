@@ -1,7 +1,7 @@
---- ./Cargo.toml	2024-05-06 17:04:31.059469877 -0500
-+++ ./Cargo.toml.new	2024-05-06 23:27:51.338764184 -0500
-@@ -56,7 +56,7 @@
- serde = { version = "1.0.152", features = ["derive"] }
+--- ./Cargo.toml	2024-06-10 20:56:56.957205204 -0500
++++ ./Cargo.toml.new	2024-06-10 20:57:57.163582345 -0500
+@@ -57,7 +57,7 @@
+ freedesktop-desktop-entry = "0.6.1"
  
  [profile.release]
 -lto = "fat"

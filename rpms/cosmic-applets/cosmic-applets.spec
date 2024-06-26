@@ -107,6 +107,22 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletInputSources.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNetwork.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNotifications.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletPower.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletStatusArea.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTiling.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTime.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
 %endif
 
 %files
@@ -143,6 +159,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
 %{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 %{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
 %dir %{_datadir}/cosmic/com.system76.CosmicAppList
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels
@@ -208,7 +225,6 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-disabled-symbolic.svg
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-new-symbolic.svg
 %{_datadir}/icons/hicolor/scalable/status/cosmic-applet-notification-symbolic.svg
-%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicPanelLauncherButton.svg
 
 %changelog

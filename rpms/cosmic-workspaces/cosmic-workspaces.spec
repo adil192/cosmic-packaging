@@ -15,7 +15,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Workspaces overview for the COSMIC Desktop Environment
 
-SourceLicense:  GPL-3.0
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0
 # Apache-2.0 OR MIT

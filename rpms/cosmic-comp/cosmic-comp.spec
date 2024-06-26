@@ -12,7 +12,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Compositor for the COSMIC Desktop Environment
 
-SourceLicense:  GPL-3.0-only
 # (Apache-2.0 OR MIT) AND BSD-3-Clause
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0

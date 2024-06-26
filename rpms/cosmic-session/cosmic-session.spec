@@ -15,7 +15,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Session manager for the COSMIC desktop environment
 
-SourceLicense:  GPL-3.0-only
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0 OR BSD-3-Clause
 # Apache-2.0 OR BSL-1.0

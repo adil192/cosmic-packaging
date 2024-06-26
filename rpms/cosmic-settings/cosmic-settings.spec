@@ -14,7 +14,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Settings app for the COSMIC Desktop Environment
 
-SourceLicense:  GPL-3.0 AND GPL-3.0-only
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0
 # Apache-2.0 OR MIT

@@ -14,7 +14,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Terminal emulator built with alacritty and Libcosmic
 
-SourceLicense:  GPL-3.0-only
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0
 # Apache-2.0 OR BSL-1.0

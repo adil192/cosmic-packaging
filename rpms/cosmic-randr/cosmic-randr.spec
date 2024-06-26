@@ -12,7 +12,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Display configuration command line tool
 
-SourceLicense:  MPL-2.0
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0
 # Apache-2.0 OR MIT

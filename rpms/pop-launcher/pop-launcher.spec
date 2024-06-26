@@ -12,7 +12,6 @@ Version: ###
 Release:        %autorelease
 Summary:        Modular IPC-based desktop launcher service
 
-SourceLicense:  GPL-3.0-only AND MPL-2.0
 # (Apache-2.0 OR MIT) AND BSD-3-Clause
 # Apache-2.0
 # Apache-2.0 OR BSL-1.0

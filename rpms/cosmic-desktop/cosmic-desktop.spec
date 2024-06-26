@@ -1,10 +1,10 @@
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-desktop
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        The next generation COSMIC Desktop Environment
 

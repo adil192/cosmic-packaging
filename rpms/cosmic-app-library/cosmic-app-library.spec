@@ -5,7 +5,7 @@ ExcludeArch: %{ix86}
 # prevent library files from being installed
 %global cargo_install_lib 0
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
@@ -13,7 +13,7 @@ ExcludeArch: %{ix86}
 %global crate cosmic-app-library
 
 Name:           cosmic-app-library
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        App Library program for the COSMIC Desktop Environment
 

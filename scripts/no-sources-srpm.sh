@@ -15,7 +15,7 @@ repo=$5
 cp $path_to_spec $name.spec 2>/dev/null || :
 
 # Make replacements to specfile
-sed -i "/^%global ver / s/.*/%global ver $version/" $name.spec
+sed -i "/^Version: ### / s/.*/Version:           $version~^%{commitdate}git%{sub %{commit} 1 7}/" $name.spec
 sed -i "/^%global commit / s/.*/%global commit none/" $name.spec
 current_date=$(date +'%Y%m%d.%H')
 sed -i "/^%global commitdate / s/.*/%global commitdate $current_date/" $name.spec

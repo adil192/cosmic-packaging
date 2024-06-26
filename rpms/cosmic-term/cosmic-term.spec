@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate cosmic-term
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-term
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        Terminal emulator built with alacritty and Libcosmic
 

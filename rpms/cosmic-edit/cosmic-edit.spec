@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate cosmic-edit
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-edit
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        Libcosmic text editor
 

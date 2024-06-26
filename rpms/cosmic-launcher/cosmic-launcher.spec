@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate cosmic-launcher
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-launcher
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        Pop launcher frontend for the COSMIC Desktop Environment
 

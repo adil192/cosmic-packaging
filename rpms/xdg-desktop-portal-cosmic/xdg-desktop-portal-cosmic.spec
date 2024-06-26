@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate xdg-desktop-portal-cosmic
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           xdg-desktop-portal-cosmic
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        XDG Desktop Portals for the COSMIC Desktop Environment
 

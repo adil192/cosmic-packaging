@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate cosmic-session
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-session
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        Session manager for the COSMIC desktop environment
 

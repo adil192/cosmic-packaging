@@ -7,13 +7,13 @@ ExcludeArch: %{ix86}
 
 %global crate cosmic-settings-daemon
 
-%global ver ###
+
 %global commit ###
 %global commitdatestring ###
 %global commitdate ###
 
 Name:           cosmic-settings-daemon
-Version:        %{ver}~git%{commitdate}.%{sub %{commit} 1 7}
+Version: ###
 Release:        %autorelease
 Summary:        Settings daemon for the COSMIC Desktop Environment
 

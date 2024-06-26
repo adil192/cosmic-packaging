@@ -83,11 +83,11 @@ Requires:       cosmic-comp
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then
-  # If it exists, append the contents of %{SOURCE2} to .cargo/config.toml
+  # If it exists, append the contents of %%{SOURCE2} to .cargo/config.toml
   cat %{SOURCE2} >> .cargo/config.toml
   echo "Appended %{SOURCE2} to .cargo/config.toml"
 else
-  # If it does not exist, append the contents of %{SOURCE2} to .cargo/config
+  # If it does not exist, append the contents of %%{SOURCE2} to .cargo/config
   cat %{SOURCE2} >> .cargo/config
   echo "Appended %{SOURCE2} to .cargo/config"
 fi

@@ -62,10 +62,9 @@ BuildRequires:  just
 BuildRequires:  glib2-devel
 BuildRequires:  libxkbcommon-devel
 
-BuildRequires:  git-core
-
 Requires:       gvfs
 Requires:       xdg-utils
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

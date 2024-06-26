@@ -61,6 +61,7 @@ BuildRequires:  libxkbcommon-devel
 
 Requires:       PackageKit
 Requires:       flatpak-libs
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

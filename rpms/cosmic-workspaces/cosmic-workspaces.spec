@@ -66,6 +66,7 @@ BuildRequires:  mesa-libgbm-devel
 BuildRequires:  make
 
 Requires:       cosmic-comp
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

@@ -59,6 +59,8 @@ BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 
+Requires:       hicolor-icon-theme
+
 %global _description %{expand:
 %{summary}.}
 

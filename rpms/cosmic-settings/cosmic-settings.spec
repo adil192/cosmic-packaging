@@ -62,6 +62,8 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  systemd-devel
 BuildRequires:  just
 
+Requires:       hicolor-icon-theme
+
 %global _description %{expand:
 %{summary}.}
 
@@ -132,13 +134,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSe
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-light-style-square.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-dark.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-light.svg
-%{_datadir}/icons/hicolor/128x128/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/16x16/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/24x24/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/256x256/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/32x32/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/48x48/apps/com.system76.CosmicSettings.svg
-%{_datadir}/icons/hicolor/64x64/apps/com.system76.CosmicSettings.svg
+%{_datadir}/icons/hicolor/*/apps/com.system76.CosmicSettings.svg
 %{_datadir}/applications/com.system76.CosmicSettings.About.desktop
 %{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop
 %{_datadir}/applications/com.system76.CosmicSettings.DateTime.desktop

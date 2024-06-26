@@ -61,7 +61,7 @@ BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  libxkbcommon-devel
 
-BuildRequires:  git-core
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

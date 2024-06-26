@@ -50,6 +50,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 
 Requires:       cosmic-session
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

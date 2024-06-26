@@ -65,6 +65,7 @@ BuildRequires:  just
 
 Requires:       cosmic-icons
 Requires:       cosmic-panel
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

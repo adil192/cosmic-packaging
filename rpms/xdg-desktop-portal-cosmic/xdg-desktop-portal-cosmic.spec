@@ -66,6 +66,8 @@ BuildRequires:  gstreamer1-devel
 BuildRequires:  glib2-devel
 BuildRequires:  just
 
+Requires:       hicolor-icon-theme
+
 %global _description %{expand:
 %{summary}.}
 

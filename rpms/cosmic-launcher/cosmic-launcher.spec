@@ -63,6 +63,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 
 Requires:       pop-launcher
+Requires:       hicolor-icon-theme
 
 %global _description %{expand:
 %{summary}.}

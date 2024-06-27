@@ -39,14 +39,14 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3
 
 URL:            https://github.com/pop-os/cosmic-notifications
 
-Source:         https://github.com/pop-os/cosmic-notifications/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-notifications/archive/%{commit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-notifications at the specified commit
 # * cargo vendor > vendor-config.toml
 # * tar -pczf vendor.tar.gz vendor
-Source:         vendor.tar.gz
+Source1:        vendor.tar.gz
 # * mv vendor-config.toml ..
-Source2:         vendor-config.toml
+Source2:        vendor-config.toml
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

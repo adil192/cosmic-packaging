@@ -39,6 +39,8 @@ Source1:        vendor.tar.gz
 # * mv vendor-config.toml ..
 Source2:        vendor-config.toml
 
+Patch0:         https://github.com/pop-os/cosmic-screenshot/pull/32.patch
+
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
 BuildRequires:  lld

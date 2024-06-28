@@ -60,6 +60,7 @@ BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  glib2-devel
 BuildRequires:  libxkbcommon-devel
+BuildRequires:  desktop-file-utils
 
 Requires:       gvfs
 Requires:       xdg-utils

@@ -60,6 +60,7 @@ BuildRequires:  cargo
 BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
+BuildRequires:  desktop-file-utils
 
 Requires:       pop-launcher
 Requires:       hicolor-icon-theme

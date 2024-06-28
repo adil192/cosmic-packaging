@@ -63,6 +63,7 @@ BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  mesa-libEGL-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
+BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-icons
 Requires:       cosmic-panel

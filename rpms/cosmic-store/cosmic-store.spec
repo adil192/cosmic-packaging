@@ -59,6 +59,7 @@ BuildRequires:  flatpak-devel
 BuildRequires:  libappstream-glib
 BuildRequires:  just
 BuildRequires:  libxkbcommon-devel
+BuildRequires:  desktop-file-utils
 
 Requires:       PackageKit
 Requires:       flatpak-libs

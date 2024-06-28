@@ -59,6 +59,7 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  libxkbcommon-devel
+BuildRequires:  desktop-file-utils
 
 Requires:       hicolor-icon-theme
 

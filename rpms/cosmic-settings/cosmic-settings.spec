@@ -62,6 +62,7 @@ BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  systemd-devel
 BuildRequires:  just
+BuildRequires:  desktop-file-utils
 
 Requires:       hicolor-icon-theme
 

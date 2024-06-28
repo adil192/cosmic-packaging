@@ -63,6 +63,7 @@ BuildRequires:  libseat-devel
 BuildRequires:  libinput-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  make
+BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-comp
 Requires:       hicolor-icon-theme

@@ -48,6 +48,7 @@ BuildRequires:  rustc
 BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
+BuildRequires:  desktop-file-utils
 
 BuildRequires:  systemd-rpm-macros
 

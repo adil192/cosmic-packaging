@@ -47,6 +47,7 @@ BuildRequires:  cargo
 BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
+BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-session
 Requires:       hicolor-icon-theme

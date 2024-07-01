@@ -117,8 +117,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %license LICENSE.dependencies
 %license cargo-vendor.txt
 %{_bindir}/cosmic-comp
-%dir %{_sysconfdir}/cosmic-comp
-%config(noreplace) %{_sysconfdir}/cosmic-comp/config.ron
+%{_datadir}/cosmic/com.system76.CosmicSettings.Shortcuts/v1/defaults
 
 %changelog
 %autochangelog

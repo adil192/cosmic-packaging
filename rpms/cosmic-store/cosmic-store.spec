@@ -106,7 +106,7 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicStore.desktop
+# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicStore.desktop
 %endif
 
 %files

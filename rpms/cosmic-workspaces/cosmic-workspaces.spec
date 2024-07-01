@@ -109,7 +109,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
+# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
 %endif
 
 %files

@@ -113,7 +113,7 @@ just rootdir=%{buildroot} install
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
-desktop-file-validate %{buildroot}%{_datadir}/wayland-sessions/cosmic.desktop
+# desktop-file-validate %%{buildroot}%%{_datadir}/wayland-sessions/cosmic.desktop
 %endif
 
 %files

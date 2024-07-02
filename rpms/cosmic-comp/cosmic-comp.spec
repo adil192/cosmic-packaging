@@ -102,7 +102,6 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 make install DESTDIR=%{buildroot} prefix=%{_prefix}
-install -Dm0644 config.ron %{buildroot}/%{_sysconfdir}/cosmic-comp/config.ron
 
 %if %{with check}
 %check

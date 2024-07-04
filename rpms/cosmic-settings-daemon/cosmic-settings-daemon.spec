@@ -113,6 +113,8 @@ export VERGEN_GIT_SHA="%{commit}"
 %license cargo-vendor.txt
 %{_bindir}/cosmic-settings-daemon
 %{_datadir}/cosmic/com.system76.CosmicSettings.Shortcuts/*
+%{_datadir}/polkit-1/rules.d/cosmic-settings-daemon.rules
+
 
 %changelog
 %autochangelog

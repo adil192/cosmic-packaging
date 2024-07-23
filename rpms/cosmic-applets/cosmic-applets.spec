@@ -110,22 +110,22 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppList.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletInputSources.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletNetwork.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletNotifications.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletPower.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletStatusArea.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletTiling.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletTime.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
-# desktop-file-validate %%{buildroot}%%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletInputSources.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNetwork.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNotifications.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletPower.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletStatusArea.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTiling.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTime.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
 %endif
 
 %files

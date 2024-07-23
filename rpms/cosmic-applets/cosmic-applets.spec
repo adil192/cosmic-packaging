@@ -46,7 +46,6 @@ Source1:        vendor.tar.gz
 # * mv vendor-config.toml ..
 Source2:        vendor-config.toml
 
-# Patch0:         https://github.com/pop-os/cosmic-applets/pull/507.patch
 
 Patch: better_compile.patch
 Patch: symlink.patch

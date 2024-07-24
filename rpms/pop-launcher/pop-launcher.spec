@@ -56,7 +56,7 @@ BuildRequires:  mesa-libEGL-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 
-Requires:       libqalculate
+Requires:       qalculate
 Requires:       fd-find
 
 %global _description %{expand:

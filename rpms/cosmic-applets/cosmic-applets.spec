@@ -109,6 +109,8 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
+# COSMIC is not a valid category pre-fedora 41
+%if %{fedora} > 40
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
@@ -125,6 +127,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAp
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+%endif
 %endif
 
 %files

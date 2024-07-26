@@ -98,6 +98,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSc
 %doc README.md
 %{_bindir}/cosmic-screenshot
 %{_datadir}/applications/com.system76.CosmicScreenshot.desktop
+%{_datadir}/icons/hicolor/*/apps/com.system76.CosmicScreenshot.svg
 
 %changelog
 %autochangelog

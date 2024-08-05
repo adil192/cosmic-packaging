@@ -42,10 +42,10 @@ URL:            https://github.com/pop-os/cosmic-greeter
 Source0:        https://github.com/pop-os/cosmic-greeter/archive/%{commit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-greeter at the specified commit
-# * cargo vendor > vendor-config-%{commit}.toml
-# * tar -pczf vendor-%{commit}.tar.gz vendor
+# * cargo vendor > vendor-config-%%{commit}.toml
+# * tar -pczf vendor-%%{commit}.tar.gz vendor
 Source1:        vendor-%{commit}.tar.gz
-# * mv vendor-config-%{commit}.toml ..
+# * mv vendor-config-%%{commit}.toml ..
 Source2:        vendor-config-%{commit}.toml
 
 Patch:          service.patch

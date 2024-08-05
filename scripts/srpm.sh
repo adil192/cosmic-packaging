@@ -47,7 +47,7 @@ tar -pczf $SOURCE_NAME-$COMMIT.tar.gz $SOURCE_NAME-$COMMIT
 rm -rf $SOURCE_NAME-$COMMIT
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{sub %{commit} 1 7}/" $NAME.spec
+sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec
 sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 
 sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec

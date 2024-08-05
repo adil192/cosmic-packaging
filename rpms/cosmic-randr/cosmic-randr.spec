@@ -31,11 +31,11 @@ URL:            https://github.com/pop-os/cosmic-randr
 Source0:        https://github.com/pop-os/cosmic-randr/archive/%{commit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-randr at the specified commit
-# * cargo vendor > vendor-config.toml
-# * tar -pczf vendor.tar.gz vendor
-Source1:        vendor.tar.gz
-# * mv vendor-config.toml ..
-Source2:        vendor-config.toml
+# * cargo vendor > vendor-config-%{commit}.toml
+# * tar -pczf vendor-%{commit}.tar.gz vendor
+Source1:        vendor-%{commit}.tar.gz
+# * mv vendor-config-%{commit}.toml ..
+Source2:        vendor-config-%{commit}.toml
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc

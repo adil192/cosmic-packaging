@@ -33,8 +33,8 @@ COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
-    cargo vendor > ../vendor-config.toml
-    tar -pczf vendor.tar.gz vendor && mv vendor.tar.gz ../vendor.tar.gz
+    cargo vendor > ../vendor-config-$COMMIT.toml
+    tar -pczf vendor-$COMMIT.tar.gz vendor && mv vendor-$COMMIT.tar.gz ../vendor-$COMMIT.tar.gz
     # Back into parent directory
     rm -rf vendor
     cd ..
@@ -55,5 +55,5 @@ sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATEST
 
 # Should have these sources
 # SOURCE_NAME-COMMIT.tar.gz
-# vendor.tar.gz
-# vendor-config.toml
+# vendor-%{commit}.tar.gz
+# vendor-config-%{commit}.toml

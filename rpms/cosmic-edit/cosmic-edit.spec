@@ -46,11 +46,11 @@ URL:            https://github.com/pop-os/cosmic-edit
 Source0:        https://github.com/pop-os/cosmic-edit/archive/%{commit}/cosmic-edit-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-edit at the specified commit
-# * cargo vendor > vendor-config-%%{commit}.toml
-# * tar -pczf vendor-%%{commit}.tar.gz vendor
-Source1:        vendor-%{commit}.tar.gz
-# * mv vendor-config-%%{commit}.toml ..
-Source2:        vendor-config-%{commit}.toml
+# * cargo vendor > vendor-config-%%{shortcommit}.toml
+# * tar -pczf vendor-%%{shortcommit}.tar.gz vendor
+Source1:        vendor-%{shortcommit}.tar.gz
+# * mv vendor-config-%%{shortcommit}.toml ..
+Source2:        vendor-config-%{shortcommit}.toml
 
 
 BuildRequires:  cargo-rpm-macros >= 26

@@ -58,6 +58,6 @@ sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec
 
 # Should have these sources
-# SOURCE_NAME-COMMIT.tar.gz
-# vendor-%{commit}.tar.gz
-# vendor-config-%{commit}.toml
+# SOURCE_NAME-SHORTCOMMIT.tar.gz
+# vendor-%{shortcommit}.tar.gz
+# vendor-config-%{shortcommit}.toml

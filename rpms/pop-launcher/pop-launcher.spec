@@ -38,7 +38,7 @@ License:        (Apache-2.0 OR MIT) AND BSD-3-Clause AND Apache-2.0 AND Apache-2
 
 URL:            https://github.com/pop-os/launcher
 
-Source0:        https://github.com/pop-os/launcher/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/launcher/archive/%{commit}/launcher-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/launcher at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -66,7 +66,7 @@ Requires:       fd-find
 %description %{_description}
 
 %prep
-%autosetup -n launcher-%{commit} -p1 -a1
+%autosetup -n launcher-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

@@ -39,7 +39,7 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 
 URL:            https://github.com/pop-os/cosmic-applibrary
 
-Source0:        https://github.com/pop-os/cosmic-applibrary/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-applibrary/archive/%{commit}/cosmic-applibrary-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-applibrary at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -66,7 +66,7 @@ Requires:       hicolor-icon-theme
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-applibrary-%{commit} -p1 -a1
+%autosetup -n cosmic-applibrary-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

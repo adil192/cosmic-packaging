@@ -29,7 +29,7 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR MIT A
 
 URL:            https://github.com/pop-os/cosmic-randr
 
-Source0:        https://github.com/pop-os/cosmic-randr/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-randr/archive/%{commit}/cosmic-randr-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-randr at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -51,7 +51,7 @@ Cosmic-randr command line interface.}
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-randr-%{commit} -p1 -a1
+%autosetup -n cosmic-randr-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

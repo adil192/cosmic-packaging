@@ -37,7 +37,7 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 AND Apache-2.0 OR BSD-3
 
 URL:            https://github.com/pop-os/cosmic-panel
 
-Source0:        https://github.com/pop-os/cosmic-panel/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-panel/archive/%{commit}/cosmic-panel-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-panel at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -60,7 +60,7 @@ BuildRequires:  just
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-panel-%{commit} -p1 -a1
+%autosetup -n cosmic-panel-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

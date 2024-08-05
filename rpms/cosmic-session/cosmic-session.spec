@@ -35,7 +35,7 @@ License:        0BSD OR MIT OR Apache-2.0 AND Apache-2.0 OR BSD-3-Clause AND Apa
 
 URL:            https://github.com/pop-os/cosmic-session
 
-Source0:        https://github.com/pop-os/cosmic-session/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-session/archive/%{commit}/cosmic-session-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-session at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -79,7 +79,7 @@ The session manager for the COSMIC desktop environment.}
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{commit} -p1 -a1
+%autosetup -n %{crate}-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

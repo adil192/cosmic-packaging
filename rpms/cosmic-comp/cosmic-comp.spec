@@ -43,7 +43,7 @@ License:        GPL-3.0 AND (Apache-2.0 OR MIT) AND BSD-3-Clause AND 0BSD OR MIT
 
 URL:            https://github.com/pop-os/cosmic-comp
 
-Source0:        https://github.com/pop-os/cosmic-comp/archive/%{commit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-comp/archive/%{commit}/cosmic-comp-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-comp at the specified commit
 # * cargo vendor > vendor-config-%%{commit}.toml
@@ -75,7 +75,7 @@ Recommends:     cosmic-session
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-comp-%{commit} -p1 -a1
+%autosetup -n cosmic-comp-%{shortcommit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

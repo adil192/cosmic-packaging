@@ -24,6 +24,9 @@ then
     cd .. && mv $SOURCE_NAME-LATEST $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT
 fi
 
+# Set short commit
+SHORTCOMMIT=$(echo ${COMMIT:0:7})
+
 # Reset to specified COMMIT
 git reset --hard $COMMIT
 
@@ -33,8 +36,8 @@ COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
-    cargo vendor > ../vendor-config-$COMMIT.toml
-    tar -pczf vendor-$COMMIT.tar.gz vendor && mv vendor-$COMMIT.tar.gz ../vendor-$COMMIT.tar.gz
+    cargo vendor > ../vendor-config-$SHORTCOMMIT.toml
+    tar -pczf vendor-$SHORTCOMMIT.tar.gz vendor && mv vendor-$SHORTCOMMIT.tar.gz ../vendor-$SHORTCOMMIT.tar.gz
     # Back into parent directory
     rm -rf vendor
     cd ..
@@ -43,8 +46,9 @@ else
 fi
 
 # Zip SOURCE
-tar -pczf $SOURCE_NAME-$COMMIT.tar.gz $SOURCE_NAME-$COMMIT
-rm -rf $SOURCE_NAME-$COMMIT
+mv $SOURCE_NAME-$COMMIT $SOURCE_NAME-$SHORTCOMMIT
+tar -pczf $SOURCE_NAME-$SHORTCOMMIT.tar.gz $SOURCE_NAME-$SHORTCOMMIT
+rm -rf $SOURCE_NAME-$SHORTCOMMIT
 
 # Make replacements to specfile
 sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec

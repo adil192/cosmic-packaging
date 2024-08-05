@@ -110,7 +110,121 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
 # COSMIC is not a valid category pre-fedora 41
-%if %{fedora} > 40
+%if %{defined fedora} && 0%{?fedora} < 41
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletInputSources.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletMinimize.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNetwork.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletNotifications.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletPower.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletStatusArea.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTiling.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletTime.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletWorkspaces.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+
+%endif
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
@@ -127,7 +241,6 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAp
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
-%endif
 %endif
 
 %files

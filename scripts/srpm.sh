@@ -27,7 +27,7 @@ fi
 # Reset to specified COMMIT
 git reset --hard $COMMIT
 
-COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d.%H%M%S)
+COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d)
 COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 
 if [ "$VENDOR" -eq 1 ]; then

@@ -104,6 +104,14 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
 # COSMIC is not a valid category pre-fedora 41
+%if %{defined fedora} && 0%{?fedora} < 41
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicEdit.desktop
+%endif
 %if %{fedora} > 40
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicEdit.desktop
 %endif

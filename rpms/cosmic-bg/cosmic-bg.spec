@@ -59,7 +59,7 @@ Requires:       hicolor-icon-theme
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-bg-%{shortcommit} -p1 -a1
+%autosetup -n cosmic-bg-%{commit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

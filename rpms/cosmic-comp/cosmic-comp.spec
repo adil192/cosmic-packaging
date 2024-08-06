@@ -75,7 +75,7 @@ Recommends:     cosmic-session
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-comp-%{shortcommit} -p1 -a1
+%autosetup -n cosmic-comp-%{commit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

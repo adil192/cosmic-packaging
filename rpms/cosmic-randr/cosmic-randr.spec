@@ -51,7 +51,7 @@ Cosmic-randr command line interface.}
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-randr-%{shortcommit} -p1 -a1
+%autosetup -n cosmic-randr-%{commit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

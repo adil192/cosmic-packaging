@@ -46,9 +46,8 @@ else
 fi
 
 # Zip SOURCE
-mv $SOURCE_NAME-$COMMIT $SOURCE_NAME-$SHORTCOMMIT
-tar -pczf $SOURCE_NAME-$SHORTCOMMIT.tar.gz $SOURCE_NAME-$SHORTCOMMIT
-rm -rf $SOURCE_NAME-$SHORTCOMMIT
+tar -pczf $SOURCE_NAME-$SHORTCOMMIT.tar.gz $SOURCE_NAME-$COMMIT
+rm -rf $SOURCE_NAME-$COMMIT
 
 # Make replacements to specfile
 sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec

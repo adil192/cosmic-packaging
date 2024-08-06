@@ -69,7 +69,7 @@ Requires:       hicolor-icon-theme
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{shortcommit} -p1 -a1
+%autosetup -n %{crate}-%{commit} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

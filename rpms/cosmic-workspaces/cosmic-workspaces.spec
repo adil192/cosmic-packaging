@@ -103,12 +103,6 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 make install DESTDIR=%{buildroot} prefix=%{_prefix}
 
-%if %{with check}
-%check
-# Set vergen environment variables
-export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
-export VERGEN_GIT_SHA="%{commit}"
-%cargo_test
 # COSMIC is not a valid category pre-fedora 41
 %if %{defined fedora} && 0%{?fedora} < 41
 desktop-file-install \
@@ -118,7 +112,14 @@ desktop-file-install \
 --dir %{buildroot}%{_datadir}/applications \
 %{buildroot}%{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
 %endif
+
+%check
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicWorkspaces.desktop
+%if %{with check}
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
+%cargo_test
 %endif
 
 %files

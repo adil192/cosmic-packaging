@@ -104,12 +104,6 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
-%if %{with check}
-%check
-# Set vergen environment variables
-export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
-export VERGEN_GIT_SHA="%{commit}"
-%cargo_test
 # COSMIC is not a valid category pre-fedora 41
 %if %{defined fedora} && 0%{?fedora} < 41
 
@@ -226,6 +220,8 @@ desktop-file-install \
 %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
 
 %endif
+
+%check
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
@@ -242,6 +238,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAp
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+%if %{with check}
+# Set vergen environment variables
+export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+export VERGEN_GIT_SHA="%{commit}"
+%cargo_test
 %endif
 
 %files

@@ -45,8 +45,8 @@ else
     cd ..
 fi
 
-# Zip SOURCE
-tar -pczf $SOURCE_NAME-$SHORTCOMMIT.tar.gz $SOURCE_NAME-$COMMIT
+# Get SOURCE and rm repo
+wget $REPO/archive/$COMMIT/$SOURCE_NAME-$SHORTCOMMIT.tar.gz
 rm -rf $SOURCE_NAME-$COMMIT
 
 # Make replacements to specfile

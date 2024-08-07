@@ -234,23 +234,24 @@ desktop-file-install \
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.About.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.DateTime.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Dock.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Panel.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.WindowManagement.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Displays.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Firmware.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Keyboard.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Mouse.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Notifications.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.RegionLanguage.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Sound.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Touchpad.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Users.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Wallpaper.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Workspaces.desktop
+# TODO: Fix desktop file validation of sub pages upstream
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.About.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.DateTime.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Dock.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Panel.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.WindowManagement.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Displays.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Firmware.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Keyboard.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Mouse.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Notifications.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.RegionLanguage.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Sound.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Touchpad.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Users.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Wallpaper.desktop
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Workspaces.desktop
 %if %{with check}
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"

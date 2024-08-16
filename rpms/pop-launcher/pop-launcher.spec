@@ -47,8 +47,6 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
-Patch:          symlink.patch
-
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc
 BuildRequires:  lld

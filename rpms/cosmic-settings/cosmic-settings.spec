@@ -63,6 +63,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  systemd-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
+BuildRequires:  pipewire-devel
 
 Requires:       hicolor-icon-theme
 

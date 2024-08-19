@@ -103,137 +103,6 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} install
 
-# COSMIC is not a valid category pre-fedora 41
-%if %{defined fedora} && 0%{?fedora} < 41
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.About.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.DateTime.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Dock.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Panel.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.WindowManagement.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Displays.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Firmware.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Keyboard.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Mouse.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Notifications.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.RegionLanguage.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Sound.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Touchpad.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Users.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Wallpaper.desktop
-
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Workspaces.desktop
-
-%endif
-
 %check
 # FIXME: OnlyShowIn=COSMIC, should be fixed in 41 ?
 # desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.desktop
@@ -268,7 +137,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-settings
-%{_datadir}/applications/com.system76.CosmicSettings.desktop
+%{_datadir}/applications/com.system76.CosmicSettings*.desktop
 %{_metainfodir}/com.system76.CosmicSettings.metainfo.xml
 %dir %{_datadir}/cosmic/com.system76.CosmicTheme.Dark.Builder
 %{_datadir}/cosmic/com.system76.CosmicTheme.Dark.Builder/v1/*
@@ -289,23 +158,6 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-dark.svg
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-light.svg
 %{_datadir}/icons/hicolor/*/apps/com.system76.CosmicSettings.svg
-%{_datadir}/applications/com.system76.CosmicSettings.About.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.DateTime.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Dock.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Panel.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.WindowManagement.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Displays.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Firmware.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Keyboard.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Mouse.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Notifications.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.RegionLanguage.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Sound.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Touchpad.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Users.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Wallpaper.desktop
-%{_datadir}/applications/com.system76.CosmicSettings.Workspaces.desktop
 %{_datadir}/polkit-1/rules.d/cosmic-settings.rules
 
 %changelog

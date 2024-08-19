@@ -1,11 +1,18 @@
-#!/bin/bash -x
+#!/bin/bash -xe
+
+# clone repo, detect last commit, vendor deps, update specfile
+
+if [ "$#" -lt 6 ]; then
+    echo "Error: Less than six arguments provided."
+    exit 1
+fi
 
 # NAME of the crate/package
 NAME=$1
 SOURCE_NAME=$2
 # VERSION of the crate/package
 VERSION=$3
-# COMMIT to target (latest == master)
+# COMMIT to target (LATEST == master)
 COMMIT=$4
 # REPO link
 REPO=$5
@@ -18,8 +25,7 @@ LATEST="LATEST"
 mkdir $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT && git clone --recurse-submodules $REPO .
 
 # Get latest COMMIT hash if COMMIT is set to latest
-if [[ "$COMMIT" == "$LATEST" ]]
-then
+if [[ "$COMMIT" == "$LATEST" ]]; then
     COMMIT=$(git rev-parse HEAD)
     cd .. && mv $SOURCE_NAME-LATEST $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT
 fi
@@ -36,7 +42,7 @@ COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
-    cargo vendor > ../vendor-config-$SHORTCOMMIT.toml
+    cargo vendor >../vendor-config-$SHORTCOMMIT.toml
     tar -pczf vendor-$SHORTCOMMIT.tar.gz vendor && mv vendor-$SHORTCOMMIT.tar.gz ../vendor-$SHORTCOMMIT.tar.gz
     # Back into parent directory
     rm -rf vendor
@@ -45,8 +51,7 @@ else
     cd ..
 fi
 
-# Get SOURCE and rm repo
-wget $REPO/archive/$COMMIT/$SOURCE_NAME-$SHORTCOMMIT.tar.gz
+# rm repo
 rm -rf $SOURCE_NAME-$COMMIT
 
 # Make replacements to specfile

@@ -104,7 +104,7 @@ export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} install
 
 # COSMIC is not a valid category pre-fedora 41
-%if %{defined fedora} && 0%{?fedora} > 40
+%if %{defined fedora} && 0%{?fedora} < 41
 
 desktop-file-install \
 --remove-category COSMIC \
@@ -235,7 +235,8 @@ desktop-file-install \
 %endif
 
 %check
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.desktop
+# FIXME: OnlyShowIn=COSMIC, should be fixed in 41 ?
+# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.desktop
 # TODO: Fix desktop file validation of sub pages upstream
 # desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.About.desktop
 # desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicSettings.Appearance.desktop

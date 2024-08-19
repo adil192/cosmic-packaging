@@ -64,7 +64,7 @@ BuildRequires:  systemd-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
 BuildRequires:  pipewire-devel
-BuildRequires:  clang
+BuildRequires:  clang-libs
 
 Requires:       hicolor-icon-theme
 

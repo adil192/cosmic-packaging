@@ -64,6 +64,7 @@ BuildRequires:  systemd-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
 BuildRequires:  pipewire-devel
+BuildRequires:  clang
 
 Requires:       hicolor-icon-theme
 
@@ -103,7 +104,7 @@ export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} install
 
 # COSMIC is not a valid category pre-fedora 41
-%if %{defined fedora} && 0%{?fedora} < 41
+%if %{defined fedora} && 0%{?fedora} > 40
 
 desktop-file-install \
 --remove-category COSMIC \

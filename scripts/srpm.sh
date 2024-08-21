@@ -1,39 +1,43 @@
 #!/bin/bash -xe
 
 # clone repo, detect last commit, vendor deps, update specfile
+#
+#
+# PACKAGE: package name
+# SOURCE_NAME: sometime the same of PACKAGE
+# VERSION: tag, semver
+# COMMIT: latest or sha
+# REPO: link
+# VENDOR: 0 or 1
 
-if [ "$#" -lt 6 ]; then
-    echo "Error: Less than six arguments provided."
-    exit 1
+check_variable() {
+    local var_name=$1
+    if [ -z "${!var_name+x}" ]; then
+        echo "Error: '$var_name' is not defined."
+        exit 1
+    fi
+}
+
+check_variable PACKAGE
+SOURCE_NAME=${SOURCE_NAME:-"$PACKAGE"}
+VERSION=${VERSION:-"0.1.0"}
+COMMIT=${COMMIT:-"latest"}
+REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
+VENDOR=${VENDOR:-1}
+
+if [ ! -e "$PACKAGE" ]; then
+    git clone --recurse-submodules $REPO $PACKAGE
 fi
 
-# NAME of the crate/package
-NAME=$1
-SOURCE_NAME=$2
-# VERSION of the crate/package
-VERSION=$3
-# COMMIT to target (LATEST == master)
-COMMIT=$4
-# REPO link
-REPO=$5
-# VENDOR?
-VENDOR=$6
-
-LATEST="LATEST"
-
-# Clone REPO and cd into it
-mkdir $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT && git clone --recurse-submodules $REPO .
+cd $PACKAGE
 
 # Get latest COMMIT hash if COMMIT is set to latest
-if [[ "$COMMIT" == "$LATEST" ]]; then
+if [[ "$COMMIT" == "latest" ]]; then
     COMMIT=$(git rev-parse HEAD)
-    cd .. && mv $SOURCE_NAME-LATEST $SOURCE_NAME-$COMMIT && cd $SOURCE_NAME-$COMMIT
 fi
 
-# Set short commit
 SHORTCOMMIT=$(echo ${COMMIT:0:7})
 
-# Reset to specified COMMIT
 git reset --hard $COMMIT
 
 COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d)
@@ -43,16 +47,10 @@ if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
     cargo vendor >../vendor-config-$SHORTCOMMIT.toml
-    tar -pczf vendor-$SHORTCOMMIT.tar.gz vendor && mv vendor-$SHORTCOMMIT.tar.gz ../vendor-$SHORTCOMMIT.tar.gz
-    # Back into parent directory
-    rm -rf vendor
-    cd ..
-else
-    cd ..
+    tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
 fi
 
-# rm repo
-rm -rf $SOURCE_NAME-$COMMIT
+cd ..
 
 # Make replacements to specfile
 sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec
@@ -60,8 +58,3 @@ sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 
 sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec
-
-# Should have these sources
-# SOURCE_NAME-SHORTCOMMIT.tar.gz
-# vendor-%{shortcommit}.tar.gz
-# vendor-config-%{shortcommit}.toml

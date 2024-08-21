@@ -53,7 +53,7 @@ fi
 cd ..
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:           $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec
+sed -i "/^Version: / s/.*/Version:        $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec
 sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec

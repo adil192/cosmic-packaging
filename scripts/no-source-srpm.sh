@@ -20,4 +20,4 @@ VERSION=${VERSION:-"0.1.0"}
 CURRENT_DATE=$(date +'%Y%m%d')
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:           $VERSION~^%{CURRENT_DATE}gitnone/" $NAME.spec
+sed -i "/^Version: / s/.*/Version:        ${VERSION}~^${CURRENT_DATE}gitnone/" $NAME.spec

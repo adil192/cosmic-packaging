@@ -3,7 +3,7 @@
 # update specfile
 #
 #
-# PACKAGE: package name
+# NAME: package name
 # VERSION: tag, semver
 
 check_variable() {
@@ -14,10 +14,10 @@ check_variable() {
     fi
 }
 
-check_variable PACKAGE
+check_variable NAME
 VERSION=${VERSION:-"0.1.0"}
 
 CURRENT_DATE=$(date +'%Y%m%d')
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:           $VERSION~^%{CURRENT_DATE}gitnone/" $PACKAGE.spec
+sed -i "/^Version: / s/.*/Version:           $VERSION~^%{CURRENT_DATE}gitnone/" $NAME.spec

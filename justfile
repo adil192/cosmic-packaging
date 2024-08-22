@@ -1,10 +1,10 @@
 set working-directory := 'dev'
 set export
 
-NAME := 'cosmic-comp'
-# REPO := 'https://github.com/pop-os/cosmic-comp.git'
-# VERSION := '0.1.0'
-# COMMIT := 'latest'
+NAME := 'cosmic-bg'
+VERSION := '0.1.0'
+COMMIT := 'latest'
+
 
 all: init sources spec build
 
@@ -14,7 +14,7 @@ init:
 
 sources:
     cp vendor-* ~/rpmbuild/SOURCES/
-    cp *.patch ~/rpmbuild/SOURCES/ || true
+    cp *.patch ~/rpmbuild/SOURCES/ 2>/dev/null || true
 
 spec:
     cp ../rpms/{{NAME}}/{{NAME}}.spec .
@@ -30,3 +30,7 @@ fast-build:
 no-source:
     cp ../rpms/{{NAME}}/{{NAME}}.spec .
     ../scripts/no-source-srpm.sh
+
+clean:
+    rm -rf ./*
+    touch .keep

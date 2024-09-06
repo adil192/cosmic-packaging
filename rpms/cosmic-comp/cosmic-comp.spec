@@ -118,6 +118,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %license cargo-vendor.txt
 %{_bindir}/cosmic-comp
 %{_datadir}/cosmic/com.system76.CosmicSettings.Shortcuts/v1/defaults
+%{_datadir}/cosmic/com.system76.CosmicSettings.WindowRules/v1/tiling_exception_defaults
 
 %changelog
 %autochangelog

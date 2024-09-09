@@ -48,7 +48,6 @@ Source1:        vendor-%{shortcommit}.tar.gz
 Source2:        vendor-config-%{shortcommit}.toml
 
 
-Patch: better_compile.patch
 Patch: symlink.patch
 
 BuildRequires:  cargo-rpm-macros >= 25

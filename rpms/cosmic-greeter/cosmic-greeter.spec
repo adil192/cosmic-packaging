@@ -114,6 +114,7 @@ install -Dm0644 debian/cosmic-greeter.tmpfiles %{buildroot}/%{_tmpfilesdir}/cosm
 install -Dm0644 cosmic-greeter.toml %{buildroot}/%{_sysconfdir}/greetd/cosmic-greeter.toml
 install -Dm0644 debian/cosmic-greeter.service %{buildroot}/%{_unitdir}/cosmic-greeter.service
 install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/cosmic-greeter-daemon.service
+install -Dm0644 debian/cosmic-greeter.pam %{buildroot}/%{_sysconfdir}/pam.d/cosmic-greeter
 
 %if %{with check}
 %check
@@ -151,6 +152,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_sysconfdir}/greetd/cosmic-greeter.toml
 %{_unitdir}/cosmic-greeter.service
 %{_unitdir}/cosmic-greeter-daemon.service
+%{_sysconfdir}/pam.d/cosmic-greeter
 
 %changelog
 %autochangelog

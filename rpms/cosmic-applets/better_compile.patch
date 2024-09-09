@@ -1,11 +1,7 @@
---- ./Cargo.toml	2024-06-10 20:56:56.957205204 -0500
-+++ ./Cargo.toml.new	2024-06-10 20:57:57.163582345 -0500
-@@ -57,7 +57,7 @@
- freedesktop-desktop-entry = "0.6.1"
- 
+--- ./Cargo.toml
++++ ./Cargo.toml.new
+@@ -63,3 +63,3 @@
  [profile.release]
 -lto = "fat"
 +lto = "thin"
  
- [workspace.metadata.cargo-machete]
- ignored = ["libcosmic"]

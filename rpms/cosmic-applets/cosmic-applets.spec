@@ -47,7 +47,8 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
-
+# required to compile applets in a reasonable amount of time
+# necessary even with the multi-binary feature + 8h timeout
 Patch: better_compile.patch
 Patch: symlink.patch
 

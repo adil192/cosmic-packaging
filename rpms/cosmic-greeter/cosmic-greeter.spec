@@ -152,7 +152,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_sysconfdir}/greetd/cosmic-greeter.toml
 %{_unitdir}/cosmic-greeter.service
 %{_unitdir}/cosmic-greeter-daemon.service
-%{_sysconfdir}/pam.d/cosmic-greeter
+# %%{_sysconfdir}/pam.d/cosmic-greeter
 
 %changelog
 %autochangelog

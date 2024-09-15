@@ -89,8 +89,8 @@ fi
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
-%cargo_build -- --package cosmic-files-applet
 %cargo_build
+%cargo_build -- --package cosmic-files-applet
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}

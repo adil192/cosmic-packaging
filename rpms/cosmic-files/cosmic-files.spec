@@ -89,6 +89,7 @@ fi
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
+%cargo_build -- --package cosmic-files-applet
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
@@ -125,6 +126,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/cosmic-files
+%{_bindir}/cosmic-files-applet
 %{_datadir}/applications/com.system76.CosmicFiles.desktop
 %{_metainfodir}/com.system76.CosmicFiles.metainfo.xml
 %{_datadir}/icons/hicolor/*/apps/com.system76.CosmicFiles.svg

@@ -1,10 +1,10 @@
 set working-directory := 'dev'
 set export
 
-NAME := 'cosmic-bg'
+NAME := 'cosmic-files'
 VERSION := '0.1.0'
 COMMIT := 'latest'
-
+VENDOR := '1'
 
 all: init sources spec build
 

@@ -8,4 +8,11 @@ Be sure to report issues with the packaging in this repo. Report COSMIC related 
 
 # Documentation
 
-See: [docs/index.md](docs/index.md)
+To build the documentation, install `mdbook` and build the `docs` folder:
+
+```shell
+cargo install mdbook
+mdbook build docs
+```
+
+You can also serve a live webserver for the docs with `mdbook serve docs`

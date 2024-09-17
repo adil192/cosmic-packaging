@@ -117,6 +117,8 @@ install -Dm0644 debian/cosmic-greeter.service %{buildroot}/%{_unitdir}/cosmic-gr
 install -Dm0644 debian/cosmic-greeter-daemon.service %{buildroot}/%{_unitdir}/cosmic-greeter-daemon.service
 install -Dm0644 debian/greetd.pam %{buildroot}/%{_sysconfdir}/pam.d/cosmic-greeter
 
+# TODO: In greetd patch, make sure gnome-keyring is unlocked
+
 %if %{with check}
 %check
 # Set vergen environment variables

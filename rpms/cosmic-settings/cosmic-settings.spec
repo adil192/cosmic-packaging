@@ -67,6 +67,7 @@ BuildRequires:  pipewire-devel
 BuildRequires:  clang
 
 Requires:       hicolor-icon-theme
+Requires:       nm-connection-editor
 
 %global _description %{expand:
 %{summary}.}

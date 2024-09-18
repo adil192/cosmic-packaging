@@ -10,9 +10,9 @@ ExcludeArch: %{ix86}
 
 Name:           cosmic-greeter
 Version: ###
-Release:        %autorelease
-Summary:        Login and display manager for the COSMIC Desktop Environment
 Release:        2
+# Release:        %%autorelease
+Summary:        Login and display manager for the COSMIC Desktop Environment
 
 # 0BSD OR MIT OR Apache-2.0
 # Apache-2.0

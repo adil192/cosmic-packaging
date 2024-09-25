@@ -54,6 +54,9 @@ if [ "$VENDOR" -eq 1 ]; then
 
     # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
     chmod -x ./vendor/bumpalo/src/lib.rs || true
+
+    # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
+    chmod -x ./vendor/ipnet/src/lib.rs || true
     
     tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
 fi

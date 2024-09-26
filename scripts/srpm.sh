@@ -38,13 +38,12 @@ if [[ "$COMMIT" == "latest" ]]; then
     COMMIT=$(git rev-parse HEAD)
 fi
 
-SHORTCOMMIT=$(echo ${COMMIT:0:7})
-
 git reset --hard $COMMIT
 
 # Ensure commit is set to the current head of the local repo
 # This is needed because if we reset to a tag, we want the commit to be in the commit field later on (for VERGEN)
 COMMIT=$(git rev-parse HEAD)
+SHORTCOMMIT=$(echo ${COMMIT:0:7})
 
 COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d)
 COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)

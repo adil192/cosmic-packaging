@@ -69,7 +69,7 @@ fi
 cd ..
 
 # Make replacements to specfile
-if [ "$NIGHTLY" -eq 1 ] then
+if [ "$NIGHTLY" -eq 1 ]; then
     echo "NIGHTLY=1"
     sed -i "/^Version: / s/.*/Version:        $VERSION^git%{commitdate}%{shortcommit}/" $NAME.spec
 else

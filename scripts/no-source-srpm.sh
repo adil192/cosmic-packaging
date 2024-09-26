@@ -21,7 +21,7 @@ NIGHTLY=${NIGHTLY:-1}
 CURRENT_DATE=$(date +'%Y%m%d')
 
 # Make replacements to specfile
-if [ "$NIGHTLY" -eq 1 ] then
+if [ "$NIGHTLY" -eq 1 ]; then
     echo "NIGHTLY=1"
     sed -i "/^Version: / s/.*/Version:        ${VERSION}/" $NAME.spec
 else  

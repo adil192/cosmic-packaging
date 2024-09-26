@@ -9,6 +9,7 @@
 # COMMIT: latest or sha
 # REPO: link
 # VENDOR: 0 or 1
+# NIGHTLY: 0 or 1
 
 check_variable() {
     local var_name=$1
@@ -20,10 +21,11 @@ check_variable() {
 
 check_variable NAME
 SOURCE_NAME=${SOURCE_NAME:-"$NAME"}
-VERSION=${VERSION:-"0.1.0"}
+VERSION=${VERSION:-"1.0.0~alpha.2"}
 COMMIT=${COMMIT:-"latest"}
 REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
 VENDOR=${VENDOR:-1}
+NIGHTLY=${NIGHTLY:-1}
 
 if [ ! -e "$NAME" ]; then
     git clone --recurse-submodules $REPO $NAME
@@ -39,6 +41,10 @@ fi
 SHORTCOMMIT=$(echo ${COMMIT:0:7})
 
 git reset --hard $COMMIT
+
+# Ensure commit is set to the current head of the local repo
+# This is needed because if we reset to a tag, we want the commit to be in the commit field later on (for VERGEN)
+COMMIT=$(git rev-parse HEAD)
 
 COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d)
 COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
@@ -64,7 +70,12 @@ fi
 cd ..
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:        $VERSION~^%{commitdate}git%{shortcommit}/" $NAME.spec
+if [ "$NIGHTLY" -eq 1 ] then
+    echo "NIGHTLY=1"
+    sed -i "/^Version: / s/.*/Version:        $VERSION^git%{commitdate}%{shortcommit}/" $NAME.spec
+else
+    sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
+fi
 sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec

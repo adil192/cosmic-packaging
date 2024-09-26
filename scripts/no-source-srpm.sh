@@ -15,9 +15,15 @@ check_variable() {
 }
 
 check_variable NAME
-VERSION=${VERSION:-"0.1.0"}
+VERSION=${VERSION:-"1.0.0~alpha.2"}
+NIGHTLY=${NIGHTLY:-1}
 
 CURRENT_DATE=$(date +'%Y%m%d')
 
 # Make replacements to specfile
-sed -i "/^Version: / s/.*/Version:        ${VERSION}~^${CURRENT_DATE}gitnone/" $NAME.spec
+if [ "$NIGHTLY" -eq 1 ] then
+    echo "NIGHTLY=1"
+    sed -i "/^Version: / s/.*/Version:        ${VERSION}/" $NAME.spec
+else  
+    sed -i "/^Version: / s/.*/Version:        ${VERSION}^${CURRENT_DATE}/" $NAME.spec
+fi

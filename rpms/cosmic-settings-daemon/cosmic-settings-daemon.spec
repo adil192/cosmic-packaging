@@ -16,7 +16,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Settings daemon for the COSMIC Desktop Environment
 
-License:        ISC AND GPL-3.0-or-later AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0) AND MPL-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (Apache-2.0 OR BSL-1.0) AND BSD-3-Clause AND BSL-1.0 AND (MIT OR Zlib OR Apache-2.0) AND BSD-2-Clause AND Apache-2.0 AND (0BSD OR MIT OR Apache-2.0) AND Zlib AND (MIT OR Apache-2.0 OR Zlib) AND (Zlib OR Apache-2.0 OR MIT) AND  AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND MIT AND CC0-1.0 AND (Apache-2.0 OR MIT) AND (Unlicense OR MIT)
+License:        Zlib AND (Unlicense OR MIT) AND GPL-3.0-or-later AND MPL-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND BSD-3-Clause AND BSD-2-Clause AND ISC AND BSL-1.0 AND (MIT OR Zlib OR Apache-2.0) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND CC0-1.0 AND (Zlib OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0) AND (Apache-2.0 OR BSL-1.0) AND MIT AND Apache-2.0
 
 URL:            https://github.com/pop-os/cosmic-settings-daemon
 

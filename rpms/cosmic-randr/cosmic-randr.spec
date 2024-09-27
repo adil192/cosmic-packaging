@@ -13,7 +13,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Display configuration command line tool
 
-License:        Apache-2.0 AND (0BSD OR MIT OR Apache-2.0) AND GPL-3.0-only AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0) AND  AND (MIT OR Zlib OR Apache-2.0) AND ISC AND (Apache-2.0 OR MIT) AND (Unlicense OR MIT) AND MIT AND Zlib AND MPL-2.0
+License:        (MIT OR Apache-2.0) AND MPL-2.0 AND (0BSD OR MIT OR Apache-2.0) AND Zlib AND ISC AND (Apache-2.0 OR MIT) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT) AND GPL-3.0-only AND MIT AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND Apache-2.0
 
 URL:            https://github.com/pop-os/cosmic-randr
 

@@ -227,10 +227,15 @@ fn update_licenses_command(
                         return None;
                     }
                     let repl_or = l.replace("/", " OR ");
-                    if repl_or.contains("OR") {
-                        Some(format!("({})", repl_or))
+                    let result = if repl_or.contains("OR") {
+                        format!("({})", repl_or)
                     } else {
-                        Some(repl_or)
+                        repl_or
+                    };
+                    if result.trim().is_empty() {
+                        None
+                    } else {
+                        Some(result.trim().to_string())
                     }
                 })
                 .collect::<HashSet<String>>()
@@ -238,7 +243,7 @@ fn update_licenses_command(
                 .collect::<Vec<String>>()
                 .join(" AND ");
             if let Some(packaging_dir) = packaging_dir.as_deref() {
-                if !license_result.is_empty() {
+                if !license_result.is_empty() && license_validate(&license_result)? {
                     homebrew_sed(
                         &package.package_dir(packaging_dir),
                         "License: ",
@@ -289,4 +294,22 @@ fn homebrew_sed(spec_path: &Path, search_prefix: &str, replacement: &str) -> any
         writeln!(file, "{}", line)?;
     }
     Ok(())
+}
+
+fn license_validate(license: &str) -> anyhow::Result<bool> {
+    let out = Command::new("license-validate")
+        .arg("-v")
+        .arg(license)
+        .output()?;
+    let (stdout, stderr) = (
+        String::from_utf8(out.stdout)?,
+        String::from_utf8(out.stderr)?,
+    );
+    let passed_validation = stdout.starts_with("Approved license");
+    if passed_validation {
+        println!("License passed validation.");
+    } else {
+        eprintln!("License failed validation: {} {}", &stdout, &stderr);
+    }
+    Ok(passed_validation)
 }

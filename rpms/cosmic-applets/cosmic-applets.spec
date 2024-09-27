@@ -13,7 +13,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Applets for the COSMIC Desktop Environment
 
-License:        BSD-2-Clause AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND GPL-3.0-only AND GPL-3.0-or-later AND ISC AND Unicode-3.0 AND (Apache-2.0 OR BSL-1.0) AND BSL-1.0 AND Unlicense AND MPL-2.0 AND  AND MIT AND Apache-2.0 AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0 OR Zlib) AND BSD-3-Clause AND (MIT OR Zlib OR Apache-2.0) AND (0BSD OR MIT OR Apache-2.0) AND CC0-1.0 AND (MIT OR Apache-2.0) AND (Unlicense OR MIT) AND Zlib AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 OR BSD-3-Clause) AND (Zlib OR Apache-2.0 OR MIT)
+License:        BSD-2-Clause AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND GPL-3.0-or-later AND Unicode-3.0 AND (Apache-2.0 OR BSL-1.0) AND (0BSD OR MIT OR Apache-2.0) AND CC0-1.0 AND MIT AND BSD-3-Clause AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (Unlicense OR MIT) AND (Apache-2.0 OR BSD-3-Clause) AND Apache-2.0 AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Zlib OR Apache-2.0) AND Unlicense AND Zlib AND ISC AND (MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND BSL-1.0 AND (MIT OR Apache-2.0 OR Zlib) AND MPL-2.0 AND GPL-3.0-only
 
 URL:            https://github.com/pop-os/cosmic-applets
 

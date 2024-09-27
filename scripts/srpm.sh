@@ -27,6 +27,10 @@ REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
 VENDOR=${VENDOR:-1}
 NIGHTLY=${NIGHTLY:-1}
 
+if [ "$NIGHTLY" -eq 0 ]; then
+    COMMIT="epoch-1.0.0-alpha.2"
+fi
+
 if [ ! -e "$NAME" ]; then
     git clone --recurse-submodules $REPO $NAME
 fi

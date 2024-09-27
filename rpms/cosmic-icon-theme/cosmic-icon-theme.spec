@@ -9,7 +9,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Icon theme for the COSMIC Desktop Environment
 
-License:        CC-BY-SA-4.0
+License:        
 
 URL:            https://github.com/pop-os/cosmic-icons
 

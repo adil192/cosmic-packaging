@@ -30,6 +30,10 @@ enum Commands {
         /// Packaging directory to rewrite cosmic spec files (OPTIONAL)
         #[arg(long)]
         packaging_dir: Option<PathBuf>,
+        /// Optionally exclude GPL-3.0 from the license summary. cosmic-protocols has had its
+        /// license clarified but is still on old versions for all the packages.
+        #[arg(long)]
+        exclude_gpl_3: bool,
     },
 }
 
@@ -146,7 +150,8 @@ fn main() -> anyhow::Result<()> {
             workdir,
             clean,
             packaging_dir,
-        } => update_licenses_command(workdir, clean, packaging_dir),
+            exclude_gpl_3,
+        } => update_licenses_command(workdir, clean, packaging_dir, exclude_gpl_3),
     }
 }
 
@@ -154,6 +159,7 @@ fn update_licenses_command(
     workdir: PathBuf,
     clean: bool,
     packaging_dir: Option<PathBuf>,
+    exclude_gpl_3: bool,
 ) -> anyhow::Result<()> {
     let base_working_dir = workdir.canonicalize().unwrap();
     if clean {
@@ -187,12 +193,16 @@ fn update_licenses_command(
             );
             let license_result = stdout
                 .lines()
-                .map(|l| {
+                .filter_map(|l| {
+                    if l == "GPL-3.0" && exclude_gpl_3 {
+                        println!("Skipping raw GPL-3.0");
+                        return None;
+                    }
                     let repl_or = l.replace("/", " OR ");
                     if repl_or.contains("OR") {
-                        format!("({})", repl_or)
+                        Some(format!("({})", repl_or))
                     } else {
-                        repl_or
+                        Some(repl_or)
                     }
                 })
                 .collect::<HashSet<String>>()

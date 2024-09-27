@@ -1,16 +1,25 @@
 use std::{env, fs, path::PathBuf, process::Command};
 
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 
 #[derive(Parser)]
 #[command(version, about)]
 /// Generate licenses for cosmic packages
 struct Cli {
+    #[arg(value_enum)]
+    out_type: OutType,
     /// Working directory
     workdir: PathBuf,
     /// Clean working directory
     #[arg(short, long)]
     clean: bool,
+}
+
+#[derive(ValueEnum, Clone, Debug)]
+enum OutType {
+    LicenseForSpec,
+    LicenseGPL,
+    LicenseSummary,
 }
 
 const PACKAGES: [&str; 22] = [
@@ -50,23 +59,30 @@ fn main() -> anyhow::Result<()> {
     let res = || -> anyhow::Result<()> {
         for package in PACKAGES {
             println!("Package: {}", package);
-            let _ = Command::new("git")
-                .current_dir(&base_working_dir)
-                .arg("clone")
-                .arg(format!("https://github.com/pop-os/{}.git", package))
-                .status()?;
+            if !&base_working_dir.join(package).exists() {
+                let _ = Command::new("git")
+                    .current_dir(&base_working_dir)
+                    .arg("clone")
+                    .arg(format!("https://github.com/pop-os/{}.git", package))
+                    .status()?;
+            }
             let output = Command::new("sh")
-                .current_dir(base_working_dir.join(package))
-                .arg("-c")
-                .arg(
-                    r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{l}" | sort | uniq | sed '/OR/ s/.*/(&)/' | awk '{printf("%s AND ", $0)} END {print ""}' | sed 's/AND$//'"##
-                ).output()?;
+            .current_dir(base_working_dir.join(package))
+            .arg("-c")
+            .arg(
+                match args.out_type {
+                    OutType::LicenseForSpec => r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{l}" | sort | uniq | sed '/OR/ s/.*/(&)/' | awk '{printf("%s AND ", $0)} END {print ""}' | sed 's/AND$//'"##,
+                    OutType::LicenseGPL => r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{p}: {l}" | grep "GPL-3.0$""##,
+                    OutType::LicenseSummary => r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{l}""##,
+                }
+                
+            ).output()?;
 
-            let (stdout, stderr) = (
+            let (stdout, _stderr) = (
                 String::from_utf8(output.stdout).unwrap(),
                 String::from_utf8(output.stderr).unwrap(),
             );
-            println!("stdout: {} stderr: {}\n", &stdout, &stderr);
+            // println!("stdout: {} stderr: {}\n", &stdout, &stderr);
             result_string.push_str(&format!("{}\n{}\n\n", package, &stdout));
         }
         Ok(())

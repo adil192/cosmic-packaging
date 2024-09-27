@@ -2,7 +2,9 @@
 
 ## Using the license_generator program
 
-```cargo run -- <WORKING_DIRECTORY>```
+```cargo run -- license-for-spec <WORKING_DIRECTORY>```
+```cargo run -- license-gpl <WORKING_DIRECTORY>```
+```cargo run -- license-summary <WORKING_DIRECTORY>```
 
 You will get an output in `<WORKING_DIRECTORY>/cosmic_licenses.txt`
 

@@ -13,7 +13,7 @@ ExcludeArch: %{ix86}
 
 Name:           cosmic-screenshot
 Version: ###
-Release:        3
+Release:        %autorelease
 Summary:        Screenshot utility for the COSMIC Desktop Environment
 
 License:         AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND BSD-3-Clause AND (MIT OR Apache-2.0 OR Zlib) AND (0BSD OR MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MIT AND (MIT OR Apache-2.0) AND MPL-2.0 AND (Apache-2.0 OR MIT) AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT)

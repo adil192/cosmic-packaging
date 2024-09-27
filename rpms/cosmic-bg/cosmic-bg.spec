@@ -10,7 +10,7 @@ ExcludeArch: %{ix86}
 
 Name:           cosmic-bg
 Version: ###
-Release:        3
+Release:        %autorelease
 Summary:        Background manager for the COSMIC Desktop Environment
 
 License:        (Apache-2.0 OR MIT) AND (Unlicense OR MIT) AND ISC AND Apache-2.0 AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (Zlib OR Apache-2.0 OR MIT) AND (MIT OR Zlib OR Apache-2.0) AND BSL-1.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND MIT AND (MIT OR Apache-2.0) AND (0BSD OR MIT OR Apache-2.0) AND  AND BSD-3-Clause AND MPL-2.0 AND CC0-1.0

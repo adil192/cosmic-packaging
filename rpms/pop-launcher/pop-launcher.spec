@@ -10,7 +10,7 @@ ExcludeArch: %{ix86}
 
 Name:           pop-launcher
 Version: ###
-Release:        3
+Release:        %autorelease
 Summary:        Modular IPC-based desktop launcher service
 
 License:        Apache-2.0 WITH LLVM-exception AND ISC AND (MIT OR Apache-2.0 OR Zlib) AND MIT AND GPL-3.0-only AND Apache-2.0 AND (MIT OR Zlib OR Apache-2.0) AND (MIT OR Apache-2.0) AND (Unlicense OR MIT) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND MPL-2.0 AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0  OR  MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND Zlib AND BSD-3-Clause AND (Zlib OR Apache-2.0 OR MIT) AND 

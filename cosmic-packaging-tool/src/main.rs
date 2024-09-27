@@ -210,10 +210,13 @@ fn update_licenses_command(
                 .collect::<Vec<String>>()
                 .join(" AND ");
             if let Some(packaging_dir) = packaging_dir.as_deref() {
-                set_license(
-                    &packaging_dir.join(&format!("rpms/{}/{}.spec", package_name, package_name)),
-                    &license_result,
-                )?;
+                if !license_result.is_empty() {
+                    set_license(
+                        &packaging_dir
+                            .join(&format!("rpms/{}/{}.spec", package_name, package_name)),
+                        &license_result,
+                    )?;
+                }
             }
             result_string.push_str(&format!("License:        {}", &license_result));
         }

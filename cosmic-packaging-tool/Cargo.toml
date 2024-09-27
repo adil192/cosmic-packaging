@@ -1,5 +1,5 @@
 [package]
-name = "license_generator"
+name = "cosmic-packaging-tool"
 authors = ["Ryan Brue <ryanbrue.dev@gmail.com>"]
 license = "MIT"
 version = "0.1.0"

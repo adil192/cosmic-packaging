@@ -10,7 +10,7 @@ ExcludeArch: %{ix86}
 
 Name:           cosmic-randr
 Version: ###
-Release:        %autorelease
+Release:        3
 Summary:        Display configuration command line tool
 
 License:        Apache-2.0 AND (0BSD OR MIT OR Apache-2.0) AND GPL-3.0-only AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0) AND  AND (MIT OR Zlib OR Apache-2.0) AND ISC AND (Apache-2.0 OR MIT) AND (Unlicense OR MIT) AND MIT AND Zlib AND MPL-2.0

@@ -35,6 +35,12 @@ enum Commands {
         #[arg(long)]
         exclude_gpl_3: bool,
     },
+    AutobumpReleases {
+        /// Packaging directory to rewrite cosmic spec files
+        packaging_dir: PathBuf,
+        /// Release to set (i.e. '%autorelease')
+        release: String,
+    },
 }
 
 const PACKAGES_ITER: [Packages; 22] = [
@@ -141,6 +147,14 @@ impl Packages {
             Packages::XdgDesktopPortalCosmic => "xdg-desktop-portal-cosmic",
         }
     }
+
+    fn package_dir<'a>(&self, packaging_dir: &Path) -> PathBuf {
+        packaging_dir.join(&format!(
+            "rpms/{}/{}.spec",
+            self.package_name(),
+            self.package_name()
+        ))
+    }
 }
 
 fn main() -> anyhow::Result<()> {
@@ -152,7 +166,22 @@ fn main() -> anyhow::Result<()> {
             packaging_dir,
             exclude_gpl_3,
         } => update_licenses_command(workdir, clean, packaging_dir, exclude_gpl_3),
+        Commands::AutobumpReleases {
+            packaging_dir,
+            release,
+        } => autobump_releases_command(&packaging_dir, &release),
     }
+}
+
+fn autobump_releases_command(packaging_dir: &Path, release: &str) -> anyhow::Result<()> {
+    for package in PACKAGES_ITER {
+        homebrew_sed(
+            &package.package_dir(packaging_dir),
+            "Release: ",
+            &format!("Release:        {}", release),
+        )?;
+    }
+    Ok(())
 }
 
 fn update_licenses_command(
@@ -171,7 +200,6 @@ fn update_licenses_command(
     let res = || -> anyhow::Result<()> {
         for package in PACKAGES_ITER {
             let package_repo = package.to_repo();
-            let package_name = package.package_name();
             println!("Package: {}", package_repo);
             if !&base_working_dir.join(package_repo).exists() {
                 let _ = Command::new("git")
@@ -211,10 +239,10 @@ fn update_licenses_command(
                 .join(" AND ");
             if let Some(packaging_dir) = packaging_dir.as_deref() {
                 if !license_result.is_empty() {
-                    set_license(
-                        &packaging_dir
-                            .join(&format!("rpms/{}/{}.spec", package_name, package_name)),
-                        &license_result,
+                    homebrew_sed(
+                        &package.package_dir(packaging_dir),
+                        "License: ",
+                        &format!("License:        {}", &license_result),
                     )?;
                 }
             }
@@ -236,10 +264,7 @@ fn update_licenses_command(
     Ok(())
 }
 
-fn set_license(spec_path: &Path, license: &str) -> anyhow::Result<()> {
-    let search_prefix = "License: ";
-    let replacement = &format!("License:        {}", license);
-
+fn homebrew_sed(spec_path: &Path, search_prefix: &str, replacement: &str) -> anyhow::Result<()> {
     // Step 1: Open the file and read it line by line
     let file = File::open(spec_path)?;
     let reader = io::BufReader::new(file);

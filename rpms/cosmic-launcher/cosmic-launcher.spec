@@ -13,7 +13,7 @@ ExcludeArch: %{ix86}
 
 Name:           cosmic-launcher
 Version: ###
-Release:        %autorelease
+Release:        3
 Summary:        Pop launcher frontend for the COSMIC Desktop Environment
 
 License:        BSD-3-Clause AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Apache-2.0 OR BSL-1.0) AND (0BSD OR MIT OR Apache-2.0) AND Apache-2.0 AND (Apache-2.0 OR MIT) AND BSD-2-Clause AND CC0-1.0 AND (MIT OR Apache-2.0 OR CC0-1.0) AND Apache-2.0 WITH LLVM-exception AND MIT AND Unicode-3.0 AND (Apache-2.0  OR  MIT) AND (Unlicense OR MIT) AND MPL-2.0 AND (MIT OR Apache-2.0) AND (MIT OR Apache-2.0 OR Zlib) AND ISC AND (MIT OR Zlib OR Apache-2.0) AND Zlib AND (Zlib OR Apache-2.0 OR MIT) AND  AND BSL-1.0 AND MIT AND BSD-3-Clause

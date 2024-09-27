@@ -6,7 +6,7 @@
 
 Name:           cosmic-icon-theme
 Version: ###
-Release:        %autorelease
+Release:        3
 Summary:        Icon theme for the COSMIC Desktop Environment
 
 License:        CC-BY-SA-4.0

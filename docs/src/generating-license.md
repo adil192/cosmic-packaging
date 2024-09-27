@@ -1,6 +1,12 @@
 # Generating Licenses
 
-Checking licenses of rust projects:
+## Using the license_generator program
+
+```cargo run -- <WORKING_DIRECTORY>```
+
+You will get an output in `<WORKING_DIRECTORY>/cosmic_licenses.txt`
+
+## Checking licenses of rust projects in general:
 
 ```shell
 cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{p}: {l}"
@@ -15,9 +21,3 @@ cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --targe
 ```
 
 > **NOTE:** There might be an AND before and after, make sure to remove those!
-
-
-Licenses updated so far:
-
-cosmic-bg
-cosmic-comp

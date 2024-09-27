@@ -1,0 +1,10 @@
+[package]
+name = "license_generator"
+authors = ["Ryan Brue <ryanbrue.dev@gmail.com>"]
+license = "MIT"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.89"
+clap = { version = "4.5.18", features = ["derive"] }

@@ -35,7 +35,6 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
 
-Requires:       cosmic-session
 Requires:       hicolor-icon-theme
 
 %global _description %{expand:

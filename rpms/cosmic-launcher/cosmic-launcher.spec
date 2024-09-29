@@ -29,6 +29,8 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
+# See: https://github.com/pop-os/launcher/pull/242
+Patch0: pop-launcher-libexec.patch
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

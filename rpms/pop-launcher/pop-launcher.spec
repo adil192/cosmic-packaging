@@ -26,6 +26,9 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
+# See: https://github.com/pop-os/launcher/pull/242
+Patch0: https://patch-diff.githubusercontent.com/raw/pop-os/launcher/pull/242.patch
+
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  rustc
 BuildRequires:  lld
@@ -87,8 +90,8 @@ export VERGEN_GIT_SHA="%{commit}"
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/pop-launcher
-%dir %{_prefix}/lib/pop-launcher
-%{_prefix}/lib/pop-launcher/*
+%dir %{_prefix}/libexec/pop-launcher
+%{_prefix}/libexec/pop-launcher/*
 
 %changelog
 %autochangelog

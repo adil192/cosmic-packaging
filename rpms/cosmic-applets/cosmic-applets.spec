@@ -45,7 +45,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
 
-Requires:       cosmic-icons
+Requires:       cosmic-icon-theme
 Requires:       cosmic-panel
 Requires:       hicolor-icon-theme
 

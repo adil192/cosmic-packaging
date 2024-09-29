@@ -1,5 +1,5 @@
 use std::{
-    collections::HashSet,
+    collections::{HashMap, HashSet},
     env,
     fs::{self, create_dir, File},
     io::{self, BufRead, Write},
@@ -8,6 +8,10 @@ use std::{
 };
 
 use clap::{Parser, Subcommand};
+use petgraph::{
+    dot::{Config, Dot},
+    graph::{DiGraph, NodeIndex},
+};
 
 #[derive(Parser)]
 #[command(version, about)]
@@ -53,6 +57,8 @@ enum Commands {
         /// Version (i.e. 1.0.0~alpha.2)
         version: String,
     },
+    /// Build a dependency graph of the packages
+    DependencyGraph { packaging_dir: PathBuf },
 }
 
 const PACKAGES_ITER: [Packages; 22] = [
@@ -160,7 +166,7 @@ impl Packages {
         }
     }
 
-    fn package_dir<'a>(&self, packaging_dir: &Path) -> PathBuf {
+    fn spec_file<'a>(&self, packaging_dir: &Path) -> PathBuf {
         packaging_dir.join(&format!(
             "rpms/{}/{}.spec",
             self.package_name(),
@@ -188,7 +194,61 @@ fn main() -> anyhow::Result<()> {
             srpm_url,
             version,
         } => setup_build_command(&workdir, &package_name, &srpm_url, &version),
+        Commands::DependencyGraph { packaging_dir } => dependency_graph_command(&packaging_dir),
     }
+}
+
+fn dependency_graph_command(packaging_dir: &Path) -> anyhow::Result<()> {
+    // Create a directed graph
+    let mut graph = DiGraph::new();
+    let mut nodes: HashMap<String, NodeIndex> = HashMap::new();
+
+    for package in PACKAGES_ITER {
+        if !nodes.contains_key(package.package_name()) {
+            nodes.insert(
+                package.package_name().to_string(),
+                graph.add_node(package.package_name().to_string()),
+            );
+        }
+        // Open the file in read-only mode
+        let file = File::open(&package.spec_file(packaging_dir))?;
+        let reader = io::BufReader::new(file);
+
+        // Iterate over each line in the file
+        for line in reader.lines() {
+            let line = line?;
+            // Check if the line starts with "Requires:"
+            if line.starts_with("Requires:") {
+                let dep = line.split(" ").last().unwrap().to_string();
+                // println!("Dep: '{}'", &dep);
+                if !nodes.contains_key(&dep) {
+                    // println!("Dep not found in nodes: {}", &dep);
+                    nodes.insert(dep.to_string(), graph.add_node(dep.clone()));
+                }
+                graph.add_edge(
+                    *nodes.get(package.package_name()).unwrap(),
+                    *nodes.get(&dep).unwrap(),
+                    (),
+                );
+            }
+        }
+    }
+
+    // Convert the graph to DOT format
+    let dot = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
+
+    // Write the DOT file
+    let mut file = File::create("graph.dot").expect("Unable to create file");
+    write!(file, "{:?}", dot).expect("Unable to write to file");
+
+    println!("Graph saved to graph.dot. Attempting to convert to image (make sure graphviz is installed)...");
+    let _ = Command::new("dot")
+        .arg("-Tpng")
+        .arg(Path::new("graph.dot"))
+        .arg("-o")
+        .arg(Path::new("dep_graph.png"))
+        .status();
+    Ok(())
 }
 
 fn setup_build_command(
@@ -274,7 +334,7 @@ fn setup_build_command(
 fn autobump_releases_command(packaging_dir: &Path, release: &str) -> anyhow::Result<()> {
     for package in PACKAGES_ITER {
         homebrew_sed(
-            &package.package_dir(packaging_dir),
+            &package.spec_file(packaging_dir),
             "Release: ",
             &format!("Release:        {}", release),
         )?;
@@ -343,7 +403,7 @@ fn update_licenses_command(
             if let Some(packaging_dir) = packaging_dir.as_deref() {
                 if !license_result.is_empty() && license_validate(&license_result)? {
                     homebrew_sed(
-                        &package.package_dir(packaging_dir),
+                        &package.spec_file(packaging_dir),
                         "License: ",
                         &format!("License:        {}", &license_result),
                     )?;

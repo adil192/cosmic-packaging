@@ -1,7 +1,7 @@
 use std::{
     collections::HashSet,
     env,
-    fs::{self, File},
+    fs::{self, create_dir, File},
     io::{self, BufRead, Write},
     path::{Path, PathBuf},
     process::Command,
@@ -35,11 +35,23 @@ enum Commands {
         #[arg(long)]
         exclude_gpl_3: bool,
     },
+    /// Autobump releases
     AutobumpReleases {
         /// Packaging directory to rewrite cosmic spec files
         packaging_dir: PathBuf,
         /// Release to set (i.e. '%autorelease')
         release: String,
+    },
+    /// Sets up a fedpkg build (run fkinit to start)
+    SetupBuild {
+        /// Working directory
+        workdir: PathBuf,
+        /// Package name (cosmic-comp for example)
+        package_name: String,
+        /// Srpm url (check the copr)
+        srpm_url: String,
+        /// Version (i.e. 1.0.0~alpha.2)
+        version: String,
     },
 }
 
@@ -170,7 +182,93 @@ fn main() -> anyhow::Result<()> {
             packaging_dir,
             release,
         } => autobump_releases_command(&packaging_dir, &release),
+        Commands::SetupBuild {
+            workdir,
+            package_name,
+            srpm_url,
+            version,
+        } => setup_build_command(&workdir, &package_name, &srpm_url, &version),
     }
+}
+
+fn setup_build_command(
+    workdir: &Path,
+    package_name: &str,
+    srpm_url: &str,
+    version: &str,
+) -> anyhow::Result<()> {
+    let _ = create_dir(workdir);
+    let rpm_path = workdir.join(&format!("{}.rpm", package_name));
+    let package_folder = workdir.join(package_name);
+    println!("fedpkg clone {}", package_name);
+    if !Command::new("fedpkg")
+        .current_dir(workdir)
+        .arg("clone")
+        .arg(package_name)
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: fedpkg clone {}", package_name);
+    }
+    println!("wget -O {:?} {}", &rpm_path, srpm_url);
+    if !Command::new("wget")
+        .current_dir(workdir)
+        .arg("-O")
+        .arg(&rpm_path)
+        .arg(srpm_url)
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: wget -O {:?} {}", &rpm_path, srpm_url);
+    }
+    println!("fedpkg import --skip-diffs {:?}", &rpm_path);
+    if !Command::new("fedpkg")
+        .current_dir(&package_folder)
+        .arg("import")
+        .arg("--skip-diffs")
+        .arg(&rpm_path)
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: fedpkg import --skip-diffs {:?}", &rpm_path);
+    }
+    let commit_msg = format!("\"Update to {}\"", version);
+    println!("fedpkg commit -m {}", &commit_msg);
+    if !Command::new("fedpkg")
+        .current_dir(&package_folder)
+        .arg("commit")
+        .arg("-m")
+        .arg(&commit_msg)
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: fedpkg commit -m {}", &commit_msg);
+    }
+    println!("fedpkg push");
+    if !Command::new("fedpkg")
+        .current_dir(&package_folder)
+        .arg("push")
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: fedpkg push");
+    }
+    println!("fedpkg build");
+    if !Command::new("fedpkg")
+        .current_dir(&package_folder)
+        .arg("build")
+        .status()
+        .unwrap()
+        .success()
+    {
+        panic!("Failed: fedpkg build");
+    }
+    Ok(())
 }
 
 fn autobump_releases_command(packaging_dir: &Path, release: &str) -> anyhow::Result<()> {

@@ -17,45 +17,28 @@ To build (1.0.0~alpha.2 2024-09-28):
 
 > **TODO:** Build these, but first I have to wait on the ssh key to refresh 
 
-- ~~cosmic-comp~~
-- ~~cosmic-icon-theme~~
 - ~~cosmic-app-library~~
-- ~~xdg-desktop-portal-cosmic~~
+- ~~cosmic-applets~~
+- ~~cosmic-bg~~
+- ~~cosmic-comp~~
 - ~~cosmic-edit~~
 - ~~cosmic-files~~
-- ~~cosmic-randr~~
+- ~~cosmic-greeter~~
+- ~~cosmic-icon-theme~~
+- ~~cosmic-osd~~
 - ~~cosmic-settings~~
 - ~~cosmic-settings-daemon~~
-- ~~cosmic-greeter~~
-- ~~cosmic-osd~~
 - ~~cosmic-store~~
-- ~~cosmic-workspaces~~
-- ~~cosmic-screenshot~~
+- ~~cosmic-notifications~~
 - ~~cosmic-panel~~
-
-
-- cosmic-app-library
-- cosmic-comp
-- cosmic-edit
-- cosmic-files
-- cosmic-greeter
-- cosmic-icon-theme
-- cosmic-osd
-- cosmic-panel
-- cosmic-randr
-- cosmic-screenshot
-- cosmic-settings
-- cosmic-settings-daemon
-- cosmic-store
-- cosmic-workspaces
-- xdg-desktop-portal-cosmic
+- ~~cosmic-randr~~
+- ~~cosmic-screenshot~~
+- ~~cosmic-workspaces~~
+- ~~xdg-desktop-portal-cosmic~~
 
 Missing:
 
-- cosmic-applets
-- cosmic-bg
 - cosmic-launcher
-- cosmic-notifications
 - cosmic-session
 - cosmic-term
 - pop-launcher

@@ -5,6 +5,8 @@ use std::{
     io::{self, BufRead, Write},
     path::{Path, PathBuf},
     process::Command,
+    thread,
+    time::Duration,
 };
 
 use clap::{Parser, Subcommand};
@@ -52,11 +54,30 @@ enum Commands {
         workdir: PathBuf,
         /// Package name (cosmic-comp for example)
         package_name: String,
+        /// Optionally specify the branch to build
+        #[arg(long)]
+        build_branch: Option<String>,
         /// Srpm url (check the copr)
-        srpm_url: String,
+        #[arg(long)]
+        srpm_url: Option<String>,
+        /// Optional source branch to get content from
+        #[arg(long)]
+        source_branch: Option<String>,
         /// Version (i.e. 1.0.0~alpha.2)
-        version: String,
+        #[arg(long)]
+        version: Option<String>,
     },
+    // /// Sets up a fedpkg build from the rawhide branch to a different branch
+    // BuildForBranch {
+    //     /// Working directory
+    //     workdir: PathBuf,
+    //     /// Package name (cosmic-comp for example)
+    //     package_name: String,
+    //     /// Other branch (rawhide for example)
+    //     from_branch: String,
+    //     /// To branch (f41 for example)
+    //     to_branch: String,
+    // },
     /// Build a dependency graph of the packages
     DependencyGraph { packaging_dir: PathBuf },
 }
@@ -193,7 +214,16 @@ fn main() -> anyhow::Result<()> {
             package_name,
             srpm_url,
             version,
-        } => setup_build_command(&workdir, &package_name, &srpm_url, &version),
+            build_branch,
+            source_branch,
+        } => setup_build_command(
+            &workdir,
+            &package_name,
+            srpm_url.as_deref(),
+            version.as_deref(),
+            build_branch.as_deref(),
+            source_branch.as_deref(),
+        ),
         Commands::DependencyGraph { packaging_dir } => dependency_graph_command(&packaging_dir),
     }
 }
@@ -254,8 +284,10 @@ fn dependency_graph_command(packaging_dir: &Path) -> anyhow::Result<()> {
 fn setup_build_command(
     workdir: &Path,
     package_name: &str,
-    srpm_url: &str,
-    version: &str,
+    srpm_url: Option<&str>,
+    version: Option<&str>,
+    build_branch: Option<&str>,
+    source_branch: Option<&str>,
 ) -> anyhow::Result<()> {
     let _ = create_dir(workdir);
     let rpm_path = workdir.join(&format!("{}.rpm", package_name));
@@ -271,63 +303,102 @@ fn setup_build_command(
     {
         panic!("Failed: fedpkg clone {}", package_name);
     }
-    println!("wget -O {:?} {}", &rpm_path, srpm_url);
-    if !Command::new("wget")
-        .current_dir(workdir)
-        .arg("-O")
-        .arg(&rpm_path)
-        .arg(srpm_url)
-        .status()
-        .unwrap()
-        .success()
-    {
-        panic!("Failed: wget -O {:?} {}", &rpm_path, srpm_url);
+    if let Some(build_branch) = build_branch {
+        println!("fedpkg switch-branch {}", build_branch);
+        if !Command::new("fedpkg")
+            .current_dir(&package_folder)
+            .arg("switch-branch")
+            .arg(build_branch)
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: fedpkg switch-branch {}", build_branch);
+        }
     }
-    println!("fedpkg import --skip-diffs {:?}", &rpm_path);
-    if !Command::new("fedpkg")
-        .current_dir(&package_folder)
-        .arg("import")
-        .arg("--skip-diffs")
-        .arg(&rpm_path)
-        .status()
-        .unwrap()
-        .success()
-    {
-        panic!("Failed: fedpkg import --skip-diffs {:?}", &rpm_path);
+    if let Some(source_branch) = source_branch {
+        println!("git reset --hard {}", source_branch);
+        if !Command::new("git")
+            .current_dir(&package_folder)
+            .arg("reset")
+            .arg("--hard")
+            .arg(source_branch)
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: git reset --hard {}", source_branch);
+        }
+        println!("fedpkg push --force");
+        if !Command::new("fedpkg")
+            .current_dir(&package_folder)
+            .arg("push")
+            .arg("--force")
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: fedpkg push --force");
+        }
     }
-    let commit_msg = format!("\"Update to {}\"", version);
-    println!("fedpkg commit -m {}", &commit_msg);
-    if !Command::new("fedpkg")
-        .current_dir(&package_folder)
-        .arg("commit")
-        .arg("-m")
-        .arg(&commit_msg)
-        .status()
-        .unwrap()
-        .success()
-    {
-        panic!("Failed: fedpkg commit -m {}", &commit_msg);
-    }
-    println!("fedpkg push");
-    if !Command::new("fedpkg")
-        .current_dir(&package_folder)
-        .arg("push")
-        .status()
-        .unwrap()
-        .success()
-    {
-        panic!("Failed: fedpkg push");
+    if let Some(srpm_url) = srpm_url {
+        println!("wget -O {:?} {}", &rpm_path, srpm_url);
+        if !Command::new("wget")
+            .current_dir(workdir)
+            .arg("-O")
+            .arg(&rpm_path)
+            .arg(srpm_url)
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: wget -O {:?} {}", &rpm_path, srpm_url);
+        }
+        println!("fedpkg import --skip-diffs {:?}", &rpm_path);
+        if !Command::new("fedpkg")
+            .current_dir(&package_folder)
+            .arg("import")
+            .arg("--skip-diffs")
+            .arg(&rpm_path)
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: fedpkg import --skip-diffs {:?}", &rpm_path);
+        }
+        let commit_msg = format!("\"Update to {}\"", version.unwrap_or(srpm_url));
+        println!("fedpkg commit -m {}", &commit_msg);
+        if !Command::new("fedpkg")
+            .current_dir(&package_folder)
+            .arg("commit")
+            .arg("-m")
+            .arg(&commit_msg)
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: fedpkg commit -m {}", &commit_msg);
+        }
+        println!("fedpkg push");
+        if !Command::new("fedpkg")
+            .current_dir(&package_folder)
+            .arg("push")
+            .status()
+            .unwrap()
+            .success()
+        {
+            panic!("Failed: fedpkg push");
+        }
     }
     println!("fedpkg build");
-    if !Command::new("fedpkg")
+    let mut handle = Command::new("fedpkg")
         .current_dir(&package_folder)
         .arg("build")
-        .status()
-        .unwrap()
-        .success()
-    {
-        panic!("Failed: fedpkg build");
-    }
+        .spawn()
+        .unwrap();
+    println!("Waiting 10 secs for the build to commence");
+    thread::sleep(Duration::from_secs(10));
+    handle.kill().unwrap();
     Ok(())
 }
 

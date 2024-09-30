@@ -441,21 +441,24 @@ fn update_licenses_command(
             .current_dir(base_working_dir.join(package_repo))
             .arg("-c")
             .arg(
-                r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{l}" | sort | uniq"##
+                r##"cargo tree --workspace --edges no-build,no-dev,no-proc-macro --no-dedupe --target all --prefix none --format "{l}""##
             ).output()?;
 
             let (stdout, _stderr) = (
                 String::from_utf8(output.stdout).unwrap(),
                 String::from_utf8(output.stderr).unwrap(),
             );
-            let license_result = stdout
+            let mut license_result = stdout
                 .lines()
+                .collect::<HashSet<&str>>()
+                .into_iter()
                 .filter_map(|l| {
                     if l == "GPL-3.0" && exclude_gpl_3 {
                         println!("Skipping raw GPL-3.0");
                         return None;
                     }
-                    let repl_or = l.replace("/", " OR ");
+                    let mut repl_or = l.replace(" / ", " OR ");
+                    repl_or = repl_or.replace("/", " OR ");
                     let result = if repl_or.contains("OR") {
                         format!("({})", repl_or)
                     } else {
@@ -469,8 +472,9 @@ fn update_licenses_command(
                 })
                 .collect::<HashSet<String>>()
                 .into_iter()
-                .collect::<Vec<String>>()
-                .join(" AND ");
+                .collect::<Vec<String>>();
+            license_result.sort();
+            let license_result = license_result.join(" AND ");
             if let Some(packaging_dir) = packaging_dir.as_deref() {
                 if !license_result.is_empty() && license_validate(&license_result)? {
                     homebrew_sed(

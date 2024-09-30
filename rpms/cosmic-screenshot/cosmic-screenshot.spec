@@ -17,7 +17,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Screenshot utility for the COSMIC Desktop Environment
 
-License:        BSD-3-Clause AND (MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND MIT AND MPL-2.0
+License:        (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND BSD-3-Clause AND MIT AND MPL-2.0
 
 URL:            https://github.com/pop-os/cosmic-screenshot
 

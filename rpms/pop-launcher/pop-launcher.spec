@@ -14,7 +14,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Modular IPC-based desktop launcher service
 
-License:        Apache-2.0 WITH LLVM-exception AND (Unlicense OR MIT) AND MIT AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0) AND (MIT OR Apache-2.0 OR Zlib) AND (Apache-2.0  OR  MIT) AND (MIT OR Zlib OR Apache-2.0) AND GPL-3.0-only AND (0BSD OR MIT OR Apache-2.0) AND Apache-2.0 AND BSD-3-Clause AND ISC AND MPL-2.0 AND Zlib AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND (Apache-2.0 OR MIT)
+License:        (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-3-Clause AND GPL-3.0-only AND ISC AND MIT AND MPL-2.0 AND Zlib
 
 URL:            https://github.com/pop-os/launcher
 

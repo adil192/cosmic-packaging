@@ -14,7 +14,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Background manager for the COSMIC Desktop Environment
 
-License:        CC0-1.0 AND (Unlicense OR MIT) AND BSL-1.0 AND Apache-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND MPL-2.0 AND ISC AND (Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND BSD-3-Clause AND (0BSD OR MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MIT AND (Zlib OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0)
+License:        (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND Apache-2.0 AND BSD-3-Clause AND BSL-1.0 AND CC0-1.0 AND ISC AND MIT AND MPL-2.0
 
 URL:            https://github.com/pop-os/cosmic-bg
 

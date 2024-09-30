@@ -7,6 +7,7 @@ ExcludeArch: %{ix86}
 %global shortcommit %{sub %{commit} 1 7}
 %global commitdatestring ###
 %global commitdate ###
+%global cosmic_minver ###
 
 Name:           cosmic-greeter
 Version: ###
@@ -51,7 +52,7 @@ Requires:       greetd-selinux
 # fprintd-pam is required to start sessions (unclear why)
 Requires:       fprintd-pam
 Requires:       pam
-Requires:       cosmic-comp
+Requires:       cosmic-comp >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

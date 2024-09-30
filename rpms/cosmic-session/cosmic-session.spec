@@ -10,6 +10,7 @@ ExcludeArch: %{ix86}
 %global shortcommit %{sub %{commit} 1 7}
 %global commitdatestring ###
 %global commitdate ###
+%global cosmic_minver ###
 
 Name:           cosmic-session
 Version: ###
@@ -38,24 +39,24 @@ BuildRequires:  desktop-file-utils
 
 BuildRequires:  systemd-rpm-macros
 
-Requires:       cosmic-app-library
-Requires:       cosmic-applets
-Requires:       cosmic-bg
-Requires:       cosmic-comp
-Requires:       cosmic-greeter
-Requires:       cosmic-icons
-Requires:       cosmic-launcher
-Requires:       cosmic-notifications
-Requires:       cosmic-osd
-Requires:       cosmic-panel
-Requires:       cosmic-randr
-Requires:       cosmic-screenshot
-Requires:       cosmic-settings
-Requires:       cosmic-settings-daemon
-Requires:       cosmic-workspaces
+Requires:       cosmic-app-library >= %{cosmic_minver}
+Requires:       cosmic-applets >= %{cosmic_minver}
+Requires:       cosmic-bg >= %{cosmic_minver}
+Requires:       cosmic-comp >= %{cosmic_minver}
+Requires:       cosmic-greeter >= %{cosmic_minver}
+Requires:       cosmic-icons >= %{cosmic_minver}
+Requires:       cosmic-launcher >= %{cosmic_minver}
+Requires:       cosmic-notifications >= %{cosmic_minver}
+Requires:       cosmic-osd >= %{cosmic_minver}
+Requires:       cosmic-panel >= %{cosmic_minver}
+Requires:       cosmic-randr >= %{cosmic_minver}
+Requires:       cosmic-screenshot >= %{cosmic_minver}
+Requires:       cosmic-settings >= %{cosmic_minver}
+Requires:       cosmic-settings-daemon >= %{cosmic_minver}
+Requires:       cosmic-workspaces >= %{cosmic_minver}
+Requires:       xdg-desktop-portal-cosmic >= %{cosmic_minver}
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
-Requires:       xdg-desktop-portal-cosmic
 Requires:       xorg-x11-server-Xwayland
 
 %global _description %{expand:

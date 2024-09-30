@@ -79,6 +79,7 @@ if [ "$NIGHTLY" -eq 1 ]; then
 else
     sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
 fi
+sed -i "/^%global cosmic_minver / s/.*/%global cosmic_minver $VERSION/" $NAME.spec
 sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec

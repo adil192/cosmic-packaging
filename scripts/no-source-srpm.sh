@@ -27,3 +27,5 @@ if [ "$NIGHTLY" -eq 1 ]; then
 else  
     sed -i "/^Version: / s/.*/Version:        ${VERSION}^${CURRENT_DATE}/" $NAME.spec
 fi
+
+sed -i "/^%global cosmic_minver / s/.*/%global cosmic_minver $VERSION/" $NAME.spec

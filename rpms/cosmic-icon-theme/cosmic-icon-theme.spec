@@ -3,6 +3,7 @@
 %global shortcommit %{sub %{commit} 1 7}
 %global commitdatestring ###
 %global commitdate ###
+%global cosmic_minver ###
 
 Name:           cosmic-icon-theme
 Version: ###

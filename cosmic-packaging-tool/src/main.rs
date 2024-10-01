@@ -459,22 +459,38 @@ fn update_licenses_command(
                     }
                     let mut repl_or = l.replace(" / ", " OR ");
                     repl_or = repl_or.replace("/", " OR ");
-                    let result = if repl_or.contains("OR") {
-                        format!("({})", repl_or)
-                    } else {
-                        repl_or
-                    };
-                    if result.trim().is_empty() {
+
+                    if repl_or.trim().is_empty() {
                         None
                     } else {
-                        Some(result.trim().to_string())
+                        Some(repl_or.trim().to_string())
                     }
+                })
+                .collect::<HashSet<String>>()
+                .into_iter()
+                .map(|license| {
+                    let mut sub_licenses = license
+                        .split("OR")
+                        .map(|sub_license| sub_license.trim().to_string())
+                        .collect::<Vec<String>>();
+                    sub_licenses.sort();
+                    sub_licenses.join(" OR ").trim().to_string()
                 })
                 .collect::<HashSet<String>>()
                 .into_iter()
                 .collect::<Vec<String>>();
             license_result.sort();
-            let license_result = license_result.join(" AND ");
+            let license_result = license_result
+                .iter()
+                .map(|license| {
+                    if license.contains("OR") {
+                        format!("({})", license)
+                    } else {
+                        license.clone()
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(" AND ");
             if let Some(packaging_dir) = packaging_dir.as_deref() {
                 if !license_result.is_empty() && license_validate(&license_result)? {
                     homebrew_sed(

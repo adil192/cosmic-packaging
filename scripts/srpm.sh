@@ -56,7 +56,11 @@ COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 if [ "$VENDOR" -eq 1 ]; then
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
-    cargo vendor >../vendor-config-$SHORTCOMMIT.toml
+    if [ "$NIGHTLY" -eq 1 ]; then
+        cargo vendor >../vendor-config-$SHORTCOMMIT.toml
+    else
+        cargo vendor >../vendor-config-$VERSION_NO_TILDE.toml
+    fi
     
     # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
     # current version containing the bug: 2.2.0
@@ -67,8 +71,11 @@ if [ "$VENDOR" -eq 1 ]; then
 
     # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
     chmod -x ./vendor/ipnet/src/lib.rs || true
-    
-    tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
+    if [ "$NIGHTLY" -eq 1 ]; then
+        tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
+    else
+        tar -pczf ../vendor-$VERSION_NO_TILDE.tar.gz vendor
+    fi
 fi
 
 cd ..

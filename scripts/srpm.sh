@@ -22,6 +22,7 @@ check_variable() {
 check_variable NAME
 SOURCE_NAME=${SOURCE_NAME:-"$NAME"}
 VERSION=${VERSION:-"1.0.0~alpha.2"}
+VERSION_NO_TILDE="${VERSION//~/\-}"
 COMMIT=${COMMIT:-"latest"}
 REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
 VENDOR=${VENDOR:-1}
@@ -76,10 +77,18 @@ cd ..
 if [ "$NIGHTLY" -eq 1 ]; then
     echo "NIGHTLY=1"
     sed -i "/^Version: / s/.*/Version:        $VERSION^git%{commitdate}.%{shortcommit}/" $NAME.spec
+    sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
+    sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 else
     sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
+    # Replace shortcommit with version_no_tilde
+    sed -i "/^%global shortcommit / s/.*/%global version_no_tilde $VERSION_NO_TILDE" $NAME.spec
+    sed -i "s/%{shortcommit}/%{version_no_tilde}/g" $NAME.spec
+    # Delete commitdate, we don't need it here
+    sed -i "/^%global commitdate /d" $NAME.spec
+    # We still need commit, add comments explaining why
+    sed -i "/^%global commit / s/.*/\# While our version corresponds to an upstream tag, we still need to define\n\# these macros in order to set the VERGEN_GIT_SHA and VERGEN_GIT_COMMIT_DATE\n\# environment variables in multiple sections of the spec file.\n%global commit $COMMIT/" $NAME.spec
 fi
+# Universal replacements - Define cosmic_minver and commitdatestring
 sed -i "/^%global cosmic_minver / s/.*/%global cosmic_minver $VERSION/" $NAME.spec
-sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
-sed -i "/^%global commitdate / s/.*/%global commitdate $COMMITDATE/" $NAME.spec
 sed -i "/^%global commitdatestring / s/.*/%global commitdatestring $COMMITDATESTRING/" $NAME.spec

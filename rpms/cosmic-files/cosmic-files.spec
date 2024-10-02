@@ -42,7 +42,7 @@ BuildRequires:  desktop-file-utils
 
 Requires:       gvfs
 Requires:       xdg-utils
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

@@ -43,7 +43,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pipewire-devel
 BuildRequires:  clang
 
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 Requires:       nm-connection-editor
 
 %global _description %{expand:

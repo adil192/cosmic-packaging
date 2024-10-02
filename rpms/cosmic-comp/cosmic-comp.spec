@@ -41,6 +41,7 @@ BuildRequires:  pixman-devel
 BuildRequires:  make
 
 Requires:       libseat
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 Recommends:     cosmic-session
 

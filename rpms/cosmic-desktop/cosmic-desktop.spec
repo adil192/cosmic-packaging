@@ -13,7 +13,7 @@ Requires:       cosmic-app-library
 Requires:       cosmic-applets
 Requires:       cosmic-bg
 Requires:       cosmic-comp
-Requires:       cosmic-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 Requires:       cosmic-launcher
 Requires:       cosmic-notifications
 Requires:       cosmic-osd

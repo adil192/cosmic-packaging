@@ -40,6 +40,8 @@ BuildRequires:  systemd-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  make
 
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
+
 %global _description %{expand:
 %{summary}.}
 

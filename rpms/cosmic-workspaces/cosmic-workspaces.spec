@@ -46,7 +46,7 @@ BuildRequires:  make
 BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-comp
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

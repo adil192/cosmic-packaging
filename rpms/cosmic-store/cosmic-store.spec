@@ -40,7 +40,7 @@ BuildRequires:  desktop-file-utils
 
 Requires:       PackageKit
 Requires:       flatpak-libs
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

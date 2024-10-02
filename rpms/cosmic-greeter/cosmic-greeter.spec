@@ -53,6 +53,7 @@ Requires:       greetd-selinux
 Requires:       fprintd-pam
 Requires:       pam
 Requires:       cosmic-comp >= %{cosmic_minver}
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

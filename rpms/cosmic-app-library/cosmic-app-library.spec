@@ -39,7 +39,7 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
 
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

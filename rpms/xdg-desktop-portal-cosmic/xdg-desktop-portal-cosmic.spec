@@ -44,7 +44,7 @@ BuildRequires:  gstreamer1-devel
 BuildRequires:  glib2-devel
 BuildRequires:  just
 
-Requires:       hicolor-icon-theme
+Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
 %{summary}.}

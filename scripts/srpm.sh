@@ -22,7 +22,7 @@ check_variable() {
 check_variable NAME
 SOURCE_NAME=${SOURCE_NAME:-"$NAME"}
 VERSION=${VERSION:-"1.0.0~alpha.2"}
-VERSION_NO_TILDE="${VERSION//~/\-}"
+VERSION_NO_TILDE=$(echo "$VERSION" | sed 's/~/-/g')
 COMMIT=${COMMIT:-"latest"}
 REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
 VENDOR=${VENDOR:-1}

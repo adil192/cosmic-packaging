@@ -88,8 +88,8 @@ if [ "$NIGHTLY" -eq 1 ]; then
     sed -i "/^%global commit / s/.*/%global commit $COMMIT/" $NAME.spec
 else
     sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
-    # Replace shortcommit with version_no_tilde
-    sed -i "/^%global shortcommit / s/.*/%global version_no_tilde $VERSION_NO_TILDE/" $NAME.spec
+    # Replace shortcommit with version_no_tilde and delete shortcommit def. version_no_tilde is predefined by rpm macros
+    sed -i "/^%global shortcommit /d" $NAME.spec
     sed -i "s/%{shortcommit}/%{version_no_tilde}/g" $NAME.spec
     # Delete commitdate, we don't need it here
     sed -i "/^%global commitdate /d" $NAME.spec

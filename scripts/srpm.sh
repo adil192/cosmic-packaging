@@ -90,7 +90,7 @@ else
     sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
     # Replace shortcommit with version_no_tilde and delete shortcommit def. version_no_tilde is predefined by rpm macros
     sed -i "/^%global shortcommit /d" $NAME.spec
-    sed -i "s/%{shortcommit}/%{version_no_tilde}/g" $NAME.spec
+    sed -i "s/%{shortcommit}/epoch-%{version_no_tilde}/g" $NAME.spec
     # Delete commitdate, we don't need it here
     sed -i "/^%global commitdate /d" $NAME.spec
     # We still need commit, add comments explaining why

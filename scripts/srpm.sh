@@ -92,6 +92,7 @@ else
     sed -i "/^%global shortcommit /d" $NAME.spec
     # Replace commit in Source0 with epoch-%version_no_tilde
     sed -i "/^Source0/ s/%{commit}/epoch-%{version_no_tilde}/g" $NAME.spec
+    sed -i "/^%autosetup/ s/%{commit}/epoch-%{version_no_tilde}/g" $NAME.spec
     sed -i "s/%{shortcommit}/%{version_no_tilde}/g" $NAME.spec
     # Delete commitdate, we don't need it here
     sed -i "/^%global commitdate /d" $NAME.spec

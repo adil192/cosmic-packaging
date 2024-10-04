@@ -1,3 +1,4 @@
+# Generated using the scripts at https://pagure.io/fedora-cosmic/cosmic-packaging/blob/main/f/scripts
 
 %global commit ###
 %global shortcommit %{sub %{commit} 1 7}

@@ -19,7 +19,7 @@ License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND (0BSD OR Apache-2.0 O
 
 URL:            https://github.com/pop-os/cosmic-store
 
-Source0:        https://github.com/pop-os/cosmic-store/archive/%{commit}/cosmic-store-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-store/archive/%{shortcommit}/cosmic-store-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-store at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

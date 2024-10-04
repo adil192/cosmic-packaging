@@ -23,7 +23,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 URL:            https://github.com/pop-os/cosmic-launcher
 
 # Note, this is a patched cosmic-launcher while https://github.com/pop-os/launcher/pull/242 is outstanding
-Source0:        https://github.com/ryanabx/cosmic-launcher/archive/%{commit}/cosmic-launcher-%{shortcommit}.tar.gz
+Source0:        https://github.com/ryanabx/cosmic-launcher/archive/%{shortcommit}/cosmic-launcher-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-launcher at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

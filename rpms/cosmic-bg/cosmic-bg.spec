@@ -19,7 +19,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-bg
 
-Source0:        https://github.com/pop-os/cosmic-bg/archive/%{commit}/cosmic-bg-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-bg/archive/%{shortcommit}/cosmic-bg-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-bg at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

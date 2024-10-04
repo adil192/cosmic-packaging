@@ -21,7 +21,7 @@ License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND (0BSD OR Apache-2.0 O
 
 URL:            https://github.com/pop-os/cosmic-edit
 
-Source0:        https://github.com/pop-os/cosmic-edit/archive/%{commit}/cosmic-edit-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-edit/archive/%{shortcommit}/cosmic-edit-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-edit at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

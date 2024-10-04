@@ -15,7 +15,7 @@ License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-icons
 
-Source0:        https://github.com/pop-os/cosmic-icons/archive/%{commit}/cosmic-icons-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-icons/archive/%{shortcommit}/cosmic-icons-%{shortcommit}.tar.gz
 
 BuildArch:      noarch
 

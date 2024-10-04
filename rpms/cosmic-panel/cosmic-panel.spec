@@ -19,7 +19,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-panel
 
-Source0:        https://github.com/pop-os/cosmic-panel/archive/%{commit}/cosmic-panel-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-panel/archive/%{shortcommit}/cosmic-panel-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-panel at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

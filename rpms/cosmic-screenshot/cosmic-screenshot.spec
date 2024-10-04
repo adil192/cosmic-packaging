@@ -22,7 +22,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND (Apache-2.0 OR Apache-2.0 WITH L
 
 URL:            https://github.com/pop-os/cosmic-screenshot
 
-Source0:        https://github.com/pop-os/cosmic-screenshot/archive/%{commit}/cosmic-screenshot-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-screenshot/archive/%{shortcommit}/cosmic-screenshot-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-screenshot at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

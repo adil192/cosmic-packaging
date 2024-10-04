@@ -22,7 +22,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-workspaces-epoch
 
-Source0:        https://github.com/pop-os/cosmic-workspaces-epoch/archive/%{commit}/cosmic-workspaces-epoch-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-workspaces-epoch/archive/%{shortcommit}/cosmic-workspaces-epoch-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-workspaces-epoch at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

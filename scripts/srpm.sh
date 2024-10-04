@@ -59,7 +59,7 @@ if [ "$VENDOR" -eq 1 ]; then
     if [ "$NIGHTLY" -eq 1 ]; then
         cargo vendor >../vendor-config-$SHORTCOMMIT.toml
     else
-        cargo vendor >../vendor-config-$VERSION_NO_TILDE.toml
+        cargo vendor >../vendor-config-epoch-$VERSION_NO_TILDE.toml
     fi
     
     # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
@@ -74,7 +74,7 @@ if [ "$VENDOR" -eq 1 ]; then
     if [ "$NIGHTLY" -eq 1 ]; then
         tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
     else
-        tar -pczf ../vendor-$VERSION_NO_TILDE.tar.gz vendor
+        tar -pczf ../vendor-epoch-$VERSION_NO_TILDE.tar.gz vendor
     fi
 fi
 

@@ -260,6 +260,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_datadir}/applications/com.system76.CosmicPanelAppButton.desktop
 %{_datadir}/applications/com.system76.CosmicPanelWorkspacesButton.desktop
 %{_datadir}/applications/com.system76.CosmicPanelLauncherButton.desktop
+%{_datadir}/metainfo/com.system76.CosmicApplets.metainfo.xml
 %dir %{_datadir}/cosmic/com.system76.CosmicAppList
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
 %{_datadir}/cosmic/com.system76.CosmicAppList/v1/filter_top_levels

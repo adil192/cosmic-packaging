@@ -22,7 +22,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-settings-daemon
 
-Source0:        https://github.com/pop-os/cosmic-settings-daemon/archive/%{shortcommit}/cosmic-settings-daemon-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-settings-daemon/archive/%{commit}/cosmic-settings-daemon-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-settings-daemon at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

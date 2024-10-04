@@ -59,7 +59,7 @@ if [ "$VENDOR" -eq 1 ]; then
     if [ "$NIGHTLY" -eq 1 ]; then
         cargo vendor >../vendor-config-$SHORTCOMMIT.toml
     else
-        cargo vendor >../vendor-config-epoch-$VERSION_NO_TILDE.toml
+        cargo vendor >../vendor-config-$VERSION_NO_TILDE.toml
     fi
     
     # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
@@ -74,7 +74,7 @@ if [ "$VENDOR" -eq 1 ]; then
     if [ "$NIGHTLY" -eq 1 ]; then
         tar -pczf ../vendor-$SHORTCOMMIT.tar.gz vendor
     else
-        tar -pczf ../vendor-epoch-$VERSION_NO_TILDE.tar.gz vendor
+        tar -pczf ../vendor-$VERSION_NO_TILDE.tar.gz vendor
     fi
 fi
 
@@ -90,7 +90,9 @@ else
     sed -i "/^Version: / s/.*/Version:        $VERSION/" $NAME.spec
     # Replace shortcommit with version_no_tilde and delete shortcommit def. version_no_tilde is predefined by rpm macros
     sed -i "/^%global shortcommit /d" $NAME.spec
-    sed -i "s/%{shortcommit}/epoch-%{version_no_tilde}/g" $NAME.spec
+    # Replace commit in Source0 with epoch-%version_no_tilde
+    sed -i "/^Source0/ s/%{commit}/epoch-%{version_no_tilde}/g" $NAME.spec
+    sed -i "s/%{shortcommit}/%{version_no_tilde}/g" $NAME.spec
     # Delete commitdate, we don't need it here
     sed -i "/^%global commitdate /d" $NAME.spec
     # We still need commit, add comments explaining why

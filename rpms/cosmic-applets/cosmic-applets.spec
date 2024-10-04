@@ -19,7 +19,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-applets
 
-Source0:        https://github.com/pop-os/cosmic-applets/archive/%{shortcommit}/cosmic-applets-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-applets/archive/%{commit}/cosmic-applets-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-applets at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

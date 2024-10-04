@@ -22,7 +22,7 @@ License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Ap
 
 URL:            https://github.com/pop-os/cosmic-session
 
-Source0:        https://github.com/pop-os/cosmic-session/archive/%{shortcommit}/cosmic-session-%{shortcommit}.tar.gz
+Source0:        https://github.com/pop-os/cosmic-session/archive/%{commit}/cosmic-session-%{shortcommit}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-session at the specified commit
 # * cargo vendor > vendor-config-%%{shortcommit}.toml

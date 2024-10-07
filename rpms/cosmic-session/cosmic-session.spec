@@ -44,6 +44,7 @@ Requires:       cosmic-app-library >= %{cosmic_minver}
 Requires:       cosmic-applets >= %{cosmic_minver}
 Requires:       cosmic-bg >= %{cosmic_minver}
 Requires:       cosmic-comp >= %{cosmic_minver}
+Requires:       cosmic-files >= %{cosmic_minver}
 Requires:       cosmic-greeter >= %{cosmic_minver}
 Requires:       cosmic-icons >= %{cosmic_minver}
 Requires:       cosmic-launcher >= %{cosmic_minver}

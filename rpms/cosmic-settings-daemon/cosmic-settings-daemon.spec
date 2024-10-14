@@ -47,6 +47,8 @@ BuildRequires:  just
 Requires:       acpid
 Requires:       adw-gtk3-theme
 Requires:       pop-sound-theme
+Recommends:     geoclue2
+Recommends:     playerctl
 
 %global _description %{expand:
 %{summary}.}

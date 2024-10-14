@@ -13,6 +13,8 @@ Requires:       cosmic-app-library
 Requires:       cosmic-applets
 Requires:       cosmic-bg
 Requires:       cosmic-comp
+Requires:       cosmic-files
+Requires:       cosmic-greeter
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 Requires:       cosmic-launcher
 Requires:       cosmic-notifications
@@ -28,10 +30,10 @@ Requires:       pop-launcher
 Requires:       xdg-desktop-portal-cosmic
 
 Recommends:     cosmic-edit
-Recommends:     cosmic-files
-Recommends:     cosmic-greeter
+Recommends:     cosmic-player
 Recommends:     cosmic-store
 Recommends:     cosmic-term
+Recommends:     cosmic-wallpapers
 
 %global _description %{expand:
 %{summary}.}

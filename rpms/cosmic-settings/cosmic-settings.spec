@@ -46,6 +46,12 @@ BuildRequires:  clang
 
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 Requires:       nm-connection-editor
+Requires:       accountsservice
+Requires:       cosmic-settings-daemon >= %{cosmic_minver}
+Requires:       cosmic-randr >= %{cosmic_minver}
+Requires:       gettext
+Requires:       iso-codes
+Requires:       NetworkManager
 
 %global _description %{expand:
 %{summary}.}

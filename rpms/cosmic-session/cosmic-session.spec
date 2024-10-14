@@ -60,6 +60,7 @@ Requires:       xdg-desktop-portal-cosmic >= %{cosmic_minver}
 Requires:       mozilla-fira-mono-fonts
 Requires:       mozilla-fira-sans-fonts
 Requires:       xorg-x11-server-Xwayland
+Recommends:     cosmic-wallpapers >= %{cosmic_minver}
 
 %global _description %{expand:
 The session manager for the COSMIC desktop environment.}

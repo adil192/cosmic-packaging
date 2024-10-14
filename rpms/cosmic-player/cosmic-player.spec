@@ -44,7 +44,6 @@ BuildRequires:  libxkbcommon-devel
 BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
-Requires:       gstreamer1
 Requires:       gstreamer1-plugins-base
 Requires:       gstreamer1-plugins-good
 

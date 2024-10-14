@@ -46,6 +46,7 @@ BuildRequires:  just
 
 Requires:       acpid
 Requires:       adw-gtk3-theme
+Requires:       pop-sound-theme
 
 %global _description %{expand:
 %{summary}.}

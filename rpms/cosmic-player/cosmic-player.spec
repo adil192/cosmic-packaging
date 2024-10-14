@@ -100,7 +100,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %cargo_test
 %endif
 
-%player
+%files
 %license LICENSE
 %license LICENSE.dependencies
 %license cargo-vendor.txt

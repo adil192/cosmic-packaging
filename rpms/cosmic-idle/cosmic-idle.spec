@@ -88,7 +88,6 @@ export VERGEN_GIT_SHA="%{commit}"
 %license LICENSE
 %license LICENSE.dependencies
 %license cargo-vendor.txt
-%doc README.md
 %{_bindir}/cosmic-idle
 
 %changelog

@@ -47,6 +47,7 @@ Requires:       cosmic-comp >= %{cosmic_minver}
 Requires:       cosmic-files >= %{cosmic_minver}
 Requires:       cosmic-greeter >= %{cosmic_minver}
 Requires:       cosmic-icons >= %{cosmic_minver}
+Requires:       cosmic-idle >= %{cosmic_minver}
 Requires:       cosmic-launcher >= %{cosmic_minver}
 Requires:       cosmic-notifications >= %{cosmic_minver}
 Requires:       cosmic-osd >= %{cosmic_minver}

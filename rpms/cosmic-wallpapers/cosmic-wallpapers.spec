@@ -18,6 +18,9 @@ URL:            https://github.com/pop-os/cosmic-wallpapers
 
 Source0:        https://github.com/pop-os/cosmic-wallpapers/archive/%{commit}/cosmic-wallpapers-%{shortcommit}.tar.gz
 
+# https://github.com/pop-os/cosmic-wallpapers/pull/7
+Patch0:         https://patch-diff.githubusercontent.com/raw/pop-os/cosmic-wallpapers/pull/7.patch
+
 BuildArch:      noarch
 
 BuildRequires:  make
@@ -28,7 +31,7 @@ BuildRequires:  make
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-wallpapers-%{commit}
+%autosetup -n cosmic-wallpapers-%{commit} -p1 -a1
 
 %build
 
@@ -41,6 +44,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %files
 %dir %{_datadir}/backgrounds/cosmic
 %{_datadir}/backgrounds/cosmic/*
+%license LICENSE
 
 %changelog
 %autochangelog

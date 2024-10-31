@@ -31,7 +31,7 @@ BuildRequires:  make
 %description %{_description}
 
 %prep
-%autosetup -n cosmic-wallpapers-%{commit} -p1 -a1
+%autosetup -n cosmic-wallpapers-%{commit} -p1
 
 %build
 

@@ -11,6 +11,7 @@ Version: ###
 Release:        %autorelease
 Summary:        Default wallpapers for the COSMIC Desktop Environment
 
+# All cosmic wallpapers are either public domain or CC-BY-SA-4.0
 License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-wallpapers

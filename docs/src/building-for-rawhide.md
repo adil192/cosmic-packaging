@@ -13,7 +13,7 @@ fkinit
 ```
 
 
-To build (1.0.0~alpha.2 2024-09-28):
+To build (1.0.0~alpha.3 2024-09-28):
 
 > **TODO:** Build these, but first I have to wait on the ssh key to refresh 
 
@@ -44,5 +44,5 @@ Missing:
 - pop-launcher
 
 ```shell
-cargo run -- setup-build ~/workdir <PACKAGE_NAME> <SRPM_URL> 1.0.0~alpha.2
+cargo run -- setup-build ~/workdir <PACKAGE_NAME> <SRPM_URL> 1.0.0~alpha.3
 ``` 

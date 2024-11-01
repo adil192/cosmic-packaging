@@ -35,14 +35,14 @@ To build (1.0.0~alpha.3 2024-09-28):
 - ~~cosmic-screenshot~~
 - ~~cosmic-workspaces~~
 - ~~xdg-desktop-portal-cosmic~~
+- ~~cosmic-launcher~~
+- ~~cosmic-session~~
+- ~~cosmic-term~~
+- ~~pop-launcher~~
 
-Missing:
 
-- cosmic-launcher
-- cosmic-session
-- cosmic-term
-- pop-launcher
+Make sure wget is installed!
 
 ```shell
-cargo run -- setup-build ~/workdir <PACKAGE_NAME> <SRPM_URL> 1.0.0~alpha.3
+cargo run -- setup-build ~/workdir <PACKAGE_NAME> --srpm-url <SRPM_URL> --version 1.0.0~alpha.3
 ``` 

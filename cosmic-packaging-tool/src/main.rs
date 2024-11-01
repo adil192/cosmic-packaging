@@ -60,6 +60,9 @@ enum Commands {
         /// Srpm url (check the copr)
         #[arg(long)]
         srpm_url: Option<String>,
+        /// Auto get the latest srpm from the tagged repo (beta)
+        #[arg(long)]
+        auto_srpm: bool,
         /// Optional source branch to get content from
         #[arg(long)]
         source_branch: Option<String>,
@@ -196,7 +199,8 @@ impl Packages {
     }
 }
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let args = Cli::parse();
     match args.action {
         Commands::UpdateLicenses {
@@ -216,6 +220,7 @@ fn main() -> anyhow::Result<()> {
             version,
             build_branch,
             source_branch,
+            auto_srpm,
         } => setup_build_command(
             &workdir,
             &package_name,
@@ -223,7 +228,8 @@ fn main() -> anyhow::Result<()> {
             version.as_deref(),
             build_branch.as_deref(),
             source_branch.as_deref(),
-        ),
+            auto_srpm,
+        ).await,
         Commands::DependencyGraph { packaging_dir } => dependency_graph_command(&packaging_dir),
     }
 }
@@ -281,13 +287,14 @@ fn dependency_graph_command(packaging_dir: &Path) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn setup_build_command(
+async fn setup_build_command(
     workdir: &Path,
     package_name: &str,
     srpm_url: Option<&str>,
     version: Option<&str>,
     build_branch: Option<&str>,
     source_branch: Option<&str>,
+    auto_srpm: bool,
 ) -> anyhow::Result<()> {
     let _ = create_dir(workdir);
     let rpm_path = workdir.join(&format!("{}.rpm", package_name));
@@ -341,18 +348,49 @@ fn setup_build_command(
             panic!("Failed: fedpkg push --force");
         }
     }
+    let srpm_url = if auto_srpm {
+        if srpm_url.is_some() {
+            println!("WARNING: srpm url ignored because --auto-srpm was specified");
+        }
+        let url = format!("https://copr.fedorainfracloud.org/api_3/package/?ownername=ryanabx&projectname=cosmic-epoch-tagged&packagename={}&with_latest_succeeded_build=true", package_name);
+        let response = reqwest::get(url)
+            .await
+            .unwrap()
+            .json::<serde_json::Value>()
+            .await
+            .unwrap();
+        println!(
+            "Response from api: {}",
+            serde_json::to_string_pretty(&response)?
+        );
+        let url = response
+            .get("builds")
+            .unwrap()
+            .get("latest_succeeded")
+            .unwrap()
+            .get("source_package")
+            .unwrap()
+            .get("url")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+        Some(url)
+    } else {
+        srpm_url.map(|s| s.to_string())
+    };
     if let Some(srpm_url) = srpm_url {
         println!("wget -O {:?} {}", &rpm_path, srpm_url);
         if !Command::new("wget")
             .current_dir(workdir)
             .arg("-O")
             .arg(&rpm_path)
-            .arg(srpm_url)
+            .arg(&srpm_url)
             .status()
             .unwrap()
             .success()
         {
-            panic!("Failed: wget -O {:?} {}", &rpm_path, srpm_url);
+            panic!("Failed: wget -O {:?} {}", &rpm_path, &srpm_url);
         }
         println!("fedpkg import --skip-diffs {:?}", &rpm_path);
         if !Command::new("fedpkg")
@@ -366,7 +404,7 @@ fn setup_build_command(
         {
             panic!("Failed: fedpkg import --skip-diffs {:?}", &rpm_path);
         }
-        let commit_msg = format!("\"Update to {}\"", version.unwrap_or(srpm_url));
+        let commit_msg = format!("\"Update to {}\"", version.unwrap_or(&srpm_url));
         println!("fedpkg commit -m {}", &commit_msg);
         if !Command::new("fedpkg")
             .current_dir(&package_folder)

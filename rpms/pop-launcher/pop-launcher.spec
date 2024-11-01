@@ -65,6 +65,7 @@ fi
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
+export POP_LAUNCHER_LIB_DIR=/usr/libexec/pop-launcher
 just build-release --offline --frozen
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
@@ -75,7 +76,7 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
-just rootdir=%{buildroot} install
+just rootdir=%{buildroot} lib-path=libexec install
 
 %if %{with check}
 %check

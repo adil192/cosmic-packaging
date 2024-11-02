@@ -53,6 +53,11 @@ Requires:       gettext
 Requires:       iso-codes
 Requires:       NetworkManager
 
+# Require a power-profiles-daemon implementation
+Requires:       ppd-service
+# Prefer tuned-ppd
+Suggests:       tuned-ppd
+
 %global _description %{expand:
 %{summary}.}
 

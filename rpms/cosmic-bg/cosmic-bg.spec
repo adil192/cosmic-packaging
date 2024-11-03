@@ -38,6 +38,7 @@ BuildRequires:  just
 BuildRequires:  desktop-file-utils
 
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
+Requires:       desktop-backgrounds-compat
 
 %global _description %{expand:
 %{summary}.}
@@ -73,6 +74,12 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} prefix=%{_prefix} install
+
+# Set default background to system branding
+sed -e 's|source: Path(".*"),|source: Path("/usr/share/backgrounds/default-dark.png"),|' -i %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/all
+
+# Set default setting for backgrounds on all displays
+echo "true" > %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/same-on-all 
 
 # COSMIC is not a valid category pre-fedora 41
 %if %{defined fedora} && 0%{?fedora} < 41

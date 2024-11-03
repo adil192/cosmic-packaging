@@ -85,6 +85,9 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
+# Fix Firefox desktop file reference
+sed -e 's/"firefox"/"org.mozilla.firefox"/' -i %{buildroot}%{_datadir}/cosmic/com.system76.CosmicAppList/v1/favorites
+
 # COSMIC is not a valid category pre-fedora 41
 %if %{defined fedora} && 0%{?fedora} < 41
 

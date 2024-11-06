@@ -103,6 +103,13 @@ desktop-file-install \
 --add-category X-COSMIC \
 --delete-original \
 --dir %{buildroot}%{_datadir}/applications \
+%{buildroot}%{_datadir}/applications/com.system76.CosmicAppletA11y.desktop
+
+desktop-file-install \
+--remove-category COSMIC \
+--add-category X-COSMIC \
+--delete-original \
+--dir %{buildroot}%{_datadir}/applications \
 %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 
 desktop-file-install \
@@ -207,6 +214,7 @@ desktop-file-install \
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppList.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletA11y.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop
@@ -236,6 +244,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_bindir}/cosmic-applets
 %{_bindir}/cosmic-panel-button
 %{_bindir}/cosmic-app-list
+%{_bindir}/cosmic-applet-a11y
 %{_bindir}/cosmic-applet-audio
 %{_bindir}/cosmic-applet-battery
 %{_bindir}/cosmic-applet-bluetooth
@@ -249,6 +258,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_bindir}/cosmic-applet-time
 %{_bindir}/cosmic-applet-workspaces
 %{_datadir}/applications/com.system76.CosmicAppList.desktop
+%{_datadir}/applications/com.system76.CosmicAppletA11y.desktop
 %{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
 %{_datadir}/applications/com.system76.CosmicAppletBattery.desktop
 %{_datadir}/applications/com.system76.CosmicAppletBluetooth.desktop

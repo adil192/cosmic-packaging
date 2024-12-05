@@ -21,7 +21,7 @@ check_variable() {
 
 check_variable NAME
 SOURCE_NAME=${SOURCE_NAME:-"$NAME"}
-VERSION=${VERSION:-"1.0.0~alpha.3"}
+VERSION=${VERSION:-"1.0.0~alpha.4"}
 VERSION_NO_TILDE=$(echo "$VERSION" | sed 's/~/-/g')
 COMMIT=${COMMIT:-"latest"}
 REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
@@ -29,7 +29,7 @@ VENDOR=${VENDOR:-1}
 NIGHTLY=${NIGHTLY:-1}
 
 if [ "$NIGHTLY" -eq 0 ]; then
-    COMMIT="epoch-1.0.0-alpha.3"
+    COMMIT="epoch-1.0.0-alpha.4"
 fi
 
 if [ ! -e "$NAME" ]; then

@@ -33,6 +33,10 @@ Source2:        vendor-config-%{shortcommit}.toml
 # COSMIC's dconf profile
 Source3:        cosmic-dconf-profile.txt
 
+# Fixes cursor themes in COSMIC
+# See: https://github.com/pop-os/cosmic-session/pull/87
+Patch0: https://patch-diff.githubusercontent.com/raw/pop-os/cosmic-session/pull/87.patch
+
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
 BuildRequires:  lld

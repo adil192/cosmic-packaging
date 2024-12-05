@@ -30,6 +30,8 @@ Source0:        https://github.com/pop-os/cosmic-session/archive/%{commit}/cosmi
 Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
+# COSMIC's dconf profile
+Source3:        cosmic-dconf-profile.txt
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
@@ -97,6 +99,7 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} install
+install -Dm0644 cosmic-dconf-profile.txt %{buildroot}/%{_sysconfdir}/dconf/profile/cosmic
 
 %if %{with check}
 %check
@@ -115,6 +118,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_userunitdir}/cosmic-session.target
 %{_datadir}/wayland-sessions/cosmic.desktop
 %{_datadir}/applications/cosmic-mimeapps.list
+%{_sysconfdir}/dconf/profile/cosmic
 
 %changelog
 %autochangelog

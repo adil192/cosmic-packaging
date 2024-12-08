@@ -103,7 +103,7 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} install
-install -Dm0644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/dconf/profile/cosmic
+install -Dm0644 %{SOURCE3} %{buildroot}/%{_datadir}/dconf/profile/cosmic
 
 %if %{with check}
 %check
@@ -122,7 +122,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_userunitdir}/cosmic-session.target
 %{_datadir}/wayland-sessions/cosmic.desktop
 %{_datadir}/applications/cosmic-mimeapps.list
-%{_sysconfdir}/dconf/profile/cosmic
+%{_datadir}/dconf/profile/cosmic
 
 %changelog
 %autochangelog

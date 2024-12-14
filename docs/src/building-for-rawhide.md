@@ -13,7 +13,7 @@ fkinit
 ```
 
 
-To build (1.0.0~alpha.4 2024-09-28):
+To build (1.0.0~alpha.3 2024-09-28):
 
 > **TODO:** Build these, but first I have to wait on the ssh key to refresh 
 

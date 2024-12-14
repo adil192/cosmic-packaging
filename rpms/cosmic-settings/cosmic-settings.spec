@@ -149,6 +149,7 @@ export VERGEN_GIT_SHA="%{commit}"
 %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-mode-light.svg
 %{_datadir}/icons/hicolor/*/apps/com.system76.CosmicSettings.svg
 %{_datadir}/polkit-1/rules.d/cosmic-settings.rules
+%{_datadir}/polkit-1/actions/com.system76.CosmicSettings.Users.policy
 
 %changelog
 %autochangelog

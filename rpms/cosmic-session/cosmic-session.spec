@@ -69,6 +69,10 @@ Requires:       mozilla-fira-sans-fonts
 Requires:       xorg-x11-server-Xwayland
 Recommends:     cosmic-wallpapers >= %{cosmic_minver}
 
+# Include the distribution extra desktop configuration
+#   while not a hard requirement, this ensures users have a fedora-like experience.
+Recommends:     system-cosmic-config 
+
 %global _description %{expand:
 The session manager for the COSMIC desktop environment.}
 

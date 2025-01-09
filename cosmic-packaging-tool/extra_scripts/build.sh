@@ -12,7 +12,7 @@ do
     # Run a command for each string
     echo "Processing: $item"
     rm -rf ~/workdir && mkdir -p ~/workdir
-    cargo run -- setup-build ~/workdir $item --auto-srpm --version 1.0.0~alpha.4
+    cargo run -- setup-build ~/workdir $item --auto-srpm --version 1.0.0~alpha.5
     rm -rf ~/workdir && mkdir -p ~/workdir
     cargo run -- setup-build ~/workdir $item --build-branch f41 --source-branch rawhide
 done

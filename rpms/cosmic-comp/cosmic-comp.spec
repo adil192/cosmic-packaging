@@ -39,6 +39,7 @@ BuildRequires:  libseat-devel
 BuildRequires:  libinput-devel
 BuildRequires:  mesa-libgbm-devel
 BuildRequires:  pixman-devel
+BuildRequires:  libdisplay-info-devel
 BuildRequires:  make
 
 Requires:       libseat

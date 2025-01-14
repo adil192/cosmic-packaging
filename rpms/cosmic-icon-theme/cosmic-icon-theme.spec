@@ -41,7 +41,7 @@ Provides:  cosmic-icons = %{version}-%{release}
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
-just rootdir=%{buildroot} install
+just rootdir=%{buildroot} prefix=%{_prefix} install
 
 %files
 %dir %{_datadir}/icons/Cosmic

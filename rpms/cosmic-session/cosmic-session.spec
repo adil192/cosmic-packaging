@@ -46,6 +46,7 @@ Requires:       cosmic-app-library >= %{cosmic_minver}
 Requires:       cosmic-applets >= %{cosmic_minver}
 Requires:       cosmic-bg >= %{cosmic_minver}
 Requires:       cosmic-comp >= %{cosmic_minver}
+Requires:       cosmic-edit >= %{cosmic_minver}
 Requires:       cosmic-files >= %{cosmic_minver}
 Requires:       cosmic-greeter >= %{cosmic_minver}
 Requires:       cosmic-icons >= %{cosmic_minver}
@@ -58,6 +59,8 @@ Requires:       cosmic-randr >= %{cosmic_minver}
 Requires:       cosmic-screenshot >= %{cosmic_minver}
 Requires:       cosmic-settings >= %{cosmic_minver}
 Requires:       cosmic-settings-daemon >= %{cosmic_minver}
+Requires:       cosmic-store >= %{cosmic_minver}
+Requires:       cosmic-term >= %{cosmic_minver}
 Requires:       cosmic-workspaces >= %{cosmic_minver}
 Requires:       xdg-desktop-portal-cosmic >= %{cosmic_minver}
 Requires:       mozilla-fira-mono-fonts
@@ -66,8 +69,8 @@ Requires:       xorg-x11-server-Xwayland
 Recommends:     cosmic-wallpapers >= %{cosmic_minver}
 
 # Include the distribution extra desktop configuration
-#   while not a hard requirement, this ensures users have a fedora-like experience.
-Recommends:     system-cosmic-config 
+#   this ensures users have a fedora-like experience.
+Requires:       system-cosmic-config 
 
 %global _description %{expand:
 The session manager for the COSMIC desktop environment.}

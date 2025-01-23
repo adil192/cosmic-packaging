@@ -8,7 +8,7 @@
 
 Name:           cosmic-wallpapers
 Version: ###
-Release:        2
+Release:        %autorelease
 Summary:        Default wallpapers for the COSMIC Desktop Environment
 
 # All cosmic wallpapers are either public domain or CC-BY-SA-4.0

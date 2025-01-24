@@ -16,10 +16,15 @@ License:        CC-BY-SA-4.0
 
 URL:            https://github.com/pop-os/cosmic-wallpapers
 
-Source0:        https://github.com/pop-os/cosmic-wallpapers/archive/%{commit}/cosmic-wallpapers-%{shortcommit}.tar.gz
-
-# https://github.com/pop-os/cosmic-wallpapers/pull/7
-Patch0:         https://patch-diff.githubusercontent.com/raw/pop-os/cosmic-wallpapers/pull/7.patch
+# How to recreate this source
+# Install git-lfs
+# Clone https://github.com/pop-os/cosmic-wallpapers
+# Checkout commit %{commit}
+# dnf install git-lfs
+# git clone https://github.com/pop-os/cosmic-wallpapers
+# cd cosmic-wallpapers && git checkout %{commit} && cd ..
+# tar -pczf cosmic-wallpapers-archive-%{shortcommit}.tar.gz cosmic-wallpapers
+Source0:        cosmic-wallpapers-archive-%{shortcommit}.tar.gz
 
 BuildArch:      noarch
 

@@ -10,6 +10,7 @@
 # REPO: link
 # VENDOR: 0 or 1
 # NIGHTLY: 0 or 1
+# VENDORSELF: 0 or 1
 
 check_variable() {
     local var_name=$1
@@ -26,6 +27,7 @@ VERSION_NO_TILDE=$(echo "$VERSION" | sed 's/~/-/g')
 COMMIT=${COMMIT:-"latest"}
 REPO=${REPO:-"https://github.com/pop-os/$SOURCE_NAME"}
 VENDOR=${VENDOR:-1}
+VENDORSELF=${VENDORSELF:-0}
 NIGHTLY=${NIGHTLY:-1}
 
 if [ "$NIGHTLY" -eq 0 ]; then
@@ -79,6 +81,10 @@ if [ "$VENDOR" -eq 1 ]; then
 fi
 
 cd ..
+
+if [ "$VENDORSELF" -eq 1 ]; then
+	tar -pczf $NAME-archive-$SHORTCOMMIT.tar.gz $NAME
+fi
 
 # Make replacements to specfile
 if [ "$NIGHTLY" -eq 1 ]; then

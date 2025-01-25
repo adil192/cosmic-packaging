@@ -19,8 +19,8 @@ index 2002d0f..4e96906 100644
  debug = true
  
 +[patch.crates-io]
-+onig = { git = "https://github.com/ryanabx/rust-onig.git", branch = "update-oniguruma" }
-+onig_sys = { git = "https://github.com/ryanabx/rust-onig.git", branch = "update-oniguruma" }
++onig = { git = "https://github.com/ryanabx/rust-onig.git", branch = "add-cargo-lock" }
++onig_sys = { git = "https://github.com/ryanabx/rust-onig.git", branch = "add-cargo-lock" }
 +
  # [patch.'https://github.com/pop-os/libcosmic']
  # libcosmic = { path = "../libcosmic" }

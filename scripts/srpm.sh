@@ -83,7 +83,11 @@ fi
 cd ..
 
 if [ "$VENDORSELF" -eq 1 ]; then
-	tar -pczf $NAME-archive-$SHORTCOMMIT.tar.gz $NAME
+    if [ "$NIGHTLY" -eq 1 ]; then
+	    tar -pczf $NAME-archive-$SHORTCOMMIT.tar.gz $NAME
+    else
+        tar -pczf $NAME-archive-$VERSION_NO_TILDE.tar.gz $NAME
+    fi
 fi
 
 # Make replacements to specfile

@@ -1,0 +1,30 @@
+From 9a202a1a2f41c3a50b1739baa02ed9d52d2882ff Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Sat, 25 Jan 2025 11:43:35 -0600
+Subject: [PATCH] Update oniguruma crate.
+
+This fixes building on GCC 15
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ Cargo.toml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 2002d0f..4e96906 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -58,6 +58,10 @@ wgpu = ["libcosmic/wgpu", "cosmic-files/wgpu"]
+ inherits = "release"
+ debug = true
+ 
++[patch.crates-io]
++onig = { git = "https://github.com/ryanabx/rust-onig.git", branch = "update-oniguruma" }
++onig_sys = { git = "https://github.com/ryanabx/rust-onig.git", branch = "update-oniguruma" }
++
+ # [patch.'https://github.com/pop-os/libcosmic']
+ # libcosmic = { path = "../libcosmic" }
+ # cosmic-config = { path = "../libcosmic/cosmic-config" }
+-- 
+2.47.1
+

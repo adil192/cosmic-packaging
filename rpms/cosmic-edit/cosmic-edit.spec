@@ -30,6 +30,8 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
+Patch: 0001-Update-oniguruma-crate.patch
+
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc

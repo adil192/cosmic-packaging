@@ -65,8 +65,6 @@ if [ "$VENDOR" -eq 1 ]; then
         fi
     done
 
-    cargo generate-lockfile
-
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor
     if [ "$NIGHTLY" -eq 1 ]; then

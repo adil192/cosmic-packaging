@@ -56,14 +56,16 @@ COMMITDATE=$(git log -1 --format=%cd --date=format:%Y%m%d)
 COMMITDATESTRING=$(git log -1 --format=%cd --date=iso)
 
 if [ "$VENDOR" -eq 1 ]; then
-    for file in ../*.patch; do
-        # Check if the glob found any files
-        if [ -f "$file" ]; then
-            echo "Patching with $file"
-            # Add your processing commands here
-            git apply $file
-        fi
-    done
+    if [ "$VENDORSELF" -eq 1 ]; then
+        for file in ../*.patch; do
+            # Check if the glob found any files
+            if [ -f "$file" ]; then
+                echo "Patching with $file"
+                # Add your processing commands here
+                git apply $file
+            fi
+        done
+    fi
 
     echo "VENDOR=1"
     # Vendor dependencies and zip vendor

@@ -31,7 +31,7 @@ VENDORSELF=${VENDORSELF:-0}
 NIGHTLY=${NIGHTLY:-1}
 
 if [ "$NIGHTLY" -eq 0 ]; then
-    COMMIT="epoch-1.0.0-alpha.6.1"
+    COMMIT="epoch-1.0.0-alpha.6"
 fi
 
 if [ ! -e "$NAME" ]; then

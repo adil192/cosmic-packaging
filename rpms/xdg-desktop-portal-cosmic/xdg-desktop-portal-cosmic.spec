@@ -31,6 +31,9 @@ Source1:        vendor-%{shortcommit}.tar.gz
 # * mv vendor-config-%%{shortcommit}.toml ..
 Source2:        vendor-config-%{shortcommit}.toml
 
+# https://github.com/pop-os/xdg-desktop-portal-cosmic/pull/141
+Patch: https://patch-diff.githubusercontent.com/raw/pop-os/xdg-desktop-portal-cosmic/pull/141.patch
+
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  rustc
 BuildRequires:  lld

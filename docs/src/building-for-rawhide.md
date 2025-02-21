@@ -44,5 +44,5 @@ To build (1.0.0~alpha.3 2024-09-28):
 Make sure wget is installed!
 
 ```shell
-cargo run -- setup-build ~/workdir <PACKAGE_NAME> --srpm-url <SRPM_URL> --version 1.0.0~alpha.5.1
+cargo run -- setup-build ~/workdir <PACKAGE_NAME> --srpm-url <SRPM_URL> --version 1.0.0~alpha.6
 ``` 

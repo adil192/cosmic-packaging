@@ -16,7 +16,7 @@ check_variable() {
 }
 
 check_variable NAME
-VERSION=${VERSION:-"1.0.0~alpha.5.1"}
+VERSION=${VERSION:-"1.0.0~alpha.6"}
 NIGHTLY=${NIGHTLY:-1}
 
 CURRENT_DATE=$(date +'%Y%m%d')

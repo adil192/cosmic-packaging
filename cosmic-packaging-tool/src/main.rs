@@ -66,7 +66,7 @@ enum Commands {
         /// Optional source branch to get content from
         #[arg(long)]
         source_branch: Option<String>,
-        /// Version (i.e. 1.0.0~alpha.5.1)
+        /// Version (i.e. 1.0.0~alpha.6)
         #[arg(long)]
         version: Option<String>,
     },

@@ -61,8 +61,8 @@ Requires:       cosmic-settings-daemon >= %{cosmic_minver}
 Requires:       cosmic-term >= %{cosmic_minver}
 Requires:       cosmic-workspaces >= %{cosmic_minver}
 Requires:       xdg-desktop-portal-cosmic >= %{cosmic_minver}
-Requires:       mozilla-fira-mono-fonts
-Requires:       mozilla-fira-sans-fonts
+Requires:       open-sans-fonts
+Requires:       google-noto-sans-mono-fonts
 Requires:       xorg-x11-server-Xwayland
 Recommends:     cosmic-wallpapers >= %{cosmic_minver}
 

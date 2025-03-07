@@ -36,6 +36,7 @@ BuildRequires:  wayland-devel
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
+BuildRequires:  desktop-backgrounds-compat
 
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 Requires:       desktop-backgrounds-compat
@@ -76,7 +77,11 @@ export VERGEN_GIT_SHA="%{commit}"
 just rootdir=%{buildroot} prefix=%{_prefix} install
 
 # Set default background to system branding
-sed -e 's|source: Path(".*"),|source: Path("/usr/share/backgrounds/default-dark.png"),|' -i %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/all
+if [ -f "/usr/share/backgrounds/default-dark.png" ]; then
+  sed -e 's|source: Path(".*"),|source: Path("/usr/share/backgrounds/default-dark.png"),|' -i %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/all
+else
+  sed -e 's|source: Path(".*"),|source: Path("/usr/share/backgrounds/default-dark.jxl"),|' -i %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/all
+fi
 
 # Set default setting for backgrounds on all displays
 echo "true" > %{buildroot}%{_datadir}/cosmic/com.system76.CosmicBackground/v1/same-on-all 

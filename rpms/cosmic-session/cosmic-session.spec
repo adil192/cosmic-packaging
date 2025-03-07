@@ -39,9 +39,9 @@ BuildRequires:  lld
 BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  desktop-file-utils
-
 BuildRequires:  systemd-rpm-macros
 
+# Cosmic packages
 Requires:       cosmic-app-library >= %{cosmic_minver}
 Requires:       cosmic-applets >= %{cosmic_minver}
 Requires:       cosmic-bg >= %{cosmic_minver}
@@ -61,10 +61,14 @@ Requires:       cosmic-settings-daemon >= %{cosmic_minver}
 Requires:       cosmic-term >= %{cosmic_minver}
 Requires:       cosmic-workspaces >= %{cosmic_minver}
 Requires:       xdg-desktop-portal-cosmic >= %{cosmic_minver}
+Recommends:     cosmic-wallpapers >= %{cosmic_minver}
+
+# Fonts
 Requires:       open-sans-fonts
 Requires:       google-noto-sans-mono-fonts
-Requires:       xorg-x11-server-Xwayland
-Recommends:     cosmic-wallpapers >= %{cosmic_minver}
+
+# Etc
+Requires:       xdg-user-dirs
 
 # Include the distribution extra desktop configuration
 #   this ensures users have a fedora-like experience.

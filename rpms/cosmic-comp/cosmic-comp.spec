@@ -43,6 +43,7 @@ BuildRequires:  libdisplay-info-devel
 BuildRequires:  make
 
 Requires:       libseat
+Requires:       xorg-x11-server-Xwayland
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 Recommends:     cosmic-session

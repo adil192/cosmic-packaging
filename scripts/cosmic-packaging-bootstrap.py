@@ -134,6 +134,9 @@ def copy_files_to_setup():
         os.makedirs(dest_path, exist_ok=True)  # Ensure destination subdir exists
 
         for file in files:
+            # Skip vendor-config
+            if file.count("vendor-config") > 0:
+                continue
             shutil.copy2(
                 os.path.join(root, file), os.path.join(dest_path, file)
             )  # Preserve metadata

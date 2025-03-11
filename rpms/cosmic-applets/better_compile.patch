@@ -1,7 +1,0 @@
---- ./Cargo.toml
-+++ ./Cargo.toml.new
-@@ -63,3 +63,3 @@
- [profile.release]
--lto = "fat"
-+lto = "thin"
- 

@@ -104,7 +104,7 @@ packages = {
 POP_OS_GIT = "https://github.com/pop-os/"
 NIGHTLY_MINVER_TAG = "1.0.0~alpha.6"
 
-RELEASE_OVERRIDE = f"%autorelease"
+RELEASE_OVERRIDE = f"2"
 
 ############################################
 # COPY ALL FILES TO SETUP (EXCEPT SOURCES) #

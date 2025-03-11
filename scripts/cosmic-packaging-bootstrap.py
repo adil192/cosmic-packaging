@@ -106,6 +106,20 @@ NIGHTLY_MINVER_TAG = "1.0.0~alpha.6"
 
 RELEASE_OVERRIDE = f"2"
 
+###########################################
+# PATCH EXECUTABLE BIT IN VENDORED CRATES #
+###########################################
+
+def patch_vendored_crates():
+    global cwd, crate_name
+    # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
+    # current version containing the bug: 2.2.0
+    subprocess.run(["chmod" "-x" "./vendor/zip/src/spec.rs"], cwd=cwd.joinpath(crate_name), check=False)
+    # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
+    subprocess.run(["chmod" "-x" "./vendor/bumpalo/src/lib.rs"], cwd=cwd.joinpath(crate_name), check=False)
+    # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
+    subprocess.run(["chmod" "-x" "./vendor/ipnet/src/lib.rs"], cwd=cwd.joinpath(crate_name), check=False)
+
 ############################################
 # COPY ALL FILES TO SETUP (EXCEPT SOURCES) #
 ############################################
@@ -146,6 +160,8 @@ def get_vendor_artifacts():
         f"{cwd.joinpath(f"vendor-config-{tag.replace('~', '-')}.toml")}", "w"
     ) as f:
         f.write(cargo_vendor_output.stdout.strip())
+    
+    patch_vendored_crates()
 
     tar_cmd = [
         "tar",

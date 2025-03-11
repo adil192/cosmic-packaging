@@ -116,19 +116,19 @@ def patch_vendored_crates():
     # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
     # current version containing the bug: 2.2.0
     subprocess.run(
-        ["chmod" "-x" "./vendor/zip/src/spec.rs"],
+        ["chmod", "-x", "./vendor/zip/src/spec.rs"],
         cwd=cwd.joinpath(crate_name),
         check=False,
     )
     # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
     subprocess.run(
-        ["chmod" "-x" "./vendor/bumpalo/src/lib.rs"],
+        ["chmod", "-x", "./vendor/bumpalo/src/lib.rs"],
         cwd=cwd.joinpath(crate_name),
         check=False,
     )
     # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
     subprocess.run(
-        ["chmod" "-x" "./vendor/ipnet/src/lib.rs"],
+        ["chmod", "-x", "./vendor/ipnet/src/lib.rs"],
         cwd=cwd.joinpath(crate_name),
         check=False,
     )

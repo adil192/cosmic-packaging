@@ -1,100 +1,100 @@
 [submodule "rpms/cosmic-comp"]
 	path = rpms/cosmic-comp
-	url = https://src.fedoraproject.org/rpms/cosmic-comp.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-comp.git
+	branch = rawhide
 [submodule "rpms/cosmic-wallpapers"]
 	path = rpms/cosmic-wallpapers
-	url = https://src.fedoraproject.org/rpms/cosmic-wallpapers.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-wallpapers.git
+	branch = rawhide
 [submodule "rpms/cosmic-app-library"]
 	path = rpms/cosmic-app-library
-	url = https://src.fedoraproject.org/rpms/cosmic-app-library.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-app-library.git
+	branch = rawhide
 [submodule "rpms/cosmic-applets"]
 	path = rpms/cosmic-applets
-	url = https://src.fedoraproject.org/rpms/cosmic-applets.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-applets.git
+	branch = rawhide
 [submodule "rpms/cosmic-bg"]
 	path = rpms/cosmic-bg
-	url = https://src.fedoraproject.org/rpms/cosmic-bg.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-bg.git
+	branch = rawhide
 [submodule "rpms/cosmic-edit"]
 	path = rpms/cosmic-edit
-	url = https://src.fedoraproject.org/rpms/cosmic-edit.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-edit.git
+	branch = rawhide
 [submodule "rpms/cosmic-files"]
 	path = rpms/cosmic-files
-	url = https://src.fedoraproject.org/rpms/cosmic-files.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-files.git
+	branch = rawhide
 [submodule "rpms/cosmic-greeter"]
 	path = rpms/cosmic-greeter
-	url = https://src.fedoraproject.org/rpms/cosmic-greeter.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-greeter.git
+	branch = rawhide
 [submodule "rpms/cosmic-icon-theme"]
 	path = rpms/cosmic-icon-theme
-	url = https://src.fedoraproject.org/rpms/cosmic-icon-theme.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-icon-theme.git
+	branch = rawhide
 [submodule "rpms/cosmic-idle"]
 	path = rpms/cosmic-idle
-	url = https://src.fedoraproject.org/rpms/cosmic-idle.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-idle.git
+	branch = rawhide
 [submodule "rpms/cosmic-launcher"]
 	path = rpms/cosmic-launcher
-	url = https://src.fedoraproject.org/rpms/cosmic-launcher.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-launcher.git
+	branch = rawhide
 [submodule "rpms/cosmic-notifications"]
 	path = rpms/cosmic-notifications
-	url = https://src.fedoraproject.org/rpms/cosmic-notifications.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-notifications.git
+	branch = rawhide
 [submodule "rpms/cosmic-osd"]
 	path = rpms/cosmic-osd
-	url = https://src.fedoraproject.org/rpms/cosmic-osd.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-osd.git
+	branch = rawhide
 [submodule "rpms/cosmic-panel"]
 	path = rpms/cosmic-panel
-	url = https://src.fedoraproject.org/rpms/cosmic-panel.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-panel.git
+	branch = rawhide
 [submodule "rpms/cosmic-player"]
 	path = rpms/cosmic-player
-	url = https://src.fedoraproject.org/rpms/cosmic-player.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-player.git
+	branch = rawhide
 [submodule "rpms/cosmic-randr"]
 	path = rpms/cosmic-randr
-	url = https://src.fedoraproject.org/rpms/cosmic-randr.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-randr.git
+	branch = rawhide
 [submodule "rpms/cosmic-screenshot"]
 	path = rpms/cosmic-screenshot
-	url = https://src.fedoraproject.org/rpms/cosmic-screenshot.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-screenshot.git
+	branch = rawhide
 [submodule "rpms/cosmic-session"]
 	path = rpms/cosmic-session
-	url = https://src.fedoraproject.org/rpms/cosmic-session.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-session.git
+	branch = rawhide
 [submodule "rpms/cosmic-settings"]
 	path = rpms/cosmic-settings
-	url = https://src.fedoraproject.org/rpms/cosmic-settings.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-settings.git
+	branch = rawhide
 [submodule "rpms/cosmic-settings-daemon"]
 	path = rpms/cosmic-settings-daemon
-	url = https://src.fedoraproject.org/rpms/cosmic-settings-daemon.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-settings-daemon.git
+	branch = rawhide
 [submodule "rpms/cosmic-store"]
 	path = rpms/cosmic-store
-	url = https://src.fedoraproject.org/rpms/cosmic-store.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-store.git
+	branch = rawhide
 [submodule "rpms/cosmic-term"]
 	path = rpms/cosmic-term
-	url = https://src.fedoraproject.org/rpms/cosmic-term.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-term.git
+	branch = rawhide
 [submodule "rpms/cosmic-workspaces"]
 	path = rpms/cosmic-workspaces
-	url = https://src.fedoraproject.org/rpms/cosmic-workspaces.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/cosmic-workspaces.git
+	branch = rawhide
 [submodule "rpms/pop-launcher"]
 	path = rpms/pop-launcher
-	url = https://src.fedoraproject.org/rpms/pop-launcher.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/pop-launcher.git
+	branch = rawhide
 [submodule "rpms/xdg-desktop-portal-cosmic"]
 	path = rpms/xdg-desktop-portal-cosmic
-	url = https://src.fedoraproject.org/rpms/xdg-desktop-portal-cosmic.git
-	branch = main
+	url = https://src.fedoraproject.org/forks/ryanabx/rpms/xdg-desktop-portal-cosmic.git
+	branch = rawhide

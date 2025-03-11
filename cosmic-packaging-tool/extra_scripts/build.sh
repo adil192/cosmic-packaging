@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define a list of strings
-list=("cosmic-app-library" "cosmic-applets" "cosmic-bg" "cosmic-comp" "cosmic-edit" "cosmic-files" "cosmic-greeter" "cosmic-icon-theme" "cosmic-idle" "cosmic-launcher" "cosmic-notifications" "cosmic-osd" "cosmic-panel" "cosmic-player" "cosmic-randr" "cosmic-screenshot" "cosmic-session" "cosmic-settings" "cosmic-settings-daemon" "cosmic-store" "cosmic-term" "cosmic-wallpapers" "cosmic-workspaces" "xdg-desktop-portal-cosmic")
+list=("cosmic-app-library" "cosmic-applets" "cosmic-bg" "cosmic-comp" "cosmic-edit" "cosmic-files" "cosmic-greeter" "cosmic-icon-theme" "cosmic-idle" "cosmic-launcher" "cosmic-notifications" "cosmic-osd" "cosmic-panel" "cosmic-player" "cosmic-randr" "cosmic-screenshot" "cosmic-session" "cosmic-settings" "cosmic-settings-daemon" "cosmic-store" "cosmic-term" "cosmic-wallpapers" "cosmic-workspaces" "pop-launcher" "xdg-desktop-portal-cosmic")
 # list=("cosmic-app-library" "cosmic-applets" "cosmic-bg" "cosmic-edit" "cosmic-files" "cosmic-greeter" "cosmic-icon-theme" "cosmic-idle" "cosmic-launcher" "cosmic-notifications" "cosmic-osd" "cosmic-panel" "cosmic-player" "cosmic-randr" "cosmic-screenshot" "cosmic-session" "cosmic-settings" "cosmic-settings-daemon" "cosmic-store" "cosmic-term" "cosmic-workspaces" "pop-launcher" "xdg-desktop-portal-cosmic")
 # list=("cosmic-osd" "cosmic-panel" "cosmic-player" "cosmic-randr" "cosmic-screenshot" "cosmic-session" "cosmic-settings" "cosmic-settings-daemon" "cosmic-store" "cosmic-term" "cosmic-wallpapers" "cosmic-workspaces" "xdg-desktop-portal-cosmic")
 # list=("cosmic-player")
@@ -15,7 +15,12 @@ for item in "${list[@]}"
 do
     # Run a command for each string
     echo "Processing: $item"
-    git submodule set-branch -b main rpms/$item
+    git submodule set-url rpms/$item https://src.fedoraproject.org/forks/ryanabx/rpms/$item.git
+    git submodule set-branch -b rawhide rpms/$item
+    cd rpms/$item
+    git remote add upstream ssh://ryanabx@pkgs.fedoraproject.org/forks/ryanabx/rpms/$item.git
+    git remote add upstream-full https://src.fedoraproject.org/rpms/$item.git
+    cd ../..
     # rm -rf ~/workdir && mkdir -p ~/workdir
     # cargo run -- setup-build ~/workdir $item --auto-srpm --version 1.0.0~alpha.6
     # rm -rf ~/workdir && mkdir -p ~/workdir

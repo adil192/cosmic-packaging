@@ -85,7 +85,7 @@ packages = {
     "cosmic-term": {"crate_name": "cosmic-term", "vendor": True, "vendor_self": False},
     "cosmic-wallpapers": {
         "crate_name": "cosmic-wallpapers",
-        "vendor": True,
+        "vendor": False,
         "vendor_self": False,
     },
     "cosmic-workspaces": {

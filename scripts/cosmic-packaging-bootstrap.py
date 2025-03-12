@@ -320,33 +320,6 @@ def process_tagged(spec_path, output_path):
                 if not skip:
                     f2.write(out_line.rstrip() + "\n")
 
-
-def process_line_tagged(input_line: str):
-    global crate_name
-    output_line = input_line
-    output_line = output_line.replace(f"%{{shortcommit}}", f"%{{version_no_tilde}}")
-    if input_line.startswith(f"Version: "):
-        output_line = f"Version: {tag}"
-    elif input_line.startswith(f"%global commit "):
-        output_line = f"%global commit {commit}"
-    elif input_line.startswith(f"%autosetup "):
-        output_line = output_line.replace(
-            f"%{{commit}}", f"epoch-%{{version_no_tilde}}"
-        )
-    elif input_line.startswith(f"%global shortcommit "):
-        output_line = ""
-    elif input_line.startswith(f"%global commitdate "):
-        output_line = ""
-    elif input_line.startswith(f"%global cosmic_minver "):
-        output_line = f"%global cosmic_minver {tag}"
-    elif input_line.startswith(f"Source0: "):
-        # Example: Source0: https://github.com/pop-os/cosmic-workspaces-epoch/archive/epoch-%{version_no_tilde}/cosmic-workspaces-epoch-%{version_no_tilde}.tar.gz
-        output_line = f"{POP_OS_GIT}{crate_name}/archive/epoch-%{{version_no_tilde}}/{crate_name}-%{{version_no_tilde}}.tar.gz"
-    elif input_line.startswith(f"%global commitdatestring "):
-        output_line = f"%global commitdatestring {commit_date_string}"
-    return output_line
-
-
 #################
 # CLI ARGUMENTS #
 #################
@@ -376,10 +349,18 @@ crate_name = packages[rpm_name]["crate_name"]
 vendor = packages[rpm_name]["vendor"]
 cwd = pathlib.Path(args.cwd) if args.cwd else pathlib.Path.cwd()
 tag = args.tag if args.tag else ""
-commit = tag
-nightly = commit == ""
+# Set tag to blank if nightly is specified
+if tag == "nightly":
+    tag = ""
+# Nightly specified if tag not specified
+nightly = tag == ""
+# If nightly
+if nightly:
+    commit = ""
+else:
+    commit = str("epoch-" + tag).replace('~', '-')
 
-print(f"RPM Name: {rpm_name}, Crate Name: {crate_name}, Commit: {tag}, Cwd: {cwd}")
+print(f"RPM Name: {rpm_name}, Crate Name: {crate_name}, Tag: {tag}, Commit: {commit}, Cwd: {cwd}")
 
 if not cwd.exists():
     cwd.mkdir(parents=True, exist_ok=True)

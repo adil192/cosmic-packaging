@@ -18,7 +18,7 @@ packages = {
     },
     "cosmic-bg": {"crate_name": "cosmic-bg", "vendor": True, "apply_patches": False},
     "cosmic-comp": {"crate_name": "cosmic-comp", "vendor": True, "apply_patches": False},
-    "cosmic-edit": {"crate_name": "cosmic-edit", "vendor": True, "apply_patches": True},
+    "cosmic-edit": {"crate_name": "cosmic-edit", "vendor": True, "apply_patches": False},
     "cosmic-files": {
         "crate_name": "cosmic-files",
         "vendor": True,

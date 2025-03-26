@@ -29,7 +29,7 @@ packages = {
         "vendor": True,
         "apply_patches": False,
     },
-    "cosmic-icon-theme": {"crate_name": "cosmic-icons", "vendor": False},
+    "cosmic-icon-theme": {"crate_name": "cosmic-icons", "vendor": False, "apply_patches": False},
     "cosmic-idle": {"crate_name": "cosmic-idle", "vendor": True, "apply_patches": False},
     "cosmic-launcher": {
         "crate_name": "cosmic-launcher",

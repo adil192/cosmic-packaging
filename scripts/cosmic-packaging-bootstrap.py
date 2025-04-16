@@ -383,6 +383,19 @@ subprocess.run(
     ],
     cwd=cwd,
 )
+# We want to know if the folder name is the same as what we expect in the rpm spec file
+print("ls -a")
+ls_result = subprocess.run(
+    [
+        "ls",
+        "-a",
+    ],
+    cwd=cwd,
+    text=True,
+    capture_output=True
+)
+print(ls_result.stdout.strip())
+
 if tag == "":
     print("Nightly, so tag is accessed through rev-parse")
     # When we don't get a specific tag (i.e. nightly), our 'tag' becomes the shortcommit
@@ -434,4 +447,29 @@ if vendor:
 
 process_specfile()
 
+print("ls -a")
+ls_result = subprocess.run(
+    [
+        "ls",
+        "-a",
+    ],
+    cwd=cwd,
+    text=True,
+    capture_output=True
+)
+print(ls_result.stdout.strip())
+
+
 shutil.rmtree(cwd.joinpath(crate_name))
+
+print("ls -a")
+ls_result = subprocess.run(
+    [
+        "ls",
+        "-a",
+    ],
+    cwd=cwd,
+    text=True,
+    capture_output=True
+)
+print(ls_result.stdout.strip())

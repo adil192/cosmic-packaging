@@ -338,7 +338,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("rpm_name", choices=packages.keys())
 parser.add_argument("spec_dir", help="Path to the directory containing the spec file")
-parser.add_argument("--tag", help="Tag to use. Defaults to latest commit (Nightly)")
+parser.add_argument("--tag", help="Tag to use. Defaults to latest commit (Nightly). Specify --tag latest to get latest tag")
 parser.add_argument(
     "--cwd",
     help="Working directory to use. Defaults to wherever the script was called.",
@@ -347,6 +347,8 @@ parser.add_argument(
 ###############
 # RUN PROGRAM #
 ###############
+
+LATEST_TAG = '1.0.0~alpha.6'
 
 args = parser.parse_args()
 
@@ -360,6 +362,8 @@ tag = args.tag if args.tag else ""
 # Set tag to blank if nightly is specified
 if tag == "nightly":
     tag = ""
+elif tag == "latest":
+    tag = LATEST_TAG
 # Nightly specified if tag not specified
 nightly = tag == ""
 # If nightly

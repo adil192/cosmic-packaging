@@ -17,8 +17,16 @@ packages = {
         "apply_patches": False,
     },
     "cosmic-bg": {"crate_name": "cosmic-bg", "vendor": True, "apply_patches": False},
-    "cosmic-comp": {"crate_name": "cosmic-comp", "vendor": True, "apply_patches": False},
-    "cosmic-edit": {"crate_name": "cosmic-edit", "vendor": True, "apply_patches": False},
+    "cosmic-comp": {
+        "crate_name": "cosmic-comp",
+        "vendor": True,
+        "apply_patches": False,
+    },
+    "cosmic-edit": {
+        "crate_name": "cosmic-edit",
+        "vendor": True,
+        "apply_patches": False,
+    },
     "cosmic-files": {
         "crate_name": "cosmic-files",
         "vendor": True,
@@ -29,8 +37,16 @@ packages = {
         "vendor": True,
         "apply_patches": False,
     },
-    "cosmic-icon-theme": {"crate_name": "cosmic-icons", "vendor": False, "apply_patches": False},
-    "cosmic-idle": {"crate_name": "cosmic-idle", "vendor": True, "apply_patches": False},
+    "cosmic-icon-theme": {
+        "crate_name": "cosmic-icons",
+        "vendor": False,
+        "apply_patches": False,
+    },
+    "cosmic-idle": {
+        "crate_name": "cosmic-idle",
+        "vendor": True,
+        "apply_patches": False,
+    },
     "cosmic-launcher": {
         "crate_name": "cosmic-launcher",
         "vendor": True,
@@ -82,7 +98,11 @@ packages = {
         "vendor": True,
         "apply_patches": False,
     },
-    "cosmic-term": {"crate_name": "cosmic-term", "vendor": True, "apply_patches": False},
+    "cosmic-term": {
+        "crate_name": "cosmic-term",
+        "vendor": True,
+        "apply_patches": False,
+    },
     "cosmic-wallpapers": {
         "crate_name": "cosmic-wallpapers",
         "vendor": False,
@@ -104,7 +124,7 @@ packages = {
 POP_OS_GIT = "https://github.com/pop-os/"
 NIGHTLY_MINVER_TAG = "1.0.0~alpha.6"
 
-RELEASE_OVERRIDE = f"2"
+RELEASE_OVERRIDE = f""
 
 ###########################################
 # PATCH EXECUTABLE BIT IN VENDORED CRATES #
@@ -133,13 +153,16 @@ def patch_vendored_crates():
         check=False,
     )
 
+
 ##################################################
 # APPLY ANY PATCHES TO THE REPO BEFORE VENDORING #
 ##################################################
 
+
 def apply_patches_to_repo():
     global cwd, crate_name
     # TODO: Finish this
+
 
 ############################################
 # COPY ALL FILES TO SETUP (EXCEPT SOURCES) #
@@ -179,6 +202,9 @@ def get_vendor_artifacts():
         capture_output=True,
         text=True,
         cwd=cwd.joinpath(crate_name),
+    )
+    print(
+        f"=======cargo vendor stderr=======\n{cargo_vendor_output.stderr.strip()}\n================================="
     )
     vendor_config_name = f"vendor-config-{tag.replace('~', '-')}.toml"
     with open(f"{cwd.joinpath(vendor_config_name)}", "w") as f:
@@ -227,7 +253,15 @@ def get_vendor_artifacts():
 
 
 def process_specfile():
-    global rpm_name, spec_dir, tag, cwd, commit, nightly, commit_date, commit_date_string
+    global \
+        rpm_name, \
+        spec_dir, \
+        tag, \
+        cwd, \
+        commit, \
+        nightly, \
+        commit_date, \
+        commit_date_string
     spec_path = spec_dir.joinpath(f"{rpm_name}.spec")
     output_path = cwd.joinpath(f"{rpm_name}.spec")
     print(f"Nightly: {nightly}")
@@ -327,6 +361,7 @@ def process_tagged(spec_path, output_path):
                 if not skip:
                     f2.write(out_line.rstrip() + "\n")
 
+
 #################
 # CLI ARGUMENTS #
 #################
@@ -338,7 +373,10 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("rpm_name", choices=packages.keys())
 parser.add_argument("spec_dir", help="Path to the directory containing the spec file")
-parser.add_argument("--tag", help="Tag to use. Defaults to latest commit (Nightly). Specify --tag latest to get latest tag")
+parser.add_argument(
+    "--tag",
+    help="Tag to use. Defaults to latest commit (Nightly). Specify --tag latest to get latest tag",
+)
 parser.add_argument(
     "--cwd",
     help="Working directory to use. Defaults to wherever the script was called.",
@@ -348,7 +386,7 @@ parser.add_argument(
 # RUN PROGRAM #
 ###############
 
-LATEST_TAG = '1.0.0~alpha.6'
+LATEST_TAG = "1.0.0~alpha.6"
 
 args = parser.parse_args()
 
@@ -370,9 +408,11 @@ nightly = tag == ""
 if nightly:
     commit = ""
 else:
-    commit = str("epoch-" + tag).replace('~', '-')
+    commit = str("epoch-" + tag).replace("~", "-")
 
-print(f"RPM Name: {rpm_name}, Crate Name: {crate_name}, Tag: {tag}, Commit: {commit}, Cwd: {cwd}")
+print(
+    f"RPM Name: {rpm_name}, Crate Name: {crate_name}, Tag: {tag}, Commit: {commit}, Cwd: {cwd}"
+)
 
 if not cwd.exists():
     cwd.mkdir(parents=True, exist_ok=True)
@@ -396,7 +436,7 @@ ls_result = subprocess.run(
     ],
     cwd=cwd,
     text=True,
-    capture_output=True
+    capture_output=True,
 )
 print(ls_result.stdout.strip())
 
@@ -459,7 +499,7 @@ ls_result = subprocess.run(
     ],
     cwd=cwd,
     text=True,
-    capture_output=True
+    capture_output=True,
 )
 print(ls_result.stdout.strip())
 
@@ -474,6 +514,6 @@ ls_result = subprocess.run(
     ],
     cwd=cwd,
     text=True,
-    capture_output=True
+    capture_output=True,
 )
 print(ls_result.stdout.strip())

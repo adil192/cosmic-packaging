@@ -13,11 +13,11 @@ do
     git fetch origin
     git fetch origin-ssh
     git fetch upstream
-    git pull origin
+    git pull origin rawhide
     read -p "If pulling failed, make adjustments and press enter to continue!"
     git rebase upstream/rawhide
     read -p "Make adjustments as needed and press enter to continue!"
-    git push --force origin HEAD:rawhide
+    git push --force origin-ssh HEAD:rawhide
     cd ../..
 done
 

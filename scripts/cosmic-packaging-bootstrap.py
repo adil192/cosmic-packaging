@@ -10,115 +10,152 @@ packages = {
         "crate_name": "cosmic-applibrary",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-applets": {
         "crate_name": "cosmic-applets",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
-    "cosmic-bg": {"crate_name": "cosmic-bg", "vendor": True, "apply_patches": False},
+    "cosmic-bg": {
+        "crate_name": "cosmic-bg",
+        "vendor": True,
+        "apply_patches": False,
+        "zip_self": False,
+    },
     "cosmic-comp": {
         "crate_name": "cosmic-comp",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-edit": {
         "crate_name": "cosmic-edit",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-files": {
         "crate_name": "cosmic-files",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-greeter": {
         "crate_name": "cosmic-greeter",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-icon-theme": {
         "crate_name": "cosmic-icons",
         "vendor": False,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-idle": {
         "crate_name": "cosmic-idle",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-launcher": {
         "crate_name": "cosmic-launcher",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-notifications": {
         "crate_name": "cosmic-notifications",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
-    "cosmic-osd": {"crate_name": "cosmic-osd", "vendor": True, "apply_patches": False},
+    "cosmic-osd": {
+        "crate_name": "cosmic-osd",
+        "vendor": True,
+        "apply_patches": False,
+        "zip_self": False,
+    },
     "cosmic-panel": {
         "crate_name": "cosmic-panel",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-player": {
         "crate_name": "cosmic-player",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-randr": {
         "crate_name": "cosmic-randr",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-screenshot": {
         "crate_name": "cosmic-screenshot",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-session": {
         "crate_name": "cosmic-session",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-settings": {
         "crate_name": "cosmic-settings",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-settings-daemon": {
         "crate_name": "cosmic-settings-daemon",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-store": {
         "crate_name": "cosmic-store",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-term": {
         "crate_name": "cosmic-term",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "cosmic-wallpapers": {
         "crate_name": "cosmic-wallpapers",
         "vendor": False,
         "apply_patches": False,
+        "zip_self": True,
     },
     "cosmic-workspaces": {
         "crate_name": "cosmic-workspaces-epoch",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
     "xdg-desktop-portal-cosmic": {
         "crate_name": "xdg-desktop-portal-cosmic",
         "vendor": True,
         "apply_patches": False,
+        "zip_self": False,
     },
-    "pop-launcher": {"crate_name": "launcher", "vendor": True, "apply_patches": False},
+    "pop-launcher": {
+        "crate_name": "launcher",
+        "vendor": True,
+        "apply_patches": False,
+        "zip_self": False,
+    },
 }
 
 POP_OS_GIT = "https://github.com/pop-os/"
@@ -395,6 +432,7 @@ spec_dir = pathlib.Path(args.spec_dir)
 crate_name = packages[rpm_name]["crate_name"]
 vendor = packages[rpm_name]["vendor"]
 apply_patches = packages[rpm_name]["apply_patches"]
+zip_self = packages[rpm_name]["zip_self"]
 cwd = pathlib.Path(args.cwd) if args.cwd else pathlib.Path.cwd()
 tag = args.tag if args.tag else ""
 # Set tag to blank if nightly is specified
@@ -503,6 +541,20 @@ ls_result = subprocess.run(
 )
 print(ls_result.stdout.strip())
 
+if zip_self:
+    # tar -pczf cosmic-wallpapers-archive-%%{version_no_tilde}.tar.gz cosmic-wallpapers
+    zip_result = subprocess.run(
+        [
+            "tar",
+            "-pczf",
+            f"{crate_name}-archive-{tag.replace('~', '-')}.tar.gz",
+            crate_name,
+        ],
+        cwd=cwd,
+        text=True,
+        capture_output=True,
+    )
+    print(zip_result.stdout.strip())
 
 shutil.rmtree(cwd.joinpath(crate_name))
 

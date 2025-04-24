@@ -5,19 +5,35 @@ list=("cosmic-app-library" "cosmic-applets" "cosmic-bg" "cosmic-comp" "cosmic-ed
 echo "WARNING: This will erase everything in ~/workdir. Are you sure about this?"
 read v
 
-for item in "${list[@]}"
-do
+MAX_JOBS=5
+
+function build_package() {
+    pkg=$1
     echo "======================================"
-    echo "Processing package $item..."
-    rm -rf ~/workdir && mkdir -p ~/workdir
-    if cargo run -- setup-build ~/workdir $item --auto-srpm --version 1.0.0~alpha.7; then
-        echo "rawhide $item success"
-        rm -rf ~/workdir && mkdir -p ~/workdir
-        cargo run -- setup-build ~/workdir $item --build-branch f42 --source-branch rawhide && echo "f42 $item success" || true
-        rm -rf ~/workdir && mkdir -p ~/workdir
-        cargo run -- setup-build ~/workdir $item --build-branch f41 --source-branch rawhide && echo "f41 $item success" || true
+    echo "Processing package $pkg..."
+    rm -rf ~/workdir/$pkg && mkdir -p ~/workdir/$pkg
+    if cargo run -- setup-build ~/workdir $pkg --auto-srpm --version 1.0.0~alpha.7 > /dev/null 2>&1; then
+        echo "rawhide $pkg success"
+        rm -rf ~/workdir/$pkg && mkdir -p ~/workdir/$pkg
+        cargo run -- setup-build ~/workdir $pkg --build-branch f42 --source-branch rawhide > /dev/null 2>&1 && echo "f42 $pkg success" || echo "f42 $pkg failure"
+        rm -rf ~/workdir/$pkg && mkdir -p ~/workdir/$pkg
+        cargo run -- setup-build ~/workdir $pkg --build-branch f41 --source-branch rawhide > /dev/null 2>&1 && echo "f41 $pkg success" || echo "f41 $pkg failure"
     else
-        echo "WARNING: rawhide $item failure"
+        echo "WARNING: rawhide $pkg failure. REDO THIS ONE"
     fi
     echo "======================================"
+}
+
+
+for item in "${list[@]}"
+do
+    
+    build_package $item &
+    ((count++))
+
+    if (( count % MAX_JOBS == 0 )); then
+        wait
+    fi
 done
+
+wait 

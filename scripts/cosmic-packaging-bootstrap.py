@@ -122,9 +122,9 @@ packages = {
 }
 
 POP_OS_GIT = "https://github.com/pop-os/"
-NIGHTLY_MINVER_TAG = "1.0.0~alpha.6"
+NIGHTLY_MINVER_TAG = "1.0.0~alpha.7"
 
-RELEASE_OVERRIDE = f""
+RELEASE_OVERRIDE = None
 
 ###########################################
 # PATCH EXECUTABLE BIT IN VENDORED CRATES #
@@ -304,7 +304,7 @@ def process_nightly(spec_path, output_path):
                     out_line = f"Version: {NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
                 elif in_line.startswith(f"Source0: "):
                     out_line = f"Source0: {POP_OS_GIT}{crate_name}/archive/%{{commit}}/{crate_name}-%{{shortcommit}}.tar.gz"
-                elif in_line.startswith(f"Release: "):
+                elif in_line.startswith(f"Release: ") and RELEASE_OVERRIDE:
                     out_line = f"Release: {RELEASE_OVERRIDE}"
                 elif in_line.startswith(f"%autosetup "):
                     out_line = out_line.replace(
@@ -386,7 +386,7 @@ parser.add_argument(
 # RUN PROGRAM #
 ###############
 
-LATEST_TAG = "1.0.0~alpha.6"
+LATEST_TAG = "1.0.0~alpha.7"
 
 args = parser.parse_args()
 

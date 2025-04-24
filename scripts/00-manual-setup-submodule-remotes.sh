@@ -16,7 +16,7 @@ do
     cd rpms/$item
     git remote add upstream https://src.fedoraproject.org/rpms/$item.git
     git fetch upstream
-    git remote add origin-ssh ssh://ryanabx@pkgs.fedoraproject.org/rpms/$item.git
+    git remote add origin-ssh ssh://ryanabx@pkgs.fedoraproject.org/forks/ryanabx/rpms/$item.git
     git fetch origin-ssh || true
     cd ../..
 done

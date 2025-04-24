@@ -542,12 +542,12 @@ ls_result = subprocess.run(
 print(ls_result.stdout.strip())
 
 if zip_self:
-    # tar -pczf cosmic-wallpapers-archive-%%{version_no_tilde}.tar.gz cosmic-wallpapers
+    # tar -pczf cosmic-wallpapers-%{version_no_tilde}.tar.gz cosmic-wallpapers
     zip_result = subprocess.run(
         [
             "tar",
             "-pczf",
-            f"{crate_name}-archive-{tag.replace('~', '-')}.tar.gz",
+            f"{crate_name}-{tag.replace('~', '-')}.tar.gz",
             crate_name,
         ],
         cwd=cwd,

@@ -221,15 +221,18 @@ async fn main() -> anyhow::Result<()> {
             build_branch,
             source_branch,
             auto_srpm,
-        } => setup_build_command(
-            &workdir,
-            &package_name,
-            srpm_url.as_deref(),
-            version.as_deref(),
-            build_branch.as_deref(),
-            source_branch.as_deref(),
-            auto_srpm,
-        ).await,
+        } => {
+            setup_build_command(
+                &workdir,
+                &package_name,
+                srpm_url.as_deref(),
+                version.as_deref(),
+                build_branch.as_deref(),
+                source_branch.as_deref(),
+                auto_srpm,
+            )
+            .await
+        }
         Commands::DependencyGraph { packaging_dir } => dependency_graph_command(&packaging_dir),
     }
 }
@@ -335,6 +338,19 @@ async fn setup_build_command(
             .success()
         {
             panic!("Failed: git reset --hard {}", source_branch);
+        }
+        if let Some(build_branch) = build_branch {
+            println!("git rebase origin/{}", build_branch);
+            if !Command::new("git")
+                .current_dir(&package_folder)
+                .arg("rebase")
+                .arg(format!("origin/{}", build_branch))
+                .status()
+                .unwrap()
+                .success()
+            {
+                panic!("Failed: git rebase origin/{}", build_branch);
+            }
         }
         println!("fedpkg push --force");
         if !Command::new("fedpkg")

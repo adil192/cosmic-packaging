@@ -5,269 +5,461 @@ import os
 import shutil
 import datetime
 
-packages = {
-    "cosmic-app-library": {
-        "crate_name": "cosmic-applibrary",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-applets": {
-        "crate_name": "cosmic-applets",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-bg": {
-        "crate_name": "cosmic-bg",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-comp": {
-        "crate_name": "cosmic-comp",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-edit": {
-        "crate_name": "cosmic-edit",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-files": {
-        "crate_name": "cosmic-files",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-greeter": {
-        "crate_name": "cosmic-greeter",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-icon-theme": {
-        "crate_name": "cosmic-icons",
-        "vendor": False,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-idle": {
-        "crate_name": "cosmic-idle",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-launcher": {
-        "crate_name": "cosmic-launcher",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-notifications": {
-        "crate_name": "cosmic-notifications",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-osd": {
-        "crate_name": "cosmic-osd",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-panel": {
-        "crate_name": "cosmic-panel",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-player": {
-        "crate_name": "cosmic-player",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-randr": {
-        "crate_name": "cosmic-randr",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-screenshot": {
-        "crate_name": "cosmic-screenshot",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-session": {
-        "crate_name": "cosmic-session",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-settings": {
-        "crate_name": "cosmic-settings",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-settings-daemon": {
-        "crate_name": "cosmic-settings-daemon",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-store": {
-        "crate_name": "cosmic-store",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-term": {
-        "crate_name": "cosmic-term",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "cosmic-wallpapers": {
-        "crate_name": "cosmic-wallpapers",
-        "vendor": False,
-        "apply_patches": False,
-        "zip_self": True,
-    },
-    "cosmic-workspaces": {
-        "crate_name": "cosmic-workspaces-epoch",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "xdg-desktop-portal-cosmic": {
-        "crate_name": "xdg-desktop-portal-cosmic",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
-    "pop-launcher": {
-        "crate_name": "launcher",
-        "vendor": True,
-        "apply_patches": False,
-        "zip_self": False,
-    },
+
+class ProjectInfo:
+    POP_OS_GIT = "https://github.com/pop-os/"
+    FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
+
+    def __init__(
+        self,
+        rpm_name: str,
+        crate_name: str = "",
+        vendor: bool = True,
+        apply_patches: bool = False,
+        zip_self: bool = False,
+    ):
+        self.rpm_name = rpm_name
+        self.crate_name = crate_name if crate_name else rpm_name
+        self.vendor = vendor
+        self.apply_patches = apply_patches
+        self.zip_self = zip_self
+        self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
+        self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
+
+    def clone_upstream_git(
+        self,
+        base_dir: pathlib.Path,
+    ):
+        print("clone_upstream_git")
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "--recurse-submodules",
+                self.upstream_git,
+            ],
+            cwd=base_dir,
+        )
+
+    def clone_fedora_git(
+        self,
+        base_dir: pathlib.Path,
+    ):
+        print("clone_fedora_git")
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "--recurse-submodules",
+                self.fedora_git,
+            ],
+            cwd=base_dir,
+        )
+
+
+class DirectoryInfo:
+    PATCH_DIRECTORY = "./patches"
+    RPM_DIRECTORY = "./fedora"
+
+    def __init__(
+        self,
+        project_info: ProjectInfo,
+        input_dir: pathlib.Path,
+        output_dir: pathlib.Path,
+    ):
+        self.input_dir = input_dir.absolute()
+        self.output_dir = output_dir.absolute()
+        # Create output directory if it doesn't exist
+        if not self.output_dir.exists():
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Standard directories
+        self.patch_directory = (
+            input_dir.joinpath(DirectoryInfo.PATCH_DIRECTORY)
+            .joinpath(project_info.rpm_name)
+            .absolute()
+        )
+        if not self.patch_directory.exists():
+            self.patch_directory.mkdir(parents=True, exist_ok=True)
+        # Cloned git artifact directories
+        self.upstream_project_directory = output_dir.joinpath(
+            project_info.crate_name
+        ).absolute()
+        self.fedora_project_directory = (
+            output_dir.joinpath(DirectoryInfo.RPM_DIRECTORY)
+            .joinpath(project_info.rpm_name)
+            .absolute()
+        )
+        if not self.fedora_project_directory.parent.exists():
+            self.fedora_project_directory.parent.mkdir(parents=True, exist_ok=True)
+
+        # Clone the project git repos
+        project_info.clone_upstream_git(base_dir=self.upstream_project_directory.parent)
+        project_info.clone_fedora_git(base_dir=self.fedora_project_directory.parent)
+        print(
+            "input_dir:",
+            self.input_dir,
+            "output_dir:",
+            self.output_dir,
+            "patch_directory:",
+            self.patch_directory,
+            "upstream_project_directory:",
+            self.upstream_project_directory,
+            "fedora_project_directory:",
+            self.fedora_project_directory,
+        )
+
+
+class TagInfo:
+    LATEST_TAG = "1.0.0~alpha.7"
+    NIGHTLY_MINVER_TAG: str = "1.0.0~alpha.7"
+
+    def __init__(self, directory_info: DirectoryInfo, tag: str | None):
+        # Nightly specified if tag not specified
+        self.nightly = tag is None
+        # If nightly
+        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-")
+
+        if self.nightly:
+            print("Nightly, so tag is accessed through rev-parse")
+            # When we don't get a specific tag (i.e. nightly), our 'tag' becomes the shortcommit
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                cwd=directory_info.upstream_project_directory,
+            ).stdout.strip()
+            print(f"Commit: {commit}")
+            tag = commit[:7]
+
+        self.tag = tag
+        self.tag_no_tilde = self.tag.replace("~", "-")
+
+        print("Git reset")
+        subprocess.run(
+            ["git", "reset", "--hard", commit],
+            cwd=directory_info.upstream_project_directory,
+        )
+        subprocess.run(
+            ["git", "checkout", commit], cwd=directory_info.upstream_project_directory
+        )
+
+        print("Git rev-parse")
+        self.commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=directory_info.upstream_project_directory,
+        ).stdout.strip()
+
+        self.commit_date = subprocess.run(
+            ["git", "log", "-1", "--format=%cd", "--date=format:%Y%m%d"],
+            capture_output=True,
+            text=True,
+            cwd=directory_info.upstream_project_directory,
+        ).stdout.strip()
+        self.commit_date_string = subprocess.run(
+            ["git", "log", "-1", "--format=%cd", "--date=iso"],
+            capture_output=True,
+            text=True,
+            cwd=directory_info.upstream_project_directory,
+        ).stdout.strip()
+
+        print(
+            "tag:",
+            self.tag,
+            "tag_no_tilde:",
+            self.tag_no_tilde,
+            "commit:",
+            self.commit,
+            "commit_date:",
+            self.commit_date,
+            "commit_date_string:",
+            self.commit_date_string,
+        )
+
+
+class ProjectOperations:
+    def __init__(
+        self,
+        project_info: ProjectInfo,
+        directory_info: DirectoryInfo,
+        tag_info: TagInfo,
+    ):
+        self.project_info = project_info
+        self.directory_info = directory_info
+        self.tag_info = tag_info
+
+    # Patches crates that are known to have bad executable bits
+    # TODO: Find out if this is still needed?
+    def patch_vendored_crates(self):
+        print("patch_vendored_crates")
+        # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
+        # current version containing the bug: 2.2.0
+        subprocess.run(
+            ["chmod", "-x", "./vendor/zip/src/spec.rs"],
+            cwd=self.directory_info.upstream_project_directory,
+            check=False,
+        )
+        # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
+        subprocess.run(
+            ["chmod", "-x", "./vendor/bumpalo/src/lib.rs"],
+            cwd=self.directory_info.upstream_project_directory,
+            check=False,
+        )
+        # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
+        subprocess.run(
+            ["chmod", "-x", "./vendor/ipnet/src/lib.rs"],
+            cwd=self.directory_info.upstream_project_directory,
+            check=False,
+        )
+
+    # This function prepares the vendored artifacts for the package
+    def vendor(self):
+        print("vendor")
+        # Run cargo vendor
+        cargo_vendor_output = subprocess.run(
+            ["cargo", "vendor"],
+            capture_output=True,
+            text=True,
+            cwd=self.directory_info.upstream_project_directory,
+        )
+        print("Cargo vendor output\n", cargo_vendor_output.stderr.strip(), "\n")
+        # Write the vendor config to the output directory
+        with open(
+            self.directory_info.output_dir.joinpath(
+                "vendor-config-" + self.tag_info.tag_no_tilde + ".toml"
+            ),
+            "w",
+        ) as f:
+            f.write(cargo_vendor_output.stdout.strip())
+        # Patch crates that need patching
+        self.patch_vendored_crates()
+        # Zip up the vendored crates
+        subprocess.run(
+            [
+                "tar",
+                "-C",
+                self.directory_info.upstream_project_directory,
+                "-pczf",
+                self.directory_info.output_dir.joinpath(
+                    "vendor-" + self.tag_info.tag_no_tilde + ".tar.gz"
+                ),
+                "vendor",
+            ],
+            cwd=self.directory_info.output_dir,
+        )
+
+    # This function copies files from the fedora upstream rpm source to the output directory
+    def copy_fedora_files_to_output(self):
+        print("copy_fedora_files_to_output")
+        for root, dirs, files in os.walk(self.directory_info.fedora_project_directory):
+            relative_path = os.path.relpath(
+                root, self.directory_info.fedora_project_directory
+            )
+            dest_path = os.path.join(self.directory_info.output_dir, relative_path)
+
+            os.makedirs(dest_path, exist_ok=True)  # Ensure destination subdir exists
+
+            for file in files:
+                # Skip vendor-config
+                if file.count("vendor-config") > 0:
+                    continue
+                shutil.copy2(
+                    os.path.join(root, file), os.path.join(dest_path, file)
+                )  # Preserve metadata
+        # Don't copy sources (since we have the sources in our directory now presumably)
+        self.directory_info.output_dir.joinpath("sources").unlink(missing_ok=True)
+        self.directory_info.output_dir.joinpath(
+            self.project_info.rpm_name + ".spec"
+        ).unlink(missing_ok=True)
+
+    # Prepare the rpm spec repo by applying patches and modifying the spec file
+    def prepare_spec_repo(self):
+        print("prepare_spec_repo")
+        spec_path = self.directory_info.fedora_project_directory.joinpath(
+            f"{self.project_info.rpm_name}.spec"
+        )
+        output_path = self.directory_info.output_dir.joinpath(
+            f"{self.project_info.rpm_name}.spec"
+        )
+        # Apply downstream -nightly patches
+        for root, dirs, files in os.walk(self.directory_info.patch_directory):
+            for file in files:
+                os.path.join(root, file)
+                print("Applying patch:", file)
+                ot = subprocess.run(
+                    [
+                        "git",
+                        "am",
+                        str(os.path.join(root, file)),
+                    ],
+                    cwd=self.directory_info.fedora_project_directory,
+                    capture_output=True,
+                    text=True,
+                )
+                if ot.returncode != 0:
+                    print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
+
+        # Copy the files to the output
+        self.copy_fedora_files_to_output()
+
+        # Make spec file modifications
+        with open(spec_path, "r") as f:
+            spec_res = SpecFile(self.project_info, self.tag_info, f.read())
+            with open(output_path, "w") as f2:
+                f2.write(spec_res.spec_out)
+
+    # Performs the remainder of setup needed to build the rpm
+    def setup(self):
+        print("setup")
+        # Apply project patches early if this flag is specified
+        if self.project_info.apply_patches:
+            self.apply_patches_to_repo()
+        # If we are building a project that needs vendoring, do that now
+        if self.project_info.vendor:
+            self.vendor()
+        # Finally, prepare the Fedora spec side
+        self.prepare_spec_repo()
+        # If we want to zip our output as an artifact, do so now
+        if self.project_info.zip_self:
+            # tar -pczf cosmic-wallpapers-%{version_no_tilde}.tar.gz cosmic-wallpapers
+            zip_result = subprocess.run(
+                [
+                    "tar",
+                    "-pczf",
+                    f"{self.project_info.crate_name}-{self.tag_info.tag_no_tilde}.tar.gz",
+                    self.project_info.crate_name,
+                ],
+                cwd=self.directory_info.output_dir,
+                text=True,
+                capture_output=True,
+            )
+            print(zip_result.stdout.strip())
+
+
+# Spec file processing class
+class SpecFile:
+    def __init__(self, project_info: ProjectInfo, tag_info: TagInfo, spec_in: str):
+        if tag_info.nightly:
+            self.spec_out = self.process_nightly(project_info, tag_info, spec_in)
+        else:
+            self.spec_out = self.process_tagged(project_info, tag_info, spec_in)
+
+    def process_nightly(
+        self, project_info: ProjectInfo, tag_info: TagInfo, spec_in: str
+    ) -> str:
+        build_date = datetime.datetime.now().strftime("%Y%m%d%H%M")
+        out_str = ""
+        skip = False
+        for in_line in spec_in.splitlines():
+            out_line = in_line
+            if (
+                in_line.startswith("%global commit ")
+                or in_line.startswith(
+                    "# While our version corresponds to an upstream tag"
+                )
+            ) and not skip:
+                out_str += f"# cosmic-packaging: Nightly build processed from tagged version at {project_info.fedora_git}\n"
+                out_str += f"%global commit {tag_info.commit}\n"
+                out_str += "%global shortcommit %{sub %{commit} 1 7}\n"
+                out_str += f"%global commitdatestring {tag_info.commit_date_string}\n"
+                out_str += f"%global commitdate {tag_info.commit_date}\n"
+                out_str += f"%global builddate {build_date}\n"
+                out_str += f"%global cosmic_minver {TagInfo.NIGHTLY_MINVER_TAG}\n\n"
+                skip = True
+            elif in_line.startswith("Name: "):
+                skip = False
+            elif in_line.startswith("Version: "):
+                print(
+                    f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
+                )
+                out_line = f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
+            elif in_line.startswith("Source0: "):
+                out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
+            elif in_line.startswith("Release: ") and RELEASE_OVERRIDE:
+                out_line = f"Release: {RELEASE_OVERRIDE}"
+            elif in_line.startswith("%autosetup "):
+                out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
+
+            out_line = out_line.replace("%{version_no_tilde}", "%{shortcommit}")
+            if not skip:
+                out_str += out_line.rstrip() + "\n"
+        return out_str
+
+    # This function processes an input spec file as a string, and outputs the result to another string
+    def process_tagged(
+        self, project_info: ProjectInfo, tag_info: TagInfo, spec_in: str
+    ) -> str:
+        out_str = ""
+        skip = False
+        for in_line in spec_in.splitlines():
+            out_line = in_line
+            if (
+                in_line.startswith("%global commit ")
+                or in_line.startswith(
+                    "# While our version corresponds to an upstream tag"
+                )
+            ) and not skip:
+                out_str += "# While our version corresponds to an upstream tag, we still need to define\n"
+                out_str += "# these macros in order to set the VERGEN_GIT_SHA and VERGEN_GIT_COMMIT_DATE\n"
+                out_str += (
+                    "# environment variables in multiple sections of the spec file.\n"
+                )
+                out_str += f"%global commit {tag_info.commit}\n"
+                out_str += f"%global commitdatestring {tag_info.commit_date_string}\n"
+                out_str += f"%global cosmic_minver {tag_info.tag}\n\n"
+                skip = True
+            elif in_line.startswith("Name: "):
+                skip = False
+            elif in_line.startswith("Version: "):
+                out_line = f"Version: {tag_info.tag}"
+            elif in_line.startswith("Source0: "):
+                out_line = out_line.replace("%{commit}", "epoch-%{version_no_tilde}")
+            elif in_line.startswith("%autosetup "):
+                out_line = out_line.replace("%{commit}", "epoch-%{version_no_tilde}")
+
+            out_line = out_line.replace("%{shortcommit}", "%{version_no_tilde}")
+            if not skip:
+                out_str += out_line.rstrip() + "\n"
+        return out_str
+
+
+# Define every COSMIC package
+PACKAGES: dict[str, ProjectInfo] = {
+    "cosmic-app-library": ProjectInfo(
+        rpm_name="cosmic-app-library", crate_name="cosmic-applibrary"
+    ),
+    "cosmic-applets": ProjectInfo(rpm_name="cosmic-applets"),
+    "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg"),
+    "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp"),
+    "cosmic-edit": ProjectInfo(rpm_name="cosmic-edit"),
+    "cosmic-files": ProjectInfo(rpm_name="cosmic-files"),
+    "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter"),
+    "cosmic-icon-theme": ProjectInfo(
+        rpm_name="cosmic-icon-theme", crate_name="cosmic-icons", vendor=False
+    ),
+    "cosmic-idle": ProjectInfo(rpm_name="cosmic-idle"),
+    "cosmic-launcher": ProjectInfo(rpm_name="cosmic-launcher"),
+    "cosmic-notifications": ProjectInfo(rpm_name="cosmic-notifications"),
+    "cosmic-osd": ProjectInfo(rpm_name="cosmic-osd"),
+    "cosmic-panel": ProjectInfo(rpm_name="cosmic-panel"),
+    "cosmic-player": ProjectInfo(rpm_name="cosmic-player"),
+    "cosmic-randr": ProjectInfo(rpm_name="cosmic-randr"),
+    "cosmic-screenshot": ProjectInfo(rpm_name="cosmic-screenshot"),
+    "cosmic-session": ProjectInfo(rpm_name="cosmic-session"),
+    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings"),
+    "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
+    "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
+    "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),
+    "cosmic-wallpapers": ProjectInfo(rpm_name="cosmic-wallpapers", zip_self=True),
+    "cosmic-workspaces": ProjectInfo(
+        rpm_name="cosmic-workspaces", crate_name="cosmic-workspaces-epoch"
+    ),
+    "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
+    "pop-launcher": ProjectInfo(rpm_name="pop-launcher", crate_name="launcher"),
 }
 
-POP_OS_GIT = "https://github.com/pop-os/"
-NIGHTLY_MINVER_TAG = "1.0.0~alpha.7"
-
 RELEASE_OVERRIDE = None
-
-###########################################
-# PATCH EXECUTABLE BIT IN VENDORED CRATES #
-###########################################
-
-
-def patch_vendored_crates():
-    global cwd, crate_name
-    # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
-    # current version containing the bug: 2.2.0
-    subprocess.run(
-        ["chmod", "-x", "./vendor/zip/src/spec.rs"],
-        cwd=cwd.joinpath(crate_name),
-        check=False,
-    )
-    # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
-    subprocess.run(
-        ["chmod", "-x", "./vendor/bumpalo/src/lib.rs"],
-        cwd=cwd.joinpath(crate_name),
-        check=False,
-    )
-    # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
-    subprocess.run(
-        ["chmod", "-x", "./vendor/ipnet/src/lib.rs"],
-        cwd=cwd.joinpath(crate_name),
-        check=False,
-    )
-
-
-##################################################
-# APPLY ANY PATCHES TO THE REPO BEFORE VENDORING #
-##################################################
-
-
-def apply_patches_to_repo():
-    global cwd, crate_name
-    # TODO: Finish this
-
-
-############################################
-# COPY ALL FILES TO SETUP (EXCEPT SOURCES) #
-############################################
-
-
-def copy_files_to_setup():
-    global spec_dir, cwd, crate_name
-    for root, dirs, files in os.walk(spec_dir):
-        relative_path = os.path.relpath(root, spec_dir)
-        dest_path = os.path.join(cwd, relative_path)
-
-        os.makedirs(dest_path, exist_ok=True)  # Ensure destination subdir exists
-
-        for file in files:
-            # Skip vendor-config
-            if file.count("vendor-config") > 0:
-                continue
-            shutil.copy2(
-                os.path.join(root, file), os.path.join(dest_path, file)
-            )  # Preserve metadata
-    # Don't copy sources (since we have the sources in our directory now presumably)
-    cwd.joinpath("sources").unlink(missing_ok=True)
-    cwd.joinpath(f"{crate_name}.spec").unlink(missing_ok=True)
-
-
-#############################################
-# HANDLE VENDORING OF CARGO DEPENDENDENCIES #
-#############################################
-
-
-def get_vendor_artifacts():
-    global rpm_name, crate_name, tag, commit, cwd
-    print("VENDOR=1")
-    cargo_vendor_output = subprocess.run(
-        ["cargo", "vendor"],
-        capture_output=True,
-        text=True,
-        cwd=cwd.joinpath(crate_name),
-    )
-    print(
-        f"=======cargo vendor stderr=======\n{cargo_vendor_output.stderr.strip()}\n================================="
-    )
-    vendor_config_name = f"vendor-config-{tag.replace('~', '-')}.toml"
-    with open(f"{cwd.joinpath(vendor_config_name)}", "w") as f:
-        f.write(cargo_vendor_output.stdout.strip())
-
-    patch_vendored_crates()
-
-    tar_cmd = [
-        "tar",
-        "-C",
-        cwd.joinpath(crate_name),
-        "-pczf",
-        cwd.joinpath(f"vendor-{tag.replace('~', '-')}.tar.gz"),
-        "vendor",
-    ]
-    print(tar_cmd)
-
-    subprocess.run(
-        tar_cmd,
-        cwd=cwd,
-    )
-
-
-#######################
-# SPECFILE PROCESSING #
-#######################
 
 # if [ "$NIGHTLY" -eq 1 ]; then
 #     echo "NIGHTLY=1"
@@ -288,121 +480,6 @@ def get_vendor_artifacts():
 #     sed -i "/^%global commit / s/.*/\# While our version corresponds to an upstream tag, we still need to define\n\# these macros in order to set the VERGEN_GIT_SHA and VERGEN_GIT_COMMIT_DATE\n\# environment variables in multiple sections of the spec file.\n%global commit $COMMIT/" $NAME.spec
 # fi
 
-
-def process_specfile():
-    global \
-        rpm_name, \
-        spec_dir, \
-        tag, \
-        cwd, \
-        commit, \
-        nightly, \
-        commit_date, \
-        commit_date_string
-    spec_path = spec_dir.joinpath(f"{rpm_name}.spec")
-    output_path = cwd.joinpath(f"{rpm_name}.spec")
-    print(f"Nightly: {nightly}")
-    if nightly:
-        process_nightly(spec_path, output_path)
-    else:
-        process_tagged(spec_path, output_path)
-
-
-def process_nightly(spec_path, output_path):
-    global commit, commit_date, commit_date_string, tag, crate_name, rpm_name
-    build_date = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    with open(spec_path, "r") as f:
-        with open(output_path, "w") as f2:
-            skip = False
-            for in_line in f.readlines():
-                out_line = in_line
-                if (
-                    in_line.startswith(f"%global commit ")
-                    or in_line.startswith(
-                        f"# While our version corresponds to an upstream tag"
-                    )
-                ) and not skip:
-                    f2.write(
-                        f"# cosmic-packaging: Nightly build processed from tagged version at https://src.fedoraproject.org/rpms/{rpm_name}\n"
-                    )
-                    f2.write(f"%global commit {commit}\n")
-                    f2.write(f"%global shortcommit %{{sub %{{commit}} 1 7}}\n")
-                    f2.write(f"%global commitdatestring {commit_date_string}\n")
-                    f2.write(f"%global commitdate {commit_date}\n")
-                    f2.write(f"%global builddate {build_date}\n")
-                    f2.write(f"%global cosmic_minver {NIGHTLY_MINVER_TAG}\n\n")
-                    skip = True
-                elif in_line.startswith(f"Name: "):
-                    skip = False
-                elif in_line.startswith(f"Version: "):
-                    print(
-                        f"Version: {NIGHTLY_MINVER_TAG}^git{commit_date}.{commit[:7]}"
-                    )
-                    out_line = f"Version: {NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
-                elif in_line.startswith(f"Source0: "):
-                    out_line = out_line.replace(
-                        f"epoch-%{{version_no_tilde}}", f"%{{commit}}"
-                    )
-                elif in_line.startswith(f"Release: ") and RELEASE_OVERRIDE:
-                    out_line = f"Release: {RELEASE_OVERRIDE}"
-                elif in_line.startswith(f"%autosetup "):
-                    out_line = out_line.replace(
-                        f"epoch-%{{version_no_tilde}}", f"%{{commit}}"
-                    )
-
-                out_line = out_line.replace(
-                    f"%{{version_no_tilde}}", f"%{{shortcommit}}"
-                )
-                if not skip:
-                    f2.write(out_line.rstrip() + "\n")
-
-
-def process_tagged(spec_path, output_path):
-    global commit, commit_date, commit_date_string, tag, crate_name, rpm_name
-    with open(spec_path, "r") as f:
-        with open(output_path, "w") as f2:
-            skip = False
-            for in_line in f.readlines():
-                out_line = in_line
-                if (
-                    in_line.startswith(f"%global commit ")
-                    or in_line.startswith(
-                        f"# While our version corresponds to an upstream tag"
-                    )
-                ) and not skip:
-                    f2.write(
-                        "# While our version corresponds to an upstream tag, we still need to define\n"
-                    )
-                    f2.write(
-                        "# these macros in order to set the VERGEN_GIT_SHA and VERGEN_GIT_COMMIT_DATE\n"
-                    )
-                    f2.write(
-                        "# environment variables in multiple sections of the spec file.\n"
-                    )
-                    f2.write(f"%global commit {commit}\n")
-                    f2.write(f"%global commitdatestring {commit_date_string}\n")
-                    f2.write(f"%global cosmic_minver {tag}\n\n")
-                    skip = True
-                elif in_line.startswith(f"Name: "):
-                    skip = False
-                elif in_line.startswith(f"Version: "):
-                    out_line = f"Version: {tag}"
-                elif in_line.startswith(f"Source0: "):
-                    out_line = out_line.replace(
-                        f"%{{commit}}", f"epoch-%{{version_no_tilde}}"
-                    )
-                elif in_line.startswith(f"%autosetup "):
-                    out_line = out_line.replace(
-                        f"%{{commit}}", f"epoch-%{{version_no_tilde}}"
-                    )
-
-                out_line = out_line.replace(
-                    f"%{{shortcommit}}", f"%{{version_no_tilde}}"
-                )
-                if not skip:
-                    f2.write(out_line.rstrip() + "\n")
-
-
 #################
 # CLI ARGUMENTS #
 #################
@@ -412,126 +489,49 @@ parser = argparse.ArgumentParser(
     description="Setup a nightly build of cosmic-packaging",
 )
 
-parser.add_argument("rpm_name", choices=packages.keys())
-parser.add_argument("spec_dir", help="Path to the directory containing the spec file")
+parser.add_argument("rpm_name", choices=PACKAGES.keys())
 parser.add_argument(
     "--tag",
     help="Tag to use. Defaults to latest commit (Nightly). Specify --tag latest to get latest tag",
 )
-parser.add_argument(
-    "--cwd",
-    help="Working directory to use. Defaults to wherever the script was called.",
-)
+parser.add_argument("--input", help="Input directory (cosmic-packaging repo) to use.")
+parser.add_argument("--output", help="Output directory to use.")
 
 ###############
 # RUN PROGRAM #
 ###############
 
-LATEST_TAG = "1.0.0~alpha.7"
-
 args = parser.parse_args()
-
-rpm_name = args.rpm_name
-spec_dir = pathlib.Path(args.spec_dir)
-crate_name = packages[rpm_name]["crate_name"]
-vendor = packages[rpm_name]["vendor"]
-apply_patches = packages[rpm_name]["apply_patches"]
-zip_self = packages[rpm_name]["zip_self"]
-cwd = pathlib.Path(args.cwd) if args.cwd else pathlib.Path.cwd()
-tag = args.tag if args.tag else ""
-# Set tag to blank if nightly is specified
-if tag == "nightly":
-    tag = ""
-elif tag == "latest":
-    tag = LATEST_TAG
-# Nightly specified if tag not specified
-nightly = tag == ""
-# If nightly
-if nightly:
-    commit = ""
-else:
-    commit = str("epoch-" + tag).replace("~", "-")
-
-print(
-    f"RPM Name: {rpm_name}, Crate Name: {crate_name}, Tag: {tag}, Commit: {commit}, Cwd: {cwd}"
+# Identify project
+project_info = PACKAGES[args.rpm_name]
+# Get input directory and output directory
+# Depends on project_info to get the subdirectory names
+# This instantiation will clone the projects into their proper directories as well
+directory_info = DirectoryInfo(
+    project_info=project_info,
+    input_dir=pathlib.Path(args.input) if args.input else pathlib.Path.cwd(),
+    output_dir=pathlib.Path(args.output) if args.output else pathlib.Path.cwd(),
+)
+# Normalize tag argument from the command line
+tag = args.tag
+if args.tag == "latest":
+    tag = TagInfo.LATEST_TAG
+elif tag == "nightly":
+    tag = None
+# Get information about tags, using the cloned project
+# This also gets the git project into the correct revision by checking out the proper rev
+tag_info = TagInfo(
+    directory_info=directory_info,
+    tag=tag,
 )
 
-if not cwd.exists():
-    cwd.mkdir(parents=True, exist_ok=True)
+project_operations = ProjectOperations(project_info, directory_info, tag_info)
+project_operations.setup()
 
-print("Git clone")
-subprocess.run(
-    [
-        "git",
-        "clone",
-        "--recurse-submodules",
-        f"{POP_OS_GIT}{crate_name}.git",
-    ],
-    cwd=cwd,
-)
-# We want to know if the folder name is the same as what we expect in the rpm spec file
-print("ls -a")
-ls_result = subprocess.run(
-    [
-        "ls",
-        "-a",
-    ],
-    cwd=cwd,
-    text=True,
-    capture_output=True,
-)
-print(ls_result.stdout.strip())
-
-if tag == "":
-    print("Nightly, so tag is accessed through rev-parse")
-    # When we don't get a specific tag (i.e. nightly), our 'tag' becomes the shortcommit
-    commit = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        cwd=cwd.joinpath(crate_name),
-    ).stdout.strip()
-    print(f"Commit: {commit}")
-    tag = commit[:7]
-
-print(f"Tag: {tag}")
-
-print("Git reset")
-subprocess.run(["git", "reset", "--hard", commit], cwd=cwd.joinpath(crate_name))
-subprocess.run(["git", "checkout", commit], cwd=cwd.joinpath(crate_name))
-
-print("Git rev-parse")
-commit = subprocess.run(
-    ["git", "rev-parse", "HEAD"],
-    capture_output=True,
-    text=True,
-    cwd=cwd.joinpath(crate_name),
-).stdout.strip()
-
-print(f"Commit: {commit}")
-
-commit_date = subprocess.run(
-    ["git", "log", "-1", f"--format=%cd", f"--date=format:%Y%m%d"],
-    capture_output=True,
-    text=True,
-    cwd=cwd.joinpath(crate_name),
-).stdout.strip()
-commit_date_string = subprocess.run(
-    ["git", "log", "-1", f"--format=%cd", f"--date=iso"],
-    capture_output=True,
-    text=True,
-    cwd=cwd.joinpath(crate_name),
-).stdout.strip()
-
-if apply_patches:
-    apply_patches_to_repo()
-
-copy_files_to_setup()
-
-if vendor:
-    get_vendor_artifacts()
-
-process_specfile()
+# We are now set up with all the variables we need to prepare the output for rpm building
+# Finally, clean up by removing the cloned repos
+shutil.rmtree(directory_info.upstream_project_directory)
+shutil.rmtree(directory_info.fedora_project_directory.parent)
 
 print("ls -a")
 ls_result = subprocess.run(
@@ -539,36 +539,7 @@ ls_result = subprocess.run(
         "ls",
         "-a",
     ],
-    cwd=cwd,
-    text=True,
-    capture_output=True,
-)
-print(ls_result.stdout.strip())
-
-if zip_self:
-    # tar -pczf cosmic-wallpapers-%{version_no_tilde}.tar.gz cosmic-wallpapers
-    zip_result = subprocess.run(
-        [
-            "tar",
-            "-pczf",
-            f"{crate_name}-{tag.replace('~', '-')}.tar.gz",
-            crate_name,
-        ],
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-    )
-    print(zip_result.stdout.strip())
-
-shutil.rmtree(cwd.joinpath(crate_name))
-
-print("ls -a")
-ls_result = subprocess.run(
-    [
-        "ls",
-        "-a",
-    ],
-    cwd=cwd,
+    cwd=directory_info.output_dir,
     text=True,
     capture_output=True,
 )

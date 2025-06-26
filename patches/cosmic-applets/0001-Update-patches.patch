@@ -1,0 +1,78 @@
+From 6b4bce98b31fd801e6d271babde63be0f8576513 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Thu, 1 May 2025 22:17:12 -0500
+Subject: [PATCH] Update patches
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ 0001-Set-LTO-thin.patch                                | 10 +++++-----
+ ...le.patch => 0002-Symlink-relative-in-justfile.patch |  4 ++--
+ cosmic-applets.spec                                    |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+ rename 0001-Symlink-relative-in-justfile.patch => 0002-Symlink-relative-in-justfile.patch (89%)
+
+diff --git a/0001-Set-LTO-thin.patch b/0001-Set-LTO-thin.patch
+index 4670e3b..6acf14a 100644
+--- a/0001-Set-LTO-thin.patch
++++ b/0001-Set-LTO-thin.patch
+@@ -1,7 +1,7 @@
+-From 265bc44748ef6b51eaa4bbeb6211c50b5e3905a4 Mon Sep 17 00:00:00 2001
++From 6ddf5ebb192432ff522bd8cbcce44cfaaf43334e Mon Sep 17 00:00:00 2001
+ From: Ryan Brue <ryanbrue.dev@gmail.com>
+-Date: Thu, 10 Apr 2025 14:57:17 -0500
+-Subject: [PATCH] Set LTO=thin
++Date: Thu, 1 May 2025 22:14:52 -0500
++Subject: [PATCH 1/2] Set LTO=thin
+ 
+ Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+ ---
+@@ -9,14 +9,14 @@ Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+  1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+ diff --git a/Cargo.toml b/Cargo.toml
+-index 495ea56..d8f6716 100644
++index e9c7b3e..d8f6716 100644
+ --- a/Cargo.toml
+ +++ b/Cargo.toml
+ @@ -70,7 +70,7 @@ serde = { version = "1.0.219", features = ["derive"] }
+  [profile.release]
+  opt-level = "s"
+  panic = "abort"
+--lto = "fat"
++-lto = "off"
+ +lto = "thin"
+  
+  [workspace.metadata.cargo-machete]
+diff --git a/0001-Symlink-relative-in-justfile.patch b/0002-Symlink-relative-in-justfile.patch
+similarity index 89%
+rename from 0001-Symlink-relative-in-justfile.patch
+rename to 0002-Symlink-relative-in-justfile.patch
+index 1ae844c..f04c527 100644
+--- a/0001-Symlink-relative-in-justfile.patch
++++ b/0002-Symlink-relative-in-justfile.patch
+@@ -1,7 +1,7 @@
+-From 828e0435ee30654f81b037b41e6f747630b801e1 Mon Sep 17 00:00:00 2001
++From a458795eaf30366970af490b7559ff0ac653ede0 Mon Sep 17 00:00:00 2001
+ From: Ryan Brue <ryanbrue.dev@gmail.com>
+ Date: Thu, 10 Apr 2025 15:00:53 -0500
+-Subject: [PATCH] Symlink relative in justfile
++Subject: [PATCH 2/2] Symlink relative in justfile
+ 
+ Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+ ---
+diff --git a/cosmic-applets.spec b/cosmic-applets.spec
+index a9b0e8a..695b4ca 100644
+--- a/cosmic-applets.spec
++++ b/cosmic-applets.spec
+@@ -32,7 +32,7 @@ Source2:        vendor-config-%{version_no_tilde}.toml
+ # required to compile applets in a reasonable amount of time
+ # necessary even with the multi-binary feature + 8h timeout
+ Patch: 0001-Set-LTO-thin.patch
+-Patch: 0001-Symlink-relative-in-justfile.patch
++Patch: 0002-Symlink-relative-in-justfile.patch
+ 
+ BuildRequires:  cargo-rpm-macros >= 25
+ BuildRequires:  rustc
+-- 
+2.49.0
+

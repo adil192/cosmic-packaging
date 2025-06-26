@@ -1,0 +1,25 @@
+From 70084cc42318361f9442b5847e2e81aefc0e5540 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 12 May 2025 09:32:26 -0500
+Subject: [PATCH 2/2] Require glib2-devel
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-edit.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-edit.spec b/cosmic-edit.spec
+index 7cecf67..d7d0655 100644
+--- a/cosmic-edit.spec
++++ b/cosmic-edit.spec
+@@ -38,6 +38,7 @@ BuildRequires:  cargo
+ BuildRequires:  just
+ BuildRequires:  libxkbcommon-devel
+ BuildRequires:  desktop-file-utils
++BuildRequires:  glib2-devel
+ 
+ Requires:       cosmic-icon-theme >= %{cosmic_minver}
+ 
+-- 
+2.49.0
+

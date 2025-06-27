@@ -290,7 +290,7 @@ class ProjectOperations:
                 ot = subprocess.run(
                     [
                         "git",
-                        "am",
+                        "apply",
                         str(os.path.join(root, file)),
                     ],
                     cwd=self.directory_info.fedora_project_directory,

@@ -1,0 +1,24 @@
+From 621798a15fa0fd03de7ceb002a55f3494f3391bf Mon Sep 17 00:00:00 2001
+From: wiiznokes <78230769+wiiznokes@users.noreply.github.com>
+Date: Sat, 5 Jul 2025 15:53:24 +0200
+Subject: [PATCH] add openssl dep
+
+---
+ cosmic-settings-daemon.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-settings-daemon.spec b/cosmic-settings-daemon.spec
+index edd0707..290d10a 100644
+--- a/cosmic-settings-daemon.spec
++++ b/cosmic-settings-daemon.spec
+@@ -45,6 +45,7 @@ BuildRequires:  libxkbcommon-devel
+ BuildRequires:  pam-devel
+ BuildRequires:  pulseaudio-utils
+ BuildRequires:  just
++BuildRequires:  openssl-devel
+ 
+ Requires:       acpid
+ Requires:       adw-gtk3-theme
+-- 
+2.50.0
+

@@ -1,7 +1,6 @@
-set working-directory := 'dev'
 set export
 
-NAME := 'cosmic-files'
+NAME := 'cosmic-applets'
 TAG := 'nightly'
 
 all *FLAGS: clean (init FLAGS) sources spec build
@@ -39,3 +38,13 @@ clean:
 clean-rpmbuild-dir:
     rm -rf ~/rpmbuild
     rpmdev-setuptree
+
+
+clone-upstream:
+    rm -rf upstream/{{NAME}}
+    git clone https://src.fedoraproject.org/rpms/{{NAME}}.git upstream/{{NAME}}
+
+create-patch commit_msg patch_name:
+    git -C upstream/{{NAME}} add .
+    git -C upstream/{{NAME}} commit -m "{{commit_msg}}"
+    git -C upstream/{{NAME}} format-patch -1 --stdout > patches/{{NAME}}/{{patch_name}}.patch

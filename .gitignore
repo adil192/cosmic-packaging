@@ -2,3 +2,4 @@
 !dev/.keep
 target/
 venv/
+/upstream/

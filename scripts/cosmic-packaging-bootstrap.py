@@ -10,6 +10,8 @@ class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
     FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
 
+    COSMIC_PACKAGING_GIT = "https://pagure.io/fedora-cosmic/cosmic-packaging.git"
+
     def __init__(
         self,
         rpm_name: str,
@@ -17,12 +19,14 @@ class ProjectInfo:
         vendor: bool = True,
         apply_patches: bool = False,
         zip_self: bool = False,
+        staging: bool = False,
     ):
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
         self.vendor = vendor
         self.apply_patches = apply_patches
         self.zip_self = zip_self
+        self.staging = staging
         self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
 
@@ -46,15 +50,35 @@ class ProjectInfo:
         base_dir: pathlib.Path,
     ):
         print("clone_fedora_git")
-        subprocess.run(
-            [
-                "git",
-                "clone",
-                "--recurse-submodules",
-                self.fedora_git,
-            ],
-            cwd=base_dir,
-        )
+        if self.staging:
+            # Clone cosmic-packaging git and copy the proper subdirectory to the base dir
+            subprocess.run(
+                ["git", "clone", "--recurse-submodules", COSMIC_PACKAGING_GIT],
+                cwd=base_dir,
+            ),
+            subprocess.run(
+                [
+                    "mv",
+                    base_dir.joinpath("cosmic-packaging")
+                    .joinpath("staging")
+                    .joinpath(self.rpm_name),
+                    base_dir.joinpath(self.rpm_name),
+                ],
+                cwd=base_dir,
+            )
+            subprocess.run(
+                ["rm", "-r", base_dir.joinpath("cosmic-packaging")], cwd=base_dir
+            )
+        else:
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--recurse-submodules",
+                    self.fedora_git,
+                ],
+                cwd=base_dir,
+            )
 
 
 class DirectoryInfo:
@@ -457,6 +481,8 @@ PACKAGES: dict[str, ProjectInfo] = {
     ),
     "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
     "pop-launcher": ProjectInfo(rpm_name="pop-launcher", crate_name="launcher"),
+    # STAGING
+    "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True),
 }
 
 RELEASE_OVERRIDE = None

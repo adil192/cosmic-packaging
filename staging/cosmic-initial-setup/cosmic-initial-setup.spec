@@ -37,7 +37,14 @@ BuildRequires:  cargo
 BuildRequires:  just
 BuildRequires:  libxkbcommon-devel
 BuildRequires:  desktop-file-utils
+BuildRequires:  openssl-devel
+BuildRequires:  flatpak-devel
+BuildRequires:  libinput-devel
+BuildRequires:  systemd-devel
 
+Recommends:     PackageKit
+Recommends:     flatpak
+Requires:       flatpak-libs
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:

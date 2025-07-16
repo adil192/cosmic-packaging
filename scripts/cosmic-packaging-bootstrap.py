@@ -53,7 +53,12 @@ class ProjectInfo:
         if self.staging:
             # Clone cosmic-packaging git and copy the proper subdirectory to the base dir
             subprocess.run(
-                ["git", "clone", "--recurse-submodules", COSMIC_PACKAGING_GIT],
+                [
+                    "git",
+                    "clone",
+                    "--recurse-submodules",
+                    ProjectInfo.COSMIC_PACKAGING_GIT,
+                ],
                 cwd=base_dir,
             ),
             subprocess.run(

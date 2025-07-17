@@ -115,8 +115,8 @@ export VERGEN_GIT_SHA="%{commit}"
 %doc README.md
 %{_bindir}/cosmic-initial-setup
 %{_datadir}/applications/com.system76.CosmicInitialSetup.desktop
-# %{_metainfodir}/com.system76.Cosmicinitial-setup.metainfo.xml
-# %{_datadir}/icons/hicolor/*/apps/com.system76.Cosmicinitial-setup.svg
+# %%{_metainfodir}/com.system76.Cosmicinitial-setup.metainfo.xml
+# %%{_datadir}/icons/hicolor/*/apps/com.system76.Cosmicinitial-setup.svg
 
 %changelog
 %autochangelog

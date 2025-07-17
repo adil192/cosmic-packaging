@@ -90,17 +90,10 @@ desktop-file-install \
 --delete-original \
 --dir %{buildroot}%{_datadir}/applications \
 %{buildroot}%{_datadir}/applications/com.system76.CosmicInitialSetup.desktop
-desktop-file-install \
---remove-category COSMIC \
---add-category X-COSMIC \
---delete-original \
---dir %{buildroot}%{_datadir}/applications \
-%{buildroot}%{_datadir}/applications/com.system76.CosmicInitialSetup.Autostart.desktop
 %endif
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicInitialSetup.desktop
-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicInitialSetup.Autostart.desktop
 %if %{with check}
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"

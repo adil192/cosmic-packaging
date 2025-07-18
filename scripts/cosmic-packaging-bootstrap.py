@@ -20,6 +20,7 @@ class ProjectInfo:
         apply_patches: bool = False,
         zip_self: bool = False,
         staging: bool = False,
+        upstream_tag: str = "",
     ):
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
@@ -27,6 +28,7 @@ class ProjectInfo:
         self.apply_patches = apply_patches
         self.zip_self = zip_self
         self.staging = staging
+        self.upstream_tag = upstream_tag
         self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
 
@@ -399,10 +401,16 @@ class SpecFile:
             elif in_line.startswith("Name: "):
                 skip = False
             elif in_line.startswith("Version: "):
-                print(
-                    f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
-                )
-                out_line = f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
+                if project_info.upstream_tag:
+                    print(
+                        f"Version: {project_info.upstream_tag}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
+                    )
+                    out_line = f"Version: {project_info.upstream_tag}^git%{{commitdate}}.%{{shortcommit}}"
+                else:
+                    print(
+                        f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
+                    )
+                    out_line = f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
             elif in_line.startswith("Source0: "):
                 out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
             elif in_line.startswith("Release: ") and RELEASE_OVERRIDE:
@@ -485,7 +493,9 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="cosmic-workspaces", crate_name="cosmic-workspaces-epoch"
     ),
     "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
-    "pop-launcher": ProjectInfo(rpm_name="pop-launcher", crate_name="launcher"),
+    "pop-launcher": ProjectInfo(
+        rpm_name="pop-launcher", crate_name="launcher", upstream_tag="1.2.4"
+    ),
     # STAGING
     "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True),
 }

@@ -1,0 +1,40 @@
+From 45c1ce20d6423f8b4c213d6ed08c3b23f933f884 Mon Sep 17 00:00:00 2001
+From: wiiznokes <78230769+wiiznokes@users.noreply.github.com>
+Date: Sun, 20 Jul 2025 18:18:02 +0200
+Subject: [PATCH] use GIT_HASH env var
+
+---
+ cosmic-comp.spec | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cosmic-comp.spec b/cosmic-comp.spec
+index 04c1458..80f5cb3 100644
+--- a/cosmic-comp.spec
++++ b/cosmic-comp.spec
+@@ -72,6 +72,7 @@ fi
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
++export GIT_HASH="%{commit}"
+ %cargo_build
+ %{cargo_license_summary}
+ %{cargo_license} > LICENSE.dependencies
+@@ -82,6 +83,7 @@ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
++export GIT_HASH="%{commit}"
+ make install DESTDIR=%{buildroot} prefix=%{_prefix}
+ 
+ %if %{with check}
+@@ -89,6 +91,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
++export GIT_HASH="%{commit}"
+ %cargo_test
+ %endif
+ 
+-- 
+2.50.1
+

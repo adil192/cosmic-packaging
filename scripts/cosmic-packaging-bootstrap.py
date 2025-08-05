@@ -243,6 +243,11 @@ class ProjectOperations:
             cwd=self.directory_info.upstream_project_directory,
             check=False,
         )
+        subprocess.run(
+            ["chmod", "-x", "./vendor/alloc-no-stdlib/src/lib.rs"],
+            cwd=self.directory_info.upstream_project_directory,
+            check=False,
+        )
 
     # This function prepares the vendored artifacts for the package
     def vendor(self):

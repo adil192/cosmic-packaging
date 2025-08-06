@@ -221,30 +221,12 @@ class ProjectOperations:
         self.tag_info = tag_info
 
     # Patches crates that are known to have bad executable bits
-    # TODO: Find out if this is still needed?
     def patch_vendored_crates(self):
         print("patch_vendored_crates")
-        # XXX: remove me once https://github.com/zip-rs/zip2/pull/238 is merged, and zip is updated in cosmic-{files, xdg-portal, edit}.
-        # current version containing the bug: 2.2.0
+        
+        # remove executable bit of some .rs files
         subprocess.run(
-            ["chmod", "-x", "./vendor/zip/src/spec.rs"],
-            cwd=self.directory_info.upstream_project_directory,
-            check=False,
-        )
-        # XXX: remove me once bumpalo > 3.16.0 in cosmic-{edit, files, term}
-        subprocess.run(
-            ["chmod", "-x", "./vendor/bumpalo/src/lib.rs"],
-            cwd=self.directory_info.upstream_project_directory,
-            check=False,
-        )
-        # XXX: cause issue on cosmic-store. I haven't submitted a pull request or anything
-        subprocess.run(
-            ["chmod", "-x", "./vendor/ipnet/src/lib.rs"],
-            cwd=self.directory_info.upstream_project_directory,
-            check=False,
-        )
-        subprocess.run(
-            ["chmod", "-x", "./vendor/alloc-no-stdlib/src/lib.rs"],
+            ["chmod", "-x", "-R", "./vendor"],
             cwd=self.directory_info.upstream_project_directory,
             check=False,
         )

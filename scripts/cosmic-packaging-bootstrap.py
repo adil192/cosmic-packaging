@@ -226,7 +226,7 @@ class ProjectOperations:
         
         # remove executable bit of some .rs files
         subprocess.run(
-            ["chmod", "-x", "-R", "./vendor"],
+            ["find", "./vendor", "-name", "*.rs", "-type", "f", "-exec", "chmod", "-x", "{}", "+"],
             cwd=self.directory_info.upstream_project_directory,
             check=False,
         )

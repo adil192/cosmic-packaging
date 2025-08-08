@@ -484,7 +484,7 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="pop-launcher", crate_name="launcher", upstream_tag="1.2.4"
     ),
     # STAGING
-    "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True),
+    "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True, zip_self=True),
 }
 
 RELEASE_OVERRIDE = None

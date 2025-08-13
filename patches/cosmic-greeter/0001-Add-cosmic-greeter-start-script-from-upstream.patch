@@ -1,0 +1,33 @@
+From 99c0e3920c4dddcb8c40588db28e6b8899d63c92 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Wed, 13 Aug 2025 09:27:41 -0500
+Subject: [PATCH] Add cosmic-greeter-start script from upstream
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-greeter.spec | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/cosmic-greeter.spec b/cosmic-greeter.spec
+index 4a706a4..78beb3c 100644
+--- a/cosmic-greeter.spec
++++ b/cosmic-greeter.spec
+@@ -92,6 +92,7 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+ install -Dm0755 target/release/cosmic-greeter %{buildroot}/%{_bindir}/cosmic-greeter
+ install -Dm0755 target/release/cosmic-greeter-daemon %{buildroot}/%{_bindir}/cosmic-greeter-daemon
++install -Dm0755 cosmic-greeter-start.sh %{buildroot}/%{_bindir}/cosmic-greeter-start
+ install -Dm0644 dbus/com.system76.CosmicGreeter.conf %{buildroot}/%{_datadir}/dbus-1/system.d/com.system76.CosmicGreeter.conf
+ install -Dm0644 debian/cosmic-greeter.sysusers %{buildroot}/%{_sysusersdir}/cosmic-greeter.conf
+ install -Dm0644 debian/cosmic-greeter.tmpfiles %{buildroot}/%{_tmpfilesdir}/cosmic-greeter.conf
+@@ -132,6 +133,7 @@ export VERGEN_GIT_SHA="%{commit}"
+ %doc README.md
+ %{_bindir}/cosmic-greeter
+ %{_bindir}/cosmic-greeter-daemon
++%{_bindir}/cosmic-greeter-start
+ %{_datadir}/dbus-1/system.d/com.system76.CosmicGreeter.conf
+ %{_sysusersdir}/cosmic-greeter.conf
+ %{_tmpfilesdir}/cosmic-greeter.conf
+-- 
+2.50.1
+

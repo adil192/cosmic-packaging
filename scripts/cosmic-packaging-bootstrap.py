@@ -21,6 +21,7 @@ class ProjectInfo:
         zip_self: bool = False,
         staging: bool = False,
         upstream_tag: str = "",
+        release_override: str = None,
     ):
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
@@ -31,6 +32,7 @@ class ProjectInfo:
         self.upstream_tag = upstream_tag
         self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
+        self.release_override = release_override
 
     def clone_upstream_git(
         self,
@@ -400,8 +402,8 @@ class SpecFile:
                     out_line = f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
             elif in_line.startswith("Source0: "):
                 out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
-            elif in_line.startswith("Release: ") and RELEASE_OVERRIDE:
-                out_line = f"Release: {RELEASE_OVERRIDE}"
+            elif in_line.startswith("Release: ") and project_info.release_override:
+                out_line = f"Release: {project_info.release_override}"
             elif in_line.startswith("%autosetup "):
                 out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
 
@@ -458,7 +460,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp"),
     "cosmic-edit": ProjectInfo(rpm_name="cosmic-edit"),
     "cosmic-files": ProjectInfo(rpm_name="cosmic-files"),
-    "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter"),
+    "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter", release_override = "2"),
     "cosmic-icon-theme": ProjectInfo(
         rpm_name="cosmic-icon-theme", crate_name="cosmic-icons", vendor=False
     ),
@@ -486,8 +488,6 @@ PACKAGES: dict[str, ProjectInfo] = {
     # STAGING
     "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True, zip_self=True),
 }
-
-RELEASE_OVERRIDE = None
 
 # if [ "$NIGHTLY" -eq 1 ]; then
 #     echo "NIGHTLY=1"

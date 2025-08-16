@@ -21,7 +21,15 @@ License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND (0BSD OR Apache-2.0 O
 
 URL:            https://github.com/pop-os/cosmic-initial-setup
 
-Source0:        https://github.com/pop-os/cosmic-initial-setup/archive/epoch-%{version_no_tilde}/cosmic-initial-setup-%{version_no_tilde}.tar.gz
+# How to recreate this source
+# Install git-lfs
+# Clone https://github.com/pop-os/cosmic-initial-setup
+# Checkout commit %%{commit}
+# dnf install git-lfs
+# git clone https://github.com/pop-os/cosmic-initial-setup
+# cd cosmic-initial-setup && git checkout %%{commit} && cd ..
+# tar -pczf cosmic-initial-setup-%%{version_no_tilde}.tar.gz cosmic-initial-setup
+Source0:        cosmic-initial-setup-%{version_no_tilde}.tar.gz
 # To create the below sources:
 # * git clone https://github.com/pop-os/cosmic-initial-setup at the specified commit
 # * cargo vendor > vendor-config-%%{version_no_tilde}.toml
@@ -53,7 +61,7 @@ Requires:       cosmic-icon-theme >= %{cosmic_minver}
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-epoch-%{version_no_tilde} -p1 -a1
+%autosetup -n %{crate} -p1 -a1
 %cargo_prep -N
 # Check if .cargo/config.toml exists
 if [ -f .cargo/config.toml ]; then

@@ -99,6 +99,8 @@ class DirectoryInfo:
         project_info: ProjectInfo,
         input_dir: pathlib.Path,
         output_dir: pathlib.Path,
+        fedora_dir: pathlib.Path | None,
+        upstream_project_dir: pathlib.Path | None,
     ):
         self.input_dir = input_dir.absolute()
         self.output_dir = output_dir.absolute()
@@ -114,20 +116,31 @@ class DirectoryInfo:
         if not self.patch_directory.exists():
             self.patch_directory.mkdir(parents=True, exist_ok=True)
         # Cloned git artifact directories
-        self.upstream_project_directory = output_dir.joinpath(
-            project_info.crate_name
-        ).absolute()
+        self.upstream_project_directory = (
+            output_dir.joinpath(project_info.crate_name).absolute()
+            if not upstream_project_dir
+            else upstream_project_dir.absolute()
+        )
         self.fedora_project_directory = (
-            output_dir.joinpath(DirectoryInfo.RPM_DIRECTORY)
-            .joinpath(project_info.rpm_name)
-            .absolute()
+            (
+                output_dir.joinpath(DirectoryInfo.RPM_DIRECTORY)
+                .joinpath(project_info.rpm_name)
+                .absolute()
+            )
+            if not fedora_dir
+            else fedora_dir.absolute()
         )
         if not self.fedora_project_directory.parent.exists():
             self.fedora_project_directory.parent.mkdir(parents=True, exist_ok=True)
 
         # Clone the project git repos
-        project_info.clone_upstream_git(base_dir=self.upstream_project_directory.parent)
-        project_info.clone_fedora_git(base_dir=self.fedora_project_directory.parent)
+        if not upstream_project_dir:
+            project_info.clone_upstream_git(
+                base_dir=self.upstream_project_directory.parent
+            )
+        if not fedora_dir:
+            project_info.clone_fedora_git(base_dir=self.fedora_project_directory.parent)
+
         print(
             "input_dir:",
             self.input_dir,
@@ -225,13 +238,49 @@ class ProjectOperations:
     # Patches crates that are known to have bad executable bits
     def patch_vendored_crates(self):
         print("patch_vendored_crates")
-        
+
         # remove executable bit of some .rs files
         subprocess.run(
-            ["find", "./vendor", "-name", "*.rs", "-type", "f", "-exec", "chmod", "-x", "{}", "+"],
+            [
+                "find",
+                "./vendor",
+                "-name",
+                "*.rs",
+                "-type",
+                "f",
+                "-exec",
+                "chmod",
+                "-x",
+                "{}",
+                "+",
+            ],
             cwd=self.directory_info.upstream_project_directory,
             check=False,
         )
+
+    # Applies patches to the cloned git repo
+    #  note: Apply patches and zip self together will cause problems with applying patches
+    #  that will likely never occur, but just in case
+    def apply_patches_to_repo(self):
+        patch_dir = self.directory_info.fedora_project_directory
+        patches = sorted(patch_dir.glob("*.patch"))
+
+        if not patches:
+            print("No .patch files found.")
+            return
+
+        for patch in patches:
+            print(f"Applying {patch}...")
+            try:
+                subprocess.run(
+                    ["git", "am", str(patch)],
+                    check=True,
+                    cwd=self.directory_info.upstream_project_directory,
+                )
+            except subprocess.CalledProcessError:
+                print(
+                    f"Failed to apply {patch}. Resolve conflicts and run `git am --continue`."
+                )
 
     # This function prepares the vendored artifacts for the package
     def vendor(self):
@@ -273,9 +322,16 @@ class ProjectOperations:
     def copy_fedora_files_to_output(self):
         print("copy_fedora_files_to_output")
         for root, dirs, files in os.walk(self.directory_info.fedora_project_directory):
+            # Skip .git
+            if pathlib.Path(root).is_relative_to(
+                self.directory_info.fedora_project_directory.joinpath(".git")
+            ):
+                print(f"Found .git directory. {root} Continuing...")
+                continue
             relative_path = os.path.relpath(
                 root, self.directory_info.fedora_project_directory
             )
+
             dest_path = os.path.join(self.directory_info.output_dir, relative_path)
 
             os.makedirs(dest_path, exist_ok=True)  # Ensure destination subdir exists
@@ -284,9 +340,12 @@ class ProjectOperations:
                 # Skip vendor-config
                 if file.count("vendor-config") > 0:
                     continue
-                shutil.copy2(
-                    os.path.join(root, file), os.path.join(dest_path, file)
-                )  # Preserve metadata
+                try:
+                    shutil.copy2(
+                        os.path.join(root, file), os.path.join(dest_path, file)
+                    )  # Preserve metadata
+                except Exception as e:
+                    print(f"Could not copy file {os.path.join(root, file)}: ", e)
         # Don't copy sources (since we have the sources in our directory now presumably)
         self.directory_info.output_dir.joinpath("sources").unlink(missing_ok=True)
         self.directory_info.output_dir.joinpath(
@@ -456,11 +515,11 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="cosmic-app-library", crate_name="cosmic-applibrary"
     ),
     "cosmic-applets": ProjectInfo(rpm_name="cosmic-applets"),
-    "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg"),
+    "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg", apply_patches=True),
     "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp"),
     "cosmic-edit": ProjectInfo(rpm_name="cosmic-edit"),
     "cosmic-files": ProjectInfo(rpm_name="cosmic-files"),
-    "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter", release_override = "2"),
+    "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter", release_override="2"),
     "cosmic-icon-theme": ProjectInfo(
         rpm_name="cosmic-icon-theme", crate_name="cosmic-icons", vendor=False
     ),
@@ -477,7 +536,9 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),
-    "cosmic-wallpapers": ProjectInfo(rpm_name="cosmic-wallpapers", vendor=False, zip_self=True),
+    "cosmic-wallpapers": ProjectInfo(
+        rpm_name="cosmic-wallpapers", vendor=False, zip_self=True
+    ),
     "cosmic-workspaces": ProjectInfo(
         rpm_name="cosmic-workspaces", crate_name="cosmic-workspaces-epoch"
     ),
@@ -486,7 +547,9 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="pop-launcher", crate_name="launcher", upstream_tag="1.2.4"
     ),
     # STAGING
-    "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", staging=True, zip_self=True),
+    "cosmic-initial-setup": ProjectInfo(
+        rpm_name="cosmic-initial-setup", staging=True, zip_self=True
+    ),
 }
 
 # if [ "$NIGHTLY" -eq 1 ]; then
@@ -524,6 +587,14 @@ parser.add_argument(
 )
 parser.add_argument("--input", help="Input directory (cosmic-packaging repo) to use.")
 parser.add_argument("--output", help="Output directory to use.")
+parser.add_argument(
+    "--upstream-dir",
+    help="Provide a pre-cloned cosmic-<NAME> source at this specified directory.",
+)
+parser.add_argument(
+    "--fedora-dir",
+    help="Provide a pre-cloned upstream source at this specified directory.",
+)
 
 ###############
 # RUN PROGRAM #
@@ -532,6 +603,7 @@ parser.add_argument("--output", help="Output directory to use.")
 args = parser.parse_args()
 # Identify project
 project_info = PACKAGES[args.rpm_name]
+
 # Get input directory and output directory
 # Depends on project_info to get the subdirectory names
 # This instantiation will clone the projects into their proper directories as well
@@ -539,6 +611,8 @@ directory_info = DirectoryInfo(
     project_info=project_info,
     input_dir=pathlib.Path(args.input) if args.input else pathlib.Path.cwd(),
     output_dir=pathlib.Path(args.output) if args.output else pathlib.Path.cwd(),
+    upstream_project_dir=pathlib.Path(args.upstream_dir) if args.upstream_dir else None,
+    fedora_dir=pathlib.Path(args.fedora_dir) if args.fedora_dir else None,
 )
 # Normalize tag argument from the command line
 tag = args.tag
@@ -558,8 +632,11 @@ project_operations.setup()
 
 # We are now set up with all the variables we need to prepare the output for rpm building
 # Finally, clean up by removing the cloned repos
-shutil.rmtree(directory_info.upstream_project_directory)
-shutil.rmtree(directory_info.fedora_project_directory.parent)
+if not args.upstream_dir:
+    shutil.rmtree(directory_info.upstream_project_directory)
+if not args.fedora_dir:
+    shutil.rmtree(directory_info.fedora_project_directory.parent)
+
 
 print("ls -a")
 ls_result = subprocess.run(

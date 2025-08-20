@@ -519,7 +519,7 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="cosmic-app-library", crate_name="cosmic-applibrary"
     ),
     "cosmic-applets": ProjectInfo(rpm_name="cosmic-applets"),
-    "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg", apply_patches=True),
+    "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg"),
     "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp"),
     "cosmic-edit": ProjectInfo(rpm_name="cosmic-edit"),
     "cosmic-files": ProjectInfo(rpm_name="cosmic-files"),
@@ -599,6 +599,16 @@ parser.add_argument(
     "--fedora-dir",
     help="Provide a pre-cloned upstream source at this specified directory.",
 )
+parser.add_argument(
+    "--apply-patches",
+    action="store_true",
+    help="Force patches to be pre-applied even if the project doesn't automatically do so.",
+)
+parser.add_argument(
+    "--zip-self",
+    action="store_true",
+    help="Force project to be zipped even if it's not done automatically.",
+)
 
 ###############
 # RUN PROGRAM #
@@ -607,6 +617,10 @@ parser.add_argument(
 args = parser.parse_args()
 # Identify project
 project_info = PACKAGES[args.rpm_name]
+
+# Overrides
+project_info.apply_patches = True if args.apply_patches else project_info.apply_patches
+project_info.zip_self = True if args.zip_self else project_info.zip_self
 
 # Get input directory and output directory
 # Depends on project_info to get the subdirectory names

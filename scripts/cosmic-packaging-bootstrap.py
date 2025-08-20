@@ -287,7 +287,11 @@ class ProjectOperations:
         print("vendor")
         # Run cargo vendor
         cargo_vendor_output = subprocess.run(
-            ["cargo", "vendor"],
+            [
+                "cargo",
+                "vendor",
+                "--locked",
+            ],
             capture_output=True,
             text=True,
             cwd=self.directory_info.upstream_project_directory,

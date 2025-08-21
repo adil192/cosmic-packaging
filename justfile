@@ -1,5 +1,4 @@
 set export := true
-set shell := ["bash", "-cu"]
 
 NAME := 'cosmic-applets'
 TAG := 'nightly'
@@ -42,8 +41,12 @@ clean-rpmbuild-dir:
     rpmdev-setuptree
 
 clone-upstream:
+    #!/usr/bin/env bash
     rm -rf upstream/{{ NAME }}
     git clone https://src.fedoraproject.org/rpms/{{ NAME }}.git upstream/{{ NAME }}
+    for p in $(ls patches/{{NAME}}/*.patch 2>/dev/null | sort); do
+        git -C upstream/{{ NAME }} am "../../$p"
+    done
 
 create-patch commit_msg patch_name:
     #!/usr/bin/env bash

@@ -1,6 +1,7 @@
 set export := true
+set shell := ["bash", "-cu"]
 
-NAME := 'cosmic-player'
+NAME := 'cosmic-applets'
 TAG := 'nightly'
 
 all *FLAGS: clean (init FLAGS) sources spec build
@@ -45,7 +46,9 @@ clone-upstream:
     git clone https://src.fedoraproject.org/rpms/{{ NAME }}.git upstream/{{ NAME }}
 
 create-patch commit_msg patch_name:
+    #!/usr/bin/env bash
     git -C upstream/{{ NAME }} add .
     git -C upstream/{{ NAME }} commit -m "{{ commit_msg }}"
     mkdir -p patches/{{ NAME }}
-    git -C upstream/{{ NAME }} format-patch -1 --stdout > patches/{{ NAME }}/{{ patch_name }}.patch
+    next=$(printf "%04d" $(( $(ls -1 patches/{{ NAME }}/*.patch 2>/dev/null | wc -l) + 1 )))
+    git -C upstream/{{ NAME }} format-patch -1 --stdout > patches/{{ NAME }}/${next}-{{ patch_name }}.patch

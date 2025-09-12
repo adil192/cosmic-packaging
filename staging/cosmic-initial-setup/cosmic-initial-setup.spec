@@ -78,6 +78,8 @@ fi
 # Set vergen environment variables
 export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
 export VERGEN_GIT_SHA="%{commit}"
+# Set live environment check location
+export DISABLE_IF_EXISTS=/run/rootfsbase
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

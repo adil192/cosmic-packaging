@@ -1,0 +1,33 @@
+From 0d14b3c5cdc02d66c22248fc3dbbd985d32c7939 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Wed, 17 Sep 2025 12:46:22 -0500
+Subject: [PATCH] Remove Fedora 40 workarounds
+
+---
+ cosmic-term.spec | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/cosmic-term.spec b/cosmic-term.spec
+index bb8ac35..4b9f6aa 100644
+--- a/cosmic-term.spec
++++ b/cosmic-term.spec
+@@ -77,16 +77,6 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+ just rootdir=%{buildroot} prefix=%{_prefix} install
+ 
+-# COSMIC is not a valid category pre-fedora 41
+-%if %{defined fedora} && 0%{?fedora} < 41
+-desktop-file-install \
+---remove-category COSMIC \
+---add-category X-COSMIC \
+---delete-original \
+---dir %{buildroot}%{_datadir}/applications \
+-%{buildroot}%{_datadir}/applications/com.system76.CosmicTerm.desktop
+-%endif
+-
+ %check
+ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicTerm.desktop
+ %if %{with check}
+-- 
+2.50.1
+

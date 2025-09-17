@@ -1,0 +1,33 @@
+From 7e3d5cf45cb79b3d8cf682f9e367d1302300875f Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Wed, 17 Sep 2025 12:46:15 -0500
+Subject: [PATCH] Remove Fedora 40 workarounds
+
+---
+ cosmic-screenshot.spec | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/cosmic-screenshot.spec b/cosmic-screenshot.spec
+index f9fdaf4..5e3d91a 100644
+--- a/cosmic-screenshot.spec
++++ b/cosmic-screenshot.spec
+@@ -75,16 +75,6 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+ just rootdir=%{buildroot} prefix=%{_prefix} install
+ 
+-# COSMIC is not a valid category pre-fedora 41
+-%if %{defined fedora} && 0%{?fedora} < 41
+-desktop-file-install \
+---remove-category COSMIC \
+---add-category X-COSMIC \
+---delete-original \
+---dir %{buildroot}%{_datadir}/applications \
+-%{buildroot}%{_datadir}/applications/com.system76.CosmicScreenshot.desktop
+-%endif
+-
+ %check
+ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicScreenshot.desktop
+ %if %{with check}
+-- 
+2.50.1
+

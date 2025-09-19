@@ -1,5 +1,5 @@
 Name:           cosmic-desktop
-Version: 1.0.0~alpha.7
+Version: 1.0.0~beta.1
 Release:        %autorelease
 Summary:        The next generation COSMIC Desktop Environment, in a package group!
 

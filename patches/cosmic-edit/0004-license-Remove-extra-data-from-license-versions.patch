@@ -16,7 +16,7 @@ index 7cecf67..4c399ca 100644
  %{cargo_license} > LICENSE.dependencies
  %{cargo_vendor_manifest}
  sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
-+sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' cargo-vendor.txt
++sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' -i cargo-vendor.txt
  
  %install
  # Set vergen environment variables

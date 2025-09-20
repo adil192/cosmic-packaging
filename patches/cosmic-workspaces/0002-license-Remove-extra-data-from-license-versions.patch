@@ -1,0 +1,25 @@
+From c8e06e8e4e886d08290584521f6103d7cb4cd075 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Sat, 20 Sep 2025 00:49:29 -0500
+Subject: [PATCH] license: Remove extra data from license versions
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-workspaces.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-workspaces.spec b/cosmic-workspaces.spec
+index b67db64..7d84cba 100644
+--- a/cosmic-workspaces.spec
++++ b/cosmic-workspaces.spec
+@@ -78,6 +78,7 @@ export VERGEN_GIT_SHA="%{commit}"
+ %{cargo_license} > LICENSE.dependencies
+ %{cargo_vendor_manifest}
+ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
++sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' cargo-vendor.txt
+ 
+ %install
+ # Set vergen environment variables
+-- 
+2.51.0
+

@@ -1,0 +1,25 @@
+From 86c6a7cd08c85941f9c8aa584ff7a49bd51655ec Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Sat, 20 Sep 2025 00:49:29 -0500
+Subject: [PATCH] license: Remove extra data from license versions
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-notifications.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-notifications.spec b/cosmic-notifications.spec
+index 7d95158..c69214b 100644
+--- a/cosmic-notifications.spec
++++ b/cosmic-notifications.spec
+@@ -68,6 +68,7 @@ export VERGEN_GIT_SHA="%{commit}"
+ %{cargo_license} > LICENSE.dependencies
+ %{cargo_vendor_manifest}
+ sed 's/\(.*\) (.*#\(.*\))/\1+git\2/' -i cargo-vendor.txt
++sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' cargo-vendor.txt
+ 
+ %install
+ # Set vergen environment variables
+-- 
+2.51.0
+

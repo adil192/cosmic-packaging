@@ -1,0 +1,25 @@
+From df4911fc97ecaff25b55cddc977a997847845a09 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 22 Sep 2025 11:13:49 -0500
+Subject: [PATCH] Add cosmic-initial-setup to required packages
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-session.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-session.spec b/cosmic-session.spec
+index d25b30d..39a7459 100644
+--- a/cosmic-session.spec
++++ b/cosmic-session.spec
+@@ -51,6 +51,7 @@ Requires:       cosmic-files >= %{cosmic_minver}
+ Requires:       cosmic-greeter >= %{cosmic_minver}
+ Requires:       cosmic-icons >= %{cosmic_minver}
+ Requires:       cosmic-idle >= %{cosmic_minver}
++Requires:       cosmic-initial-setup >= %{cosmic_minver}
+ Requires:       cosmic-launcher >= %{cosmic_minver}
+ Requires:       cosmic-notifications >= %{cosmic_minver}
+ Requires:       cosmic-osd >= %{cosmic_minver}
+-- 
+2.50.1
+

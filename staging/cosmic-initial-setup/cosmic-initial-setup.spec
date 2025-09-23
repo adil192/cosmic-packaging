@@ -53,6 +53,8 @@ BuildRequires:  systemd-devel
 Recommends:     PackageKit
 Recommends:     flatpak
 Requires:       flatpak-libs
+Requires:       polkit
+Requires:       hicolor-icon-theme
 Requires:       cosmic-icon-theme >= %{cosmic_minver}
 
 %global _description %{expand:
@@ -108,7 +110,9 @@ export VERGEN_GIT_SHA="%{commit}"
 %doc README.md
 %{_bindir}/cosmic-initial-setup
 %{_datadir}/applications/com.system76.CosmicInitialSetup.desktop
+%dir %{_datadir}/cosmic-layouts
 %{_datadir}/cosmic-layouts/**
+%dir %{_datadir}/cosmic/cosmic-themes
 %{_datadir}/cosmic/cosmic-themes/**
 %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicInitialSetup.svg
 %{_datadir}/polkit-1/rules.d/20-cosmic-initial-setup.rules

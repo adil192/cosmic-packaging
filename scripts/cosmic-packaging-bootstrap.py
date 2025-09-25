@@ -548,7 +548,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     ),
     "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
     "pop-launcher": ProjectInfo(
-        rpm_name="pop-launcher", crate_name="launcher", upstream_tag="1.2.4"
+        rpm_name="pop-launcher", crate_name="launcher",
     ),
     # STAGING
     "cosmic-initial-setup": ProjectInfo(

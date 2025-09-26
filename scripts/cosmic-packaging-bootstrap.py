@@ -528,6 +528,7 @@ PACKAGES: dict[str, ProjectInfo] = {
         rpm_name="cosmic-icon-theme", crate_name="cosmic-icons", vendor=False
     ),
     "cosmic-idle": ProjectInfo(rpm_name="cosmic-idle"),
+    "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", zip_self=True),
     "cosmic-launcher": ProjectInfo(rpm_name="cosmic-launcher"),
     "cosmic-notifications": ProjectInfo(rpm_name="cosmic-notifications"),
     "cosmic-osd": ProjectInfo(rpm_name="cosmic-osd"),
@@ -548,11 +549,8 @@ PACKAGES: dict[str, ProjectInfo] = {
     ),
     "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
     "pop-launcher": ProjectInfo(
-        rpm_name="pop-launcher", crate_name="launcher",
-    ),
-    # STAGING
-    "cosmic-initial-setup": ProjectInfo(
-        rpm_name="cosmic-initial-setup", staging=True, zip_self=True
+        rpm_name="pop-launcher",
+        crate_name="launcher",
     ),
 }
 

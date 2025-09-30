@@ -1,6 +1,6 @@
 set export := true
 
-NAME := 'cosmic-applets'
+NAME := 'cosmic-files'
 TAG := 'nightly'
 
 all *FLAGS: clean (init FLAGS) sources spec build

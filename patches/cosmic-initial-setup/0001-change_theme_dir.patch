@@ -1,0 +1,27 @@
+From 748983cea7de142de416e1c2a25c722db5d86902 Mon Sep 17 00:00:00 2001
+From: wiiznokes <78230769+wiiznokes@users.noreply.github.com>
+Date: Wed, 1 Oct 2025 11:54:20 +0200
+Subject: [PATCH] change theme dir
+
+---
+ cosmic-initial-setup.spec | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cosmic-initial-setup.spec b/cosmic-initial-setup.spec
+index ffd9907..f18bf7e 100644
+--- a/cosmic-initial-setup.spec
++++ b/cosmic-initial-setup.spec
+@@ -112,8 +112,8 @@ export VERGEN_GIT_SHA="%{commit}"
+ %{_datadir}/applications/com.system76.CosmicInitialSetup.desktop
+ %dir %{_datadir}/cosmic-layouts
+ %{_datadir}/cosmic-layouts/**
+-%dir %{_datadir}/cosmic/cosmic-themes
+-%{_datadir}/cosmic/cosmic-themes/**
++%dir %{_datadir}/cosmic-themes
++%{_datadir}/cosmic-themes/**
+ %{_datadir}/icons/hicolor/scalable/apps/com.system76.CosmicInitialSetup.svg
+ %{_datadir}/polkit-1/rules.d/20-cosmic-initial-setup.rules
+ %{_sysconfdir}/xdg/autostart/com.system76.CosmicInitialSetup.desktop
+-- 
+2.51.0
+

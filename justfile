@@ -48,6 +48,11 @@ clone-upstream:
         git -C upstream/{{ NAME }} am "../../$p"
     done
 
+create-patch-auto commit_msg:
+    #!/usr/bin/env bash
+    patch_name="$(echo "$commit_msg" | tr ' ' '_')"
+    just create-patch "$commit_msg" "$patch_name"
+
 create-patch commit_msg patch_name:
     #!/usr/bin/env bash
     git -C upstream/{{ NAME }} add .
@@ -55,3 +60,7 @@ create-patch commit_msg patch_name:
     mkdir -p patches/{{ NAME }}
     next=$(printf "%04d" $(( $(ls -1 patches/{{ NAME }}/*.patch 2>/dev/null | wc -l) + 1 )))
     git -C upstream/{{ NAME }} format-patch -1 --stdout > patches/{{ NAME }}/${next}-{{ patch_name }}.patch
+    git -C upstream/{{ NAME }} commit --amend --no-edit
+
+push:
+    git push upstream main

@@ -1,4 +1,4 @@
-set export := true
+set dotenv-load
 
 NAME := env('NAME')
 TAG := 'nightly'
@@ -6,6 +6,10 @@ TAG := 'nightly'
 all *FLAGS: clean (init FLAGS) sources spec build
 
 all-srpm *FLAGS: clean (init FLAGS) sources spec build-srpm
+
+# init will remove your repository XD, so let's add a safe guard
+default:
+    echo "default command does nothing"
 
 # Requires python3
 init *FLAGS:

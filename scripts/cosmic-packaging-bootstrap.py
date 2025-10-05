@@ -156,8 +156,8 @@ class DirectoryInfo:
 
 
 class TagInfo:
-    LATEST_TAG = "1.0.0~beta.1"
-    NIGHTLY_MINVER_TAG: str = "1.0.0~beta.1"
+    LATEST_TAG = "1.0.0~beta.1.1"
+    NIGHTLY_MINVER_TAG: str = "1.0.0~beta.1.1"
 
     def __init__(self, directory_info: DirectoryInfo, tag: str | None):
         # Nightly specified if tag not specified

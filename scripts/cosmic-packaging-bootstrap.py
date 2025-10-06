@@ -557,6 +557,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     "pop-launcher": ProjectInfo(
         rpm_name="pop-launcher",
         crate_name="launcher",
+        upstream_tag="1.2.7"
     ),
 }
 

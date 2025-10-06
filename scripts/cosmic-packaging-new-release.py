@@ -14,6 +14,7 @@ PACKAGES = [
     "cosmic-greeter",
     "cosmic-icon-theme",
     "cosmic-idle",
+    "cosmic-initial-setup",
     "cosmic-launcher",
     "cosmic-notifications",
     "cosmic-osd",
@@ -54,7 +55,7 @@ def download_package(rpm_name: str, output_path: Path) -> str:
     print("Done!")
     return data["builds"]["latest_succeeded"]["source_package"]["version"]
 
-def build_package(rpm_name: str, branch: str, version: str | None = None) -> str:
+def build_package(rpm_name: str, branch: str, version: str | None = None, side_tag: str | None = None) -> str:
     print(f"Building {rpm_name} with branch {branch}")
     output_package = WORKING_DIRECTORY.joinpath(f"{rpm_name}.src.rpm")
     # Download src rpm
@@ -68,7 +69,10 @@ def build_package(rpm_name: str, branch: str, version: str | None = None) -> str
     subprocess.run(["fedpkg", "commit", "-m", f"update to {version}"], cwd=rpm_dir, check=True)
     subprocess.run(["fedpkg", "push"], cwd=rpm_dir)
     try:
-        subprocess.run(["fedpkg", "build"], cwd=rpm_dir, timeout=10)
+        if side_tag and branch == "rawhide":
+            subprocess.run(["fedpkg", "build", f"--target={side_tag}"], cwd=rpm_dir, timeout=10)
+        else:
+            subprocess.run(["fedpkg", "build"], cwd=rpm_dir, timeout=10)
     except subprocess.TimeoutExpired:
         print("Finished waiting for build.")
     return version
@@ -80,10 +84,11 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("rpm_name", choices=PACKAGES)
 parser.add_argument("branch", choices=VERSIONS)
+parser.add_argument("--side-tag")
 
 args = parser.parse_args()
 
-print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}")
+print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}")
 
 if args.branch == "all":
     downloaded_version = None
@@ -92,7 +97,7 @@ if args.branch == "all":
         if br == "all":
             continue
         try:
-            downloaded_version = build_package(args.rpm_name, br, downloaded_version)
+            downloaded_version = build_package(args.rpm_name, br, downloaded_version, args.side_tag)
         except Exception as e:
             print(f"Error when building {br}: {e}")
             break

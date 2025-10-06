@@ -33,6 +33,7 @@ class ProjectInfo:
         self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
         self.release_override = release_override
+        self.ignore_patches = []
 
     def clone_upstream_git(
         self,
@@ -262,6 +263,7 @@ class ProjectOperations:
     #  note: Apply patches and zip self together will cause problems with applying patches
     #  that will likely never occur, but just in case
     def apply_patches_to_repo(self):
+        print("apply_patches_to_repo")
         patch_dir = self.directory_info.fedora_project_directory
         patches = sorted(patch_dir.glob("*.patch"))
 
@@ -359,6 +361,7 @@ class ProjectOperations:
     # Prepare the rpm spec repo by applying patches and modifying the spec file
     def prepare_spec_repo(self):
         print("prepare_spec_repo")
+        print(f"Patches to ignore: {self.project_info.ignore_patches}")
         spec_path = self.directory_info.fedora_project_directory.joinpath(
             f"{self.project_info.rpm_name}.spec"
         )
@@ -368,6 +371,9 @@ class ProjectOperations:
         # Apply downstream -nightly patches
         for root, dirs, files in os.walk(self.directory_info.patch_directory):
             for file in files:
+                if file.strip() in self.project_info.ignore_patches:
+                    print(f"Ignoring {file} due to override...")
+                    continue
                 os.path.join(root, file)
                 print("Applying patch:", file)
                 ot = subprocess.run(
@@ -598,7 +604,7 @@ parser.add_argument(
     help="Provide a pre-cloned upstream source at this specified directory.",
 )
 parser.add_argument(
-    "--apply-patches",
+    "--pre-apply-spec-patches",
     action="store_true",
     help="Force patches to be pre-applied even if the project doesn't automatically do so.",
 )
@@ -606,6 +612,11 @@ parser.add_argument(
     "--zip-self",
     action="store_true",
     help="Force project to be zipped even if it's not done automatically.",
+)
+parser.add_argument(
+    "--ignore-patch",
+    action="append",
+    help="Ignore applying a patch temporarily (useful for tagged version releases)"
 )
 
 ###############
@@ -617,8 +628,9 @@ args = parser.parse_args()
 project_info = PACKAGES[args.rpm_name]
 
 # Overrides
-project_info.apply_patches = True if args.apply_patches else project_info.apply_patches
+project_info.apply_patches = True if args.pre_apply_spec_patches else project_info.apply_patches
 project_info.zip_self = True if args.zip_self else project_info.zip_self
+project_info.ignore_patches = args.ignore_patch
 
 # Get input directory and output directory
 # Depends on project_info to get the subdirectory names

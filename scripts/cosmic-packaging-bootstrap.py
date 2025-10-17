@@ -631,7 +631,7 @@ project_info = PACKAGES[args.rpm_name]
 # Overrides
 project_info.apply_patches = True if args.pre_apply_spec_patches else project_info.apply_patches
 project_info.zip_self = True if args.zip_self else project_info.zip_self
-project_info.ignore_patches = args.ignore_patch
+project_info.ignore_patches = args.ignore_patch if args.ignore_patch else project_info.ignore_patches
 
 # Get input directory and output directory
 # Depends on project_info to get the subdirectory names

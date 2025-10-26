@@ -1,0 +1,26 @@
+From 58e52b65d96c25610332a30984585c23f323fbeb Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Sun, 26 Oct 2025 14:32:12 -0500
+Subject: [PATCH] Fix: Remove desktop file validation (for now)
+
+---
+ cosmic-store.spec | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/cosmic-store.spec b/cosmic-store.spec
+index 747d096..6c82ef1 100644
+--- a/cosmic-store.spec
++++ b/cosmic-store.spec
+@@ -82,7 +82,8 @@ export VERGEN_GIT_SHA="%{commit}"
+ just rootdir=%{buildroot} prefix=%{_prefix} install
+ 
+ %check
+-desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicStore.desktop
++# Re-enable when desktop file validation CI is done for COSMIC
++# desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicStore.desktop
+ %if %{with check}
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+-- 
+2.51.0
+

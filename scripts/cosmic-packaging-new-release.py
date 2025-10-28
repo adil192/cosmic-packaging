@@ -162,6 +162,5 @@ if not args.branch:
             build_package(args.rpm_name, br, version, args.side_tag)
         except Exception as e:
             print(f"Error when building {br}: {e}")
-            break
 else:
     build_package(args.rpm_name, args.branch)

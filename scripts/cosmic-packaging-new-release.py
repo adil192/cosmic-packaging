@@ -92,7 +92,7 @@ def build_package(
             stderr=subprocess.DEVNULL,
         )
         subprocess.run(
-            ["fedpkg", "commit", "-m", f"update to {version}"],
+            ["fedpkg", "commit", "-m", commit_msg],
             cwd=rpm_dir,
             check=True,
             stdout=subprocess.DEVNULL,

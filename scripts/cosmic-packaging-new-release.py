@@ -74,16 +74,16 @@ def build_package(
 
     # Clone fedpkg repo
     rpm_dir = WORKING_DIRECTORY.joinpath(rpm_name)
+    subprocess.run(
+        ["fedpkg", "switch-branch", branch],
+        cwd=rpm_dir,
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     commit_msg = f"update to {version}"
     old_commit_msg = get_latest_commit_name(rpm_dir)
     if old_commit_msg != commit_msg:
-        subprocess.run(
-            ["fedpkg", "switch-branch", branch],
-            cwd=rpm_dir,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
         subprocess.run(
             ["fedpkg", "import", "--skip-diffs", output_package],
             cwd=rpm_dir,

@@ -38,11 +38,23 @@ VERSIONS = [
     "f43",
     "f42",
     "f41",
-    "all"
 ]
 
 WORKING_DIRECTORY: Path = Path.home().joinpath("workdir")
 Path.mkdir(WORKING_DIRECTORY, exist_ok=True)
+
+
+def get_latest_commit_name(repo_path="."):
+    # Run `git rev-parse HEAD` to get the latest commit hash
+    result = subprocess.run(
+        ["git", "-C", repo_path, "log", "-1", "--pretty=%B"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip()
+
 
 def download_package(rpm_name: str, output_path: Path) -> str:
     # Get package download link
@@ -52,30 +64,70 @@ def download_package(rpm_name: str, output_path: Path) -> str:
         data = json.load(response)
     source_package = data["builds"]["latest_succeeded"]["source_package"]["url"]
     urlretrieve(source_package, output_path)
-    print("Done!")
     return data["builds"]["latest_succeeded"]["source_package"]["version"]
 
-def build_package(rpm_name: str, branch: str, version: str | None = None, side_tag: str | None = None) -> str:
+
+def build_package(
+    rpm_name: str, branch: str, version: str | None = None, side_tag: str | None = None
+):
     print(f"Building {rpm_name} with branch {branch}")
-    output_package = WORKING_DIRECTORY.joinpath(f"{rpm_name}.src.rpm")
-    # Download src rpm
-    if not version:
-        version = download_package(rpm_name, output_package)
-        subprocess.run(["fedpkg", "clone", rpm_name], cwd=WORKING_DIRECTORY, check=True)
+
     # Clone fedpkg repo
     rpm_dir = WORKING_DIRECTORY.joinpath(rpm_name)
-    subprocess.run(["fedpkg", "switch-branch", branch], cwd=rpm_dir, check=True)
-    subprocess.run(["fedpkg", "import", "--skip-diffs", output_package], cwd=rpm_dir, check=True)
-    subprocess.run(["fedpkg", "commit", "-m", f"update to {version}"], cwd=rpm_dir, check=True)
-    subprocess.run(["fedpkg", "push"], cwd=rpm_dir)
-    try:
-        if side_tag and branch == "rawhide":
-            subprocess.run(["fedpkg", "build", f"--target={side_tag}"], cwd=rpm_dir, timeout=10)
-        else:
-            subprocess.run(["fedpkg", "build"], cwd=rpm_dir, timeout=10)
-    except subprocess.TimeoutExpired:
-        print("Finished waiting for build.")
+    commit_msg = f"update to {version}"
+    old_commit_msg = get_latest_commit_name(rpm_dir)
+    if old_commit_msg != commit_msg:
+        subprocess.run(
+            ["fedpkg", "switch-branch", branch],
+            cwd=rpm_dir,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["fedpkg", "import", "--skip-diffs", output_package],
+            cwd=rpm_dir,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["fedpkg", "commit", "-m", f"update to {version}"],
+            cwd=rpm_dir,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["fedpkg", "push"],
+            cwd=rpm_dir,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        try:
+            if side_tag and branch == "rawhide":
+                subprocess.run(
+                    ["fedpkg", "build", f"--target={side_tag}"],
+                    cwd=rpm_dir,
+                    timeout=10,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            else:
+                subprocess.run(
+                    ["fedpkg", "build"],
+                    cwd=rpm_dir,
+                    timeout=10,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+        except subprocess.TimeoutExpired:
+            print("Finished waiting for build.")
+    else:
+        print("Build skipped. Commit messages matched.")
     return version
+
 
 parser = argparse.ArgumentParser(
     prog="cosmic-packaging-bootstrap",
@@ -83,21 +135,31 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument("rpm_name", choices=PACKAGES)
-parser.add_argument("branch", choices=VERSIONS)
+parser.add_argument("--branch", choices=VERSIONS)
 parser.add_argument("--side-tag")
 
 args = parser.parse_args()
 
 print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}")
 
-if args.branch == "all":
-    downloaded_version = None
+output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
+# Download src rpm
+version = download_package(args.rpm_name, output_package)
+subprocess.run(
+    ["fedpkg", "clone", args.rpm_name],
+    cwd=WORKING_DIRECTORY,
+    check=True,
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+)
+
+if not args.branch:
     for br in VERSIONS:
         print(f"Version: {br}")
         if br == "all":
             continue
         try:
-            downloaded_version = build_package(args.rpm_name, br, downloaded_version, args.side_tag)
+            build_package(args.rpm_name, br, version, args.side_tag)
         except Exception as e:
             print(f"Error when building {br}: {e}")
             break

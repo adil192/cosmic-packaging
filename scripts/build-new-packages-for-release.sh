@@ -29,8 +29,6 @@ list=(
     )
 # list=("cosmic-applets" "cosmic-bg" "cosmic-comp" "cosmic-edit" "cosmic-files" "cosmic-greeter" "cosmic-icon-theme" "cosmic-idle" "cosmic-launcher" "cosmic-notifications" "cosmic-osd" "cosmic-panel" "cosmic-player" "cosmic-randr" "cosmic-screenshot" "cosmic-session" "cosmic-settings" "cosmic-settings-daemon" "cosmic-store" "cosmic-term" "cosmic-wallpapers" "cosmic-workspaces" "pop-launcher" "xdg-desktop-portal-cosmic")
 
-MAX_JOBS=10
-
 function build_package() {
     pkg=$1
     echo "======================================"
@@ -43,12 +41,5 @@ function build_package() {
 
 for item in "${list[@]}"
 do
-    build_package $item &
-    ((count++))
-
-    if (( count % MAX_JOBS == 0 )); then
-        wait
-    fi
+    build_package $item > ./.out/log-$item.txt
 done
-
-wait 

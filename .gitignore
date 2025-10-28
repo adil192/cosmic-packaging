@@ -4,3 +4,5 @@ target/
 venv/
 /upstream/
 .env
+
+.out/

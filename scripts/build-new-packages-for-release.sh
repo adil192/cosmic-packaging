@@ -10,6 +10,7 @@ list=(
     "cosmic-greeter"
     "cosmic-icon-theme"
     "cosmic-idle"
+    "cosmic-initial-setup"
     "cosmic-launcher"
     "cosmic-notifications"
     "cosmic-osd"

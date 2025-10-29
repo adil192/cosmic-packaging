@@ -21,7 +21,7 @@ class ProjectInfo:
         zip_self: bool = False,
         staging: bool = False,
         upstream_tag: str = "",
-        release_override: str = None,
+        release_override: str | None = None,
     ):
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
@@ -33,7 +33,7 @@ class ProjectInfo:
         self.upstream_git = ProjectInfo.POP_OS_GIT + self.crate_name + ".git"
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
         self.release_override = release_override
-        self.ignore_patches = []
+        self.ignore_patches: list[str] = []
 
     def clone_upstream_git(
         self,
@@ -48,6 +48,7 @@ class ProjectInfo:
                 self.upstream_git,
             ],
             cwd=base_dir,
+            check=True,
         )
 
     def clone_fedora_git(
@@ -65,7 +66,8 @@ class ProjectInfo:
                     ProjectInfo.COSMIC_PACKAGING_GIT,
                 ],
                 cwd=base_dir,
-            ),
+                check=True,
+            )
             subprocess.run(
                 [
                     "mv",
@@ -75,9 +77,12 @@ class ProjectInfo:
                     base_dir.joinpath(self.rpm_name),
                 ],
                 cwd=base_dir,
+                check=True,
             )
             subprocess.run(
-                ["rm", "-r", base_dir.joinpath("cosmic-packaging")], cwd=base_dir
+                ["rm", "-r", base_dir.joinpath("cosmic-packaging")],
+                cwd=base_dir,
+                check=True,
             )
         else:
             subprocess.run(
@@ -88,6 +93,7 @@ class ProjectInfo:
                     self.fedora_git,
                 ],
                 cwd=base_dir,
+                check=True,
             )
 
 
@@ -164,7 +170,7 @@ class TagInfo:
         # Nightly specified if tag not specified
         self.nightly = tag is None
         # If nightly
-        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-")
+        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-") # type: ignore
 
         if self.nightly:
             print("Nightly, so tag is accessed through rev-parse")
@@ -174,20 +180,24 @@ class TagInfo:
                 capture_output=True,
                 text=True,
                 cwd=directory_info.upstream_project_directory,
+                check=True,
             ).stdout.strip()
             print(f"Commit: {commit}")
             tag = commit[:7]
 
         self.tag = tag
-        self.tag_no_tilde = self.tag.replace("~", "-")
+        self.tag_no_tilde = self.tag.replace("~", "-") # type: ignore
 
         print("Git reset")
         subprocess.run(
             ["git", "reset", "--hard", commit],
             cwd=directory_info.upstream_project_directory,
+            check=True,
         )
         subprocess.run(
-            ["git", "checkout", commit], cwd=directory_info.upstream_project_directory
+            ["git", "checkout", commit],
+            cwd=directory_info.upstream_project_directory,
+            check=True,
         )
 
         print("Git rev-parse")
@@ -196,6 +206,7 @@ class TagInfo:
             capture_output=True,
             text=True,
             cwd=directory_info.upstream_project_directory,
+            check=True,
         ).stdout.strip()
 
         self.commit_date = subprocess.run(
@@ -203,12 +214,14 @@ class TagInfo:
             capture_output=True,
             text=True,
             cwd=directory_info.upstream_project_directory,
+            check=True,
         ).stdout.strip()
         self.commit_date_string = subprocess.run(
             ["git", "log", "-1", "--format=%cd", "--date=iso"],
             capture_output=True,
             text=True,
             cwd=directory_info.upstream_project_directory,
+            check=True,
         ).stdout.strip()
 
         print(
@@ -276,8 +289,8 @@ class ProjectOperations:
             try:
                 subprocess.run(
                     ["git", "am", str(patch)],
-                    check=True,
                     cwd=self.directory_info.upstream_project_directory,
+                    check=True,
                 )
             except subprocess.CalledProcessError:
                 print(
@@ -297,6 +310,7 @@ class ProjectOperations:
             capture_output=True,
             text=True,
             cwd=self.directory_info.upstream_project_directory,
+            check=True,
         )
         print("Cargo vendor output\n", cargo_vendor_output.stderr.strip(), "\n")
         # Write the vendor config to the output directory
@@ -322,12 +336,13 @@ class ProjectOperations:
                 "vendor",
             ],
             cwd=self.directory_info.output_dir,
+            check=True,
         )
 
     # This function copies files from the fedora upstream rpm source to the output directory
     def copy_fedora_files_to_output(self):
         print("copy_fedora_files_to_output")
-        for root, dirs, files in os.walk(self.directory_info.fedora_project_directory):
+        for root, _dirs, files in os.walk(self.directory_info.fedora_project_directory):
             # Skip .git
             if pathlib.Path(root).is_relative_to(
                 self.directory_info.fedora_project_directory.joinpath(".git")
@@ -369,7 +384,7 @@ class ProjectOperations:
             f"{self.project_info.rpm_name}.spec"
         )
         # Apply downstream -nightly patches
-        for root, dirs, files in os.walk(self.directory_info.patch_directory):
+        for root, _dirs, files in os.walk(self.directory_info.patch_directory):
             for file in files:
                 if file.strip() in self.project_info.ignore_patches:
                     print(f"Ignoring {file} due to override...")
@@ -385,6 +400,7 @@ class ProjectOperations:
                     cwd=self.directory_info.fedora_project_directory,
                     capture_output=True,
                     text=True,
+                    check=True,
                 )
                 if ot.returncode != 0:
                     print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
@@ -422,6 +438,7 @@ class ProjectOperations:
                 cwd=self.directory_info.output_dir,
                 text=True,
                 capture_output=True,
+                check=True,
             )
             print(zip_result.stdout.strip())
 
@@ -555,9 +572,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     ),
     "xdg-desktop-portal-cosmic": ProjectInfo(rpm_name="xdg-desktop-portal-cosmic"),
     "pop-launcher": ProjectInfo(
-        rpm_name="pop-launcher",
-        crate_name="launcher",
-        upstream_tag="1.2.7"
+        rpm_name="pop-launcher", crate_name="launcher", upstream_tag="1.2.7"
     ),
 }
 
@@ -617,7 +632,7 @@ parser.add_argument(
 parser.add_argument(
     "--ignore-patch",
     action="append",
-    help="Ignore applying a patch temporarily (useful for tagged version releases)"
+    help="Ignore applying a patch temporarily (useful for tagged version releases)",
 )
 
 ###############
@@ -629,9 +644,15 @@ args = parser.parse_args()
 project_info = PACKAGES[args.rpm_name]
 
 # Overrides
-project_info.apply_patches = True if args.pre_apply_spec_patches else project_info.apply_patches
-project_info.zip_self = True if args.zip_self else project_info.zip_self
-project_info.ignore_patches = args.ignore_patch if args.ignore_patch else project_info.ignore_patches
+if args.pre_apply_spec_patches:
+    project_info.apply_patches = args.pre_apply_spec_patches
+
+if args.zip_self:
+    project_info.zip_self = args.zip_self
+
+if args.ignore_patch:
+    project_info.ignore_patches = args.ignore_patch
+
 
 # Get input directory and output directory
 # Depends on project_info to get the subdirectory names
@@ -676,5 +697,6 @@ ls_result = subprocess.run(
     cwd=directory_info.output_dir,
     text=True,
     capture_output=True,
+    check=True,
 )
 print(ls_result.stdout.strip())

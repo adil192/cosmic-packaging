@@ -126,6 +126,8 @@ def build_package(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+    else:
+        print("Commit skipped. Commit messages matched.")
     if should_build(rpm_name, branch, version):
         try:
             if side_tag and branch == "rawhide":
@@ -147,7 +149,7 @@ def build_package(
         except subprocess.TimeoutExpired:
             print("Finished waiting for build.")
     else:
-        print("Build skipped. Commit messages matched.")
+        print(f"Build skipped. A build was found with matching version {version}")
     return version
 
 

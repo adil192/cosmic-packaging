@@ -73,18 +73,16 @@ def download_package(rpm_name: str, output_path: Path) -> str:
 
 def should_build(rpm_name: str, branch: str, version: str) -> bool:
     check = subprocess.run(
-        ["koji", "list-builds", f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=\"*{version}*fc{branch_to_number(branch)}\"", "--quiet"],
-        check=True,
+        ["koji", "list-builds", f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=*{version}.fc{branch_to_number(branch)}*", "--quiet"],
         capture_output=True,
         text=True
     )
     check2 = subprocess.run(
-        ["koji", "list-builds", f"--package={rpm_name}", "--state=BUILDING", f"--pattern=\"*{version}*fc{branch_to_number(branch)}\"", "--quiet"],
-        check=True,
+        ["koji", "list-builds", f"--package={rpm_name}", "--state=BUILDING", f"--pattern=*{version}.fc{branch_to_number(branch)}*", "--quiet"],
         capture_output=True,
         text=True
     )
-    return check.stdout.strip() == "" and check2.stdout.strip() == ""
+    return check.stdout.strip() == "" and check2.stdout.strip() == "" and check.stderr.strip() == "" and check2.stderr.strip() == ""
 
 
 def build_package(
@@ -105,47 +103,49 @@ def build_package(
     commit_msg = f"update to {version}"
     old_commit_msg = get_latest_commit_name(rpm_dir)
     if old_commit_msg != commit_msg:
-        subprocess.run(
-            ["fedpkg", "import", "--skip-diffs", output_package],
-            cwd=rpm_dir,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        subprocess.run(
-            ["fedpkg", "commit", "-m", commit_msg],
-            cwd=rpm_dir,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        subprocess.run(
-            ["fedpkg", "push"],
-            cwd=rpm_dir,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        if not args.dry_run:
+            subprocess.run(
+                ["fedpkg", "import", "--skip-diffs", output_package],
+                cwd=rpm_dir,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            subprocess.run(
+                ["fedpkg", "commit", "-m", commit_msg],
+                cwd=rpm_dir,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            subprocess.run(
+                ["fedpkg", "push"],
+                cwd=rpm_dir,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
     else:
         print("Commit skipped. Commit messages matched.")
     if should_build(rpm_name, branch, version):
         try:
-            if side_tag and branch == "rawhide":
-                subprocess.run(
-                    ["fedpkg", "build", f"--target={side_tag}"],
-                    cwd=rpm_dir,
-                    timeout=10,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
-            else:
-                subprocess.run(
-                    ["fedpkg", "build"],
-                    cwd=rpm_dir,
-                    timeout=10,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
+            if not args.dry_run:
+                if side_tag and branch == "rawhide":
+                    subprocess.run(
+                        ["fedpkg", "build", f"--target={side_tag}"],
+                        cwd=rpm_dir,
+                        timeout=10,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
+                else:
+                    subprocess.run(
+                        ["fedpkg", "build"],
+                        cwd=rpm_dir,
+                        timeout=10,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                    )
         except subprocess.TimeoutExpired:
             print("Finished waiting for build.")
     else:
@@ -161,10 +161,11 @@ parser = argparse.ArgumentParser(
 parser.add_argument("rpm_name", choices=PACKAGES)
 parser.add_argument("--branch", choices=VERSIONS)
 parser.add_argument("--side-tag")
+parser.add_argument("--dry-run", action="store_true")
 
 args = parser.parse_args()
 
-print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}")
+print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}, Dry Run: {args.dry_run}")
 
 output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
 # Download src rpm

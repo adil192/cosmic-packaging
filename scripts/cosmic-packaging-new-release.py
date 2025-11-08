@@ -40,6 +40,11 @@ VERSIONS = [
     "f41",
 ]
 
+RAWHIDE_BRANCH = "f44"
+
+def branch_to_number(branch: str) -> str:
+    return branch[1:] if branch != "rawhide" else RAWHIDE_BRANCH[1:]
+
 WORKING_DIRECTORY: Path = Path.home().joinpath("workdir")
 Path.mkdir(WORKING_DIRECTORY, exist_ok=True)
 
@@ -66,9 +71,24 @@ def download_package(rpm_name: str, output_path: Path) -> str:
     urlretrieve(source_package, output_path)
     return data["builds"]["latest_succeeded"]["source_package"]["version"]
 
+def should_build(rpm_name: str, branch: str, version: str) -> bool:
+    check = subprocess.run(
+        ["koji", "list-builds" f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=\"*{version}*fc{branch_to_number(branch)}\"", "--quiet"],
+        check=True,
+        capture_output=True,
+        text=True
+    )
+    check2 = subprocess.run(
+        ["koji", "list-builds" f"--package={rpm_name}", "--state=BUILDING", f"--pattern=\"*{version}*fc{branch_to_number(branch)}\"", "--quiet"],
+        check=True,
+        capture_output=True,
+        text=True
+    )
+    return check.stdout.strip() == "" and check2.stdout.strip() == ""
+
 
 def build_package(
-    rpm_name: str, branch: str, version: str | None = None, side_tag: str | None = None
+    rpm_name: str, branch: str, version: str, side_tag: str | None = None
 ):
     print(f"Building {rpm_name} with branch {branch}")
 
@@ -81,6 +101,7 @@ def build_package(
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    # TODO: Next cycle (beta.5 -> beta.6), take version and strip the '-1' at the end 
     commit_msg = f"update to {version}"
     old_commit_msg = get_latest_commit_name(rpm_dir)
     if old_commit_msg != commit_msg:
@@ -105,6 +126,7 @@ def build_package(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+    if should_build(rpm_name, branch, version):
         try:
             if side_tag and branch == "rawhide":
                 subprocess.run(

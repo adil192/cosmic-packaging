@@ -12,7 +12,7 @@ function build_package() {
     echo "======================================"
     echo "Processing package $pkg..."
     rm -rf ~/workdir/$pkg && mkdir -p ~/workdir/$pkg
-    if cargo run -- setup-build ~/workdir $pkg --auto-srpm --version 1.0.0~beta.5 > /dev/null 2>&1; then
+    if cargo run -- setup-build ~/workdir $pkg --auto-srpm --version 1.0.0~beta.6 > /dev/null 2>&1; then
         echo "rawhide $pkg success"
         rm -rf ~/workdir/$pkg && mkdir -p ~/workdir/$pkg
         cargo run -- setup-build ~/workdir $pkg --build-branch f42 --source-branch rawhide > /dev/null 2>&1 && echo "f42 $pkg success" || echo "f42 $pkg failure"

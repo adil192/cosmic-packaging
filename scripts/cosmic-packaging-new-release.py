@@ -99,7 +99,6 @@ def build_package(
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    # TODO: Next cycle (beta.5 -> beta.6), take version and strip the '-1' at the end 
     commit_msg = f"update to {version}"
     old_commit_msg = get_latest_commit_name(rpm_dir)
     if old_commit_msg != commit_msg:
@@ -168,8 +167,11 @@ args = parser.parse_args()
 print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}, Dry Run: {args.dry_run}")
 
 output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
-# Download src rpm
+# Download src rpm, and return the version
 version = download_package(args.rpm_name, output_package)
+# Remove any build numbers at the end i.e. 1.0.0~beta.6"-1"
+version = version.rsplit('-',maxsplit=1)[0]
+
 subprocess.run(
     ["fedpkg", "clone", args.rpm_name],
     cwd=WORKING_DIRECTORY,

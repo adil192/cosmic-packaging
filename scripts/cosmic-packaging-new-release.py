@@ -73,12 +73,12 @@ def download_package(rpm_name: str, output_path: Path) -> str:
 
 def should_build(rpm_name: str, branch: str, version: str) -> bool:
     check = subprocess.run(
-        ["koji", "list-builds", f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=*{version}.fc{branch_to_number(branch)}*", "--quiet"],
+        ["koji", "list-builds", f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=*{version}*.fc{branch_to_number(branch)}*", "--quiet"],
         capture_output=True,
         text=True
     )
     check2 = subprocess.run(
-        ["koji", "list-builds", f"--package={rpm_name}", "--state=BUILDING", f"--pattern=*{version}.fc{branch_to_number(branch)}*", "--quiet"],
+        ["koji", "list-builds", f"--package={rpm_name}", "--state=BUILDING", f"--pattern=*{version}*.fc{branch_to_number(branch)}*", "--quiet"],
         capture_output=True,
         text=True
     )

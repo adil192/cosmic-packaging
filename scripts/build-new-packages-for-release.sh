@@ -37,18 +37,22 @@ mkdir -p ./.out
 
 function build_package() {
     pkg=$1
-    SIDE_TAG=f44-build-side-122354 # MODIFY THIS WITH NEW SIDE TAGS EACH CYCLE
-    echo "======================================"
+    SIDE_TAG=f44-build-side-122580 # MODIFY THIS WITH NEW SIDE TAGS EACH CYCLE
     echo "Processing: $pkg"
     rm -f ~/workdir/$pkg.src.rpm
     rm -rf ~/workdir/$pkg/
     python3 ./scripts/cosmic-packaging-new-release.py $pkg --side-tag $SIDE_TAG > ./.out/log-$item.txt
     rm -f ~/workdir/$pkg.src.rpm
     rm -rf ~/workdir/$pkg/
-    echo "======================================"
+    echo "Done: $pkg"
 }
+
+max_jobs=10
 
 for item in "${list[@]}"
 do
-    build_package $item
+    build_package $item &
+    (( $(jobs -r | wc -l) >= max_jobs )) && wait -n
 done
+
+wait

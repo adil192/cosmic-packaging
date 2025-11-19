@@ -37,7 +37,7 @@ mkdir -p ./.out
 
 function build_package() {
     pkg=$1
-    SIDE_TAG=f44-build-side-122580 # MODIFY THIS WITH NEW SIDE TAGS EACH CYCLE
+    SIDE_TAG=f44-build-side-122976 # MODIFY THIS WITH NEW SIDE TAGS EACH CYCLE
     echo "Processing: $pkg"
     rm -f ~/workdir/$pkg.src.rpm
     rm -rf ~/workdir/$pkg/

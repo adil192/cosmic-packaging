@@ -169,7 +169,7 @@ print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_t
 output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
 # Download src rpm, and return the version
 version = download_package(args.rpm_name, output_package)
-# Remove any build numbers at the end i.e. 1.0.0~beta.7"-1"
+# Remove any build numbers at the end i.e. 1.0.0~beta.8"-1"
 version = version.rsplit('-',maxsplit=1)[0]
 
 subprocess.run(

@@ -42,6 +42,8 @@ VERSIONS = [
 
 RAWHIDE_BRANCH = "f44"
 
+output = ""
+
 def branch_to_number(branch: str) -> str:
     return branch[1:] if branch != "rawhide" else RAWHIDE_BRANCH[1:]
 
@@ -63,7 +65,7 @@ def get_latest_commit_name(repo_path="."):
 
 def download_package(rpm_name: str, output_path: Path) -> str:
     # Get package download link
-    print(f"Downloading package {rpm_name} to {output_path}...")
+    # print(f"Downloading package {rpm_name} to {output_path}...")
     url = f"https://copr.fedorainfracloud.org/api_3/package/?ownername=ryanabx&projectname=cosmic-epoch-tagged&packagename={rpm_name}&with_latest_succeeded_build=true"
     with urlopen(url) as response:
         data = json.load(response)
@@ -72,6 +74,7 @@ def download_package(rpm_name: str, output_path: Path) -> str:
     return data["builds"]["latest_succeeded"]["source_package"]["version"]
 
 def should_build(rpm_name: str, branch: str, version: str) -> bool:
+    global output
     check = subprocess.run(
         ["koji", "list-builds", f"--package={rpm_name}", "--state=COMPLETE", f"--pattern=*{version}*.fc{branch_to_number(branch)}*", "--quiet"],
         capture_output=True,
@@ -82,15 +85,20 @@ def should_build(rpm_name: str, branch: str, version: str) -> bool:
         capture_output=True,
         text=True
     )
+    currently_finished = check.stdout.strip()
+    currently_building = check2.stdout.strip()
+    if currently_finished != "":
+        output += f"{branch}: Found finished builds: {currently_finished.split('\n')}\n"
+    if currently_building != "":
+        output += f"{branch}: Found currently building builds: {currently_building.split('\n')}\n"
     return check.stdout.strip() == "" and check2.stdout.strip() == "" and check.stderr.strip() == "" and check2.stderr.strip() == ""
 
 
 def build_package(
     rpm_name: str, branch: str, version: str, side_tag: str | None = None
-):
-    print(f"Building {rpm_name} with branch {branch}")
-
-    # Clone fedpkg repo
+) -> bool:
+    global output
+    # print(f"Building {rpm_name} with branch {branch}")
     rpm_dir = WORKING_DIRECTORY.joinpath(rpm_name)
     subprocess.run(
         ["fedpkg", "switch-branch", branch],
@@ -125,7 +133,8 @@ def build_package(
                 stderr=subprocess.DEVNULL,
             )
     else:
-        print("Commit skipped. Commit messages matched.")
+        pass
+        # print("Commit skipped. Commit messages matched.")
     if should_build(rpm_name, branch, version):
         try:
             if not args.dry_run:
@@ -146,10 +155,11 @@ def build_package(
                         stderr=subprocess.DEVNULL,
                     )
         except subprocess.TimeoutExpired:
-            print("Finished waiting for build.")
+            output += f"Building version {branch}\n"
+            return True
     else:
         print(f"Build skipped. A build was found with matching version {version}")
-    return version
+        return False
 
 
 parser = argparse.ArgumentParser(
@@ -164,7 +174,6 @@ parser.add_argument("--dry-run", action="store_true")
 
 args = parser.parse_args()
 
-print(f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}, Dry Run: {args.dry_run}")
 
 output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
 # Download src rpm, and return the version
@@ -172,6 +181,14 @@ version = download_package(args.rpm_name, output_package)
 # Remove any build numbers at the end i.e. 1.0.0~beta.8"-1"
 version = version.rsplit('-',maxsplit=1)[0]
 
+import datetime
+
+time_before = datetime.datetime.now()
+
+output += "=== Starting ===\n"
+output += f"RPM Name: {args.rpm_name}, Branch: {args.branch}, Side Tag: {args.side_tag}, Dry Run: {args.dry_run}\n"
+
+# Clone fedpkg repo
 subprocess.run(
     ["fedpkg", "clone", args.rpm_name],
     cwd=WORKING_DIRECTORY,
@@ -180,14 +197,28 @@ subprocess.run(
     stderr=subprocess.DEVNULL,
 )
 
+did_build_anything = False
+
 if not args.branch:
     for br in VERSIONS:
-        print(f"Version: {br}")
+        output += f"=== Branch: {br} ===\n"
         if br == "all":
             continue
         try:
-            build_package(args.rpm_name, br, version, args.side_tag)
+            did_build_anything = build_package(args.rpm_name, br, version, args.side_tag) or did_build_anything
         except Exception as e:
-            print(f"Error when building {br}: {e}")
+            output += f"Error({br}): {e}\n"
+            did_build_anything = True
 else:
     build_package(args.rpm_name, args.branch)
+
+time_after = datetime.datetime.now()
+
+elapsed = time_after - time_before
+
+output += f"=== Done in {elapsed} seconds ===\n"
+
+if not did_build_anything:
+    print("Nothing was rebuilt.")
+else:
+    print(output)

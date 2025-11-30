@@ -158,7 +158,7 @@ def build_package(
             output += f"Building version {branch}\n"
             return True
     else:
-        print(f"Build skipped. A build was found with matching version {version}")
+        output += f"Build skipped. A build was found with matching version {version}\n"
         return False
 
 

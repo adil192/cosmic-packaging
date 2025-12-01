@@ -44,6 +44,16 @@ RAWHIDE_BRANCH = "f44"
 
 output = ""
 
+def get_latest_tag() -> str:
+    script_directory = Path(__file__).parent.resolve()
+    latest_tag_path = script_directory.parent.joinpath("latest_tag")
+    if not latest_tag_path.exists():
+        print("Latest tag file does not exist!")
+    with open(latest_tag_path, "r") as f:
+        return f.read().strip()
+
+LATEST_TAG = get_latest_tag()
+
 def branch_to_number(branch: str) -> str:
     return branch[1:] if branch != "rawhide" else RAWHIDE_BRANCH[1:]
 
@@ -180,6 +190,11 @@ output_package = WORKING_DIRECTORY.joinpath(f"{args.rpm_name}.src.rpm")
 version = download_package(args.rpm_name, output_package)
 # Remove any build numbers at the end i.e. 1.0.0~beta.8"-1"
 version = version.rsplit('-',maxsplit=1)[0]
+
+if version != LATEST_TAG:
+    print("Latest version does not equal the latest tag. Aborting")
+    import sys
+    sys.exit(1)
 
 import datetime
 

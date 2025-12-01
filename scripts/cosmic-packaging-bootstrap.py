@@ -163,8 +163,17 @@ class DirectoryInfo:
 
 
 class TagInfo:
-    LATEST_TAG = "1.0.0~beta.8"
-    NIGHTLY_MINVER_TAG: str = "1.0.0~beta.8"
+    def get_latest_tag() -> str:
+        script_directory = pathlib.Path(__file__).parent.resolve()
+        latest_tag_path = script_directory.parent.joinpath("latest_tag")
+        if not latest_tag_path.exists():
+            print("Latest tag file does not exist!")
+        with open(latest_tag_path, "r") as f:
+            return f.read().strip()
+
+    LATEST_TAG = get_latest_tag()
+    NIGHTLY_MINVER_TAG = get_latest_tag()
+
 
     def __init__(self, directory_info: DirectoryInfo, tag: str | None):
         # Nightly specified if tag not specified

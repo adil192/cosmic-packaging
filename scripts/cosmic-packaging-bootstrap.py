@@ -4,6 +4,8 @@ import pathlib
 import os
 import shutil
 import datetime
+from urllib.request import urlopen
+import json
 
 
 class ProjectInfo:
@@ -163,23 +165,21 @@ class DirectoryInfo:
 
 
 class TagInfo:
-    def get_latest_tag() -> str:
-        script_directory = pathlib.Path(__file__).parent.resolve()
-        latest_tag_path = script_directory.parent.joinpath("latest_tag")
-        if not latest_tag_path.exists():
-            print("Latest tag file does not exist!")
-        with open(latest_tag_path, "r") as f:
-            return f.read().strip()
+    # Get the latest tag from the pop-os repo
+    def get_latest_tag(package: str) -> str:
+        repo_name = PACKAGES[package].crate_name
+        url = f"https://api.github.com/repos/pop-os/{repo_name}/tags"
+        with urlopen(url) as response:
+            data = json.load(response)
+            res: str = data[0]["name"].strip()
+            # Return the name with epoch- removed and with `-` replaced with `~`
+            return res.split("epoch-", 1)[1].replace("-", "~")
 
-    LATEST_TAG = get_latest_tag()
-    NIGHTLY_MINVER_TAG = get_latest_tag()
-
-
-    def __init__(self, directory_info: DirectoryInfo, tag: str | None):
+    def __init__(self, directory_info: DirectoryInfo, tag: str, minver_tag: str | None):
         # Nightly specified if tag not specified
         self.nightly = tag is None
         # If nightly
-        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-") # type: ignore
+        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-")  # type: ignore
 
         if self.nightly:
             print("Nightly, so tag is accessed through rev-parse")
@@ -195,7 +195,8 @@ class TagInfo:
             tag = commit[:7]
 
         self.tag = tag
-        self.tag_no_tilde = self.tag.replace("~", "-") # type: ignore
+        self.tag_no_tilde = self.tag.replace("~", "-")  # type: ignore
+        self.minver_tag = minver_tag
 
         print("Git reset")
         subprocess.run(
@@ -480,7 +481,7 @@ class SpecFile:
                 out_str += f"%global commitdatestring {tag_info.commit_date_string}\n"
                 out_str += f"%global commitdate {tag_info.commit_date}\n"
                 out_str += f"%global builddate {build_date}\n"
-                out_str += f"%global cosmic_minver {TagInfo.NIGHTLY_MINVER_TAG}\n\n"
+                out_str += f"%global cosmic_minver {tag_info.minver_tag}\n\n"
                 skip = True
             elif in_line.startswith("Name: "):
                 skip = False
@@ -492,9 +493,9 @@ class SpecFile:
                     out_line = f"Version: {project_info.upstream_tag}^git%{{commitdate}}.%{{shortcommit}}"
                 else:
                     print(
-                        f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
+                        f"Version: {tag_info.minver_tag}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
                     )
-                    out_line = f"Version: {TagInfo.NIGHTLY_MINVER_TAG}^git%{{commitdate}}.%{{shortcommit}}"
+                    out_line = f"Version: {tag_info.minver_tag}^git%{{commitdate}}.%{{shortcommit}}"
             elif in_line.startswith("Source0: "):
                 out_line = out_line.replace("epoch-%{version_no_tilde}", "%{commit}")
             elif in_line.startswith("Release: ") and project_info.release_override:
@@ -675,16 +676,14 @@ directory_info = DirectoryInfo(
 )
 # Normalize tag argument from the command line
 tag = args.tag
+latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
 if args.tag == "latest":
-    tag = TagInfo.LATEST_TAG
+    tag = latest_tag
 elif tag == "nightly":
     tag = None
 # Get information about tags, using the cloned project
 # This also gets the git project into the correct revision by checking out the proper rev
-tag_info = TagInfo(
-    directory_info=directory_info,
-    tag=tag,
-)
+tag_info = TagInfo(directory_info=directory_info, tag=tag, minver_tag=latest_tag)
 
 project_operations = ProjectOperations(project_info, directory_info, tag_info)
 project_operations.setup()

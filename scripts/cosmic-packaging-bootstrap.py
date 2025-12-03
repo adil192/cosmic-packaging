@@ -167,7 +167,7 @@ class DirectoryInfo:
 class TagInfo:
     # Get the latest tag from the pop-os repo
     def get_latest_tag(package: str) -> str:
-        repo_name = PACKAGES[package].crate_name
+        repo_name = package
         url = f"https://api.github.com/repos/pop-os/{repo_name}/tags"
         with urlopen(url) as response:
             data = json.load(response)

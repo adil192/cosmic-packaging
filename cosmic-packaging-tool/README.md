@@ -1,1 +1,0 @@
-# A small collection of helper programs for cosmic-packaging

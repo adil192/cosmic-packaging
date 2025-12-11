@@ -17,7 +17,7 @@ index fff87a6..39f7d80 100644
  %dir %{_datadir}/cosmic/com.system76.CosmicTheme.Mode
  %{_datadir}/cosmic/com.system76.CosmicTheme.Mode/v1/*
 +%dir %{_datadir}/cosmic/com.system76.CosmicComp
-+${_datadir}/cosmic/com.system76.CosmicComp/v1/*
++%{_datadir}/cosmic/com.system76.CosmicComp/v1/*
  %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-round.svg
  %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-slightly-round.svg
  %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-square.svg

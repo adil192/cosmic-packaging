@@ -1,0 +1,26 @@
+From 731fc32c84f2e73eaa397d3f8505c67113f0b1e6 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Thu, 11 Dec 2025 13:01:17 -0600
+Subject: [PATCH] Add new setting
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-settings.spec | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/cosmic-settings.spec b/cosmic-settings.spec
+index fff87a6..39f7d80 100644
+--- a/cosmic-settings.spec
++++ b/cosmic-settings.spec
+@@ -140,6 +140,8 @@ export VERGEN_GIT_SHA="%{commit}"
+ %{_datadir}/cosmic/com.system76.CosmicTheme.Light/v1/*
+ %dir %{_datadir}/cosmic/com.system76.CosmicTheme.Mode
+ %{_datadir}/cosmic/com.system76.CosmicTheme.Mode/v1/*
++%dir %{_datadir}/cosmic/com.system76.CosmicComp
++${_datadir}/cosmic/com.system76.CosmicComp/v1/*
+ %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-round.svg
+ %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-slightly-round.svg
+ %{_datadir}/icons/hicolor/scalable/status/illustration-appearance-dark-style-square.svg
+-- 
+2.51.1
+

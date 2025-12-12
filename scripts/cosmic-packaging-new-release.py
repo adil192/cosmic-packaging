@@ -2,8 +2,11 @@ import subprocess
 import argparse
 import json
 from urllib.request import urlopen, urlretrieve
+import requests
 from pathlib import Path
 import datetime
+from http.client import HTTPResponse
+from typing import cast
 
 # Possible packages to build
 PACKAGES: dict[str, str] = {
@@ -70,8 +73,8 @@ class PackageBuilder:
     def download_package(rpm_name: str, output_path: Path) -> str:
         # Get package download link
         url = f"https://copr.fedorainfracloud.org/api_3/package/?ownername=ryanabx&projectname=cosmic-epoch-tagged&packagename={rpm_name}&with_latest_succeeded_build=true"
-        with urlopen(url) as response:
-            data = json.load(response)
+        with requests.get(url) as response:
+            data = response.json()
         source_package = data["builds"]["latest_succeeded"]["source_package"]["url"]
         print(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
         urlretrieve(source_package, output_path)
@@ -108,7 +111,7 @@ class PackageBuilder:
                 "list-builds",
                 f"--package={self.package}",
                 "--state=COMPLETE",
-                f"--pattern=*{self.version}*.fc{PackageBuilder.branch_to_number(branch)}*",
+                f"--pattern=*{self.version}-1.fc{PackageBuilder.branch_to_number(branch)}*",
                 "--quiet",
             ],
             capture_output=True,
@@ -120,7 +123,7 @@ class PackageBuilder:
                 "list-builds",
                 f"--package={self.package}",
                 "--state=BUILDING",
-                f"--pattern=*{self.version}*.fc{PackageBuilder.branch_to_number(branch)}*",
+                f"--pattern=*{self.version}-1.fc{PackageBuilder.branch_to_number(branch)}*",
                 "--quiet",
             ],
             capture_output=True,

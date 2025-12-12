@@ -226,30 +226,33 @@ class PackageBuilder:
 
 
 def run_iteration(rpm_name: str, side_tag: str, dry_run: bool):
-    working_directory = Path.home().joinpath("workdir").joinpath(rpm_name)
-    Path.mkdir(working_directory, exist_ok=True, parents=True)
-    pkg = PackageBuilder(rpm_name, dry_run, working_directory)
+    try:
+        working_directory = Path.home().joinpath("workdir").joinpath(rpm_name)
+        Path.mkdir(working_directory, exist_ok=True, parents=True)
+        pkg = PackageBuilder(rpm_name, dry_run, working_directory)
 
-    if pkg.tag == "":
-        print(f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}")
-        return
+        if pkg.tag == "":
+            print(f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}")
+            return
 
-    if pkg.version != pkg.tag:
-        print(f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting")
-        return
-    # Clone repo
-    pkg.clone_fedpkg_repo()
+        if pkg.version != pkg.tag:
+            print(f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting")
+            return
+        # Clone repo
+        pkg.clone_fedpkg_repo()
 
-    time_before = datetime.datetime.now()
-    # Do build
-    did_build_anything = pkg.build_with_side_tag(side_tag)
-    time_after = datetime.datetime.now()
+        time_before = datetime.datetime.now()
+        # Do build
+        did_build_anything = pkg.build_with_side_tag(side_tag)
+        time_after = datetime.datetime.now()
 
-    elapsed = time_after - time_before
-    print(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
+        elapsed = time_after - time_before
+        print(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
 
-    if not did_build_anything:
-        print(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
+        if not did_build_anything:
+            print(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
+    except Exception as e:
+        print(f"[{pkg.package}]: Failed to run iteration: {e}")
 
 parser = argparse.ArgumentParser(
     prog="cosmic_packaging_new_release",

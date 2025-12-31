@@ -39,7 +39,7 @@ PACKAGES: dict[str, str] = {
 }
 
 # Possible versions
-VERSIONS = ["rawhide", "f43", "f42", "f41"]
+VERSIONS = ["rawhide", "f43", "f42"] # 41 is now EOL
 RAWHIDE_BRANCH = "f44"
 
 class PackageBuilder:
@@ -175,13 +175,19 @@ class PackageBuilder:
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                 )
-                subprocess.run(
-                    ["fedpkg", "push"],
-                    cwd=self.repo_dir,
-                    check=True,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
+                i = 0
+                while i < 5:
+                    try:
+                        subprocess.run(
+                            ["fedpkg", "push"],
+                            cwd=self.repo_dir,
+                            check=True,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                        )
+                        break
+                    finally:
+                        i += 1
         else:
             print(f"[{self.package}, {branch}]: Commit skipped. Commit messages matched.")
         print(f"[{self.package}, {branch}]: Checking if should build...")

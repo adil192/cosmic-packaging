@@ -42,6 +42,8 @@ PACKAGES: dict[str, str] = {
 VERSIONS = ["rawhide", "f43", "f42"] # 41 is now EOL
 RAWHIDE_BRANCH = "f44"
 
+builds = []
+
 class PackageBuilder:
     def __init__(self, package: str, dry_run: bool, working_directory: Path):
         self.package = package
@@ -212,6 +214,7 @@ class PackageBuilder:
                         )
             except subprocess.TimeoutExpired:
                 print(f"[{self.package}, {branch}]: Building version {branch}\n")
+                builds.append(f"{self.package} {branch}")
                 return True
         else:
             print(f"[{self.package}, {branch}]: Build skipped. A build was found with matching version {self.version}\n")
@@ -280,3 +283,5 @@ def build_package(package: str):
 
 with ThreadPoolExecutor(max_workers=5) as executor:
     results = list(executor.map(build_package, PACKAGES.keys()))
+
+print(f"Finished. Queued builds: {builds}")

@@ -1,0 +1,28 @@
+From ff1a0b61d77bc03a24744d7b6e7469f56897dd23 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Fri, 2 Jan 2026 17:54:13 -0600
+Subject: [PATCH] Fix building ppc64le
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-settings.spec | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cosmic-settings.spec b/cosmic-settings.spec
+index 9e32d8a..1772576 100644
+--- a/cosmic-settings.spec
++++ b/cosmic-settings.spec
+@@ -31,6 +31,10 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
+ # * mv vendor-config-%%{version_no_tilde}.toml ..
+ Source2:        vendor-config-%{version_no_tilde}.toml
+ 
++# Fixes failed build on ppc64le
++# https://github.com/pop-os/cosmic-settings/pull/1727
++Patch: https://patch-diff.githubusercontent.com/raw/pop-os/cosmic-settings/pull/1727.patch
++
+ 
+ BuildRequires:  cargo-rpm-macros >= 25
+ BuildRequires:  rustc
+-- 
+2.52.0
+

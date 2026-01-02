@@ -570,7 +570,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-randr": ProjectInfo(rpm_name="cosmic-randr"),
     "cosmic-screenshot": ProjectInfo(rpm_name="cosmic-screenshot"),
     "cosmic-session": ProjectInfo(rpm_name="cosmic-session"),
-    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings"),
+    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings", apply_patches=True), # TEMP: Until ppc64le is fixed
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),

@@ -19,7 +19,7 @@ class ProjectInfo:
         rpm_name: str,
         crate_name: str = "",
         vendor: bool = True,
-        apply_patches: bool = False,
+        apply_patches_early: bool = False,
         zip_self: bool = False,
         staging: bool = False,
         upstream_tag: str = "",
@@ -28,7 +28,7 @@ class ProjectInfo:
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
         self.vendor = vendor
-        self.apply_patches = apply_patches
+        self.apply_patches_early = apply_patches_early
         self.zip_self = zip_self
         self.staging = staging
         self.upstream_tag = upstream_tag
@@ -428,8 +428,10 @@ class ProjectOperations:
     def setup(self):
         print("setup")
         # Apply project patches early if this flag is specified
-        if self.project_info.apply_patches:
+        if self.project_info.apply_patches_early:
             self.apply_patches_to_repo()
+        else:
+            print("Not applying patches early.")
         # If we are building a project that needs vendoring, do that now
         if self.project_info.vendor:
             self.vendor()
@@ -570,7 +572,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-randr": ProjectInfo(rpm_name="cosmic-randr"),
     "cosmic-screenshot": ProjectInfo(rpm_name="cosmic-screenshot"),
     "cosmic-session": ProjectInfo(rpm_name="cosmic-session"),
-    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings", apply_patches=True), # TEMP: Until ppc64le is fixed
+    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings", apply_patches_early=True), # TEMP: Until ppc64le is fixed
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),
@@ -655,7 +657,7 @@ project_info = PACKAGES[args.rpm_name]
 
 # Overrides
 if args.pre_apply_spec_patches:
-    project_info.apply_patches = args.pre_apply_spec_patches
+    project_info.apply_patches_early = args.pre_apply_spec_patches
 
 if args.zip_self:
     project_info.zip_self = args.zip_self

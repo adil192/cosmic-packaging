@@ -429,6 +429,7 @@ class ProjectOperations:
         print("setup")
         # Apply project patches early if this flag is specified
         if self.project_info.apply_patches_early:
+            print("Applying patches early.")
             self.apply_patches_to_repo()
         else:
             print("Not applying patches early.")

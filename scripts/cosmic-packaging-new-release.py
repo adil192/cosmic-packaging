@@ -45,8 +45,9 @@ RAWHIDE_BRANCH = "f44"
 builds = []
 
 class PackageBuilder:
-    def __init__(self, package: str, dry_run: bool, working_directory: Path):
+    def __init__(self, package: str, force_build: bool, dry_run: bool, working_directory: Path):
         self.package = package
+        self.force_build = force_build
         self.dry_run = dry_run
         self.working_directory = working_directory
         self.tag = PackageBuilder.get_latest_tag(self.package)
@@ -95,6 +96,8 @@ class PackageBuilder:
 
     # True if a commit should happen
     def should_commit(self) -> bool:
+        if self.force_build:
+            return True
         # Run `git rev-parse HEAD` to get the latest commit hash
         old_commit_msg = subprocess.run(
             ["git", "-C", self.repo_dir, "log", "-1", "--pretty=%B"],
@@ -107,6 +110,8 @@ class PackageBuilder:
     
     # True if we should build, false otherwise
     def should_build(self, branch: str) -> bool:
+        if self.force_build:
+            return True
         check = subprocess.run(
             [
                 "koji",
@@ -234,11 +239,11 @@ class PackageBuilder:
         return did_build_anything
 
 
-def run_iteration(rpm_name: str, side_tag: str, dry_run: bool):
+def run_iteration(rpm_name: str, force_build: bool, side_tag: str, dry_run: bool):
     try:
         working_directory = Path.home().joinpath("workdir").joinpath(rpm_name)
         Path.mkdir(working_directory, exist_ok=True, parents=True)
-        pkg = PackageBuilder(rpm_name, dry_run, working_directory)
+        pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
 
         if pkg.tag == "":
             print(f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}")
@@ -270,18 +275,31 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("--side-tag")
 parser.add_argument("--dry-run", action="store_true")
+parser.add_argument(
+    "--force-package",
+    action="append",
+    help="Force update/build package",
+    choices=PACKAGES.keys()
+)
 
 args = parser.parse_args()
 
 # Run multithreaded
 from concurrent.futures import ThreadPoolExecutor
 
-def build_package(package: str):
+def build_package(package: str, force_build: bool):
     print(f"[{package}]: Building package {package}")
-    run_iteration(package, args.side_tag, args.dry_run)
+    run_iteration(package, force_build, args.side_tag, args.dry_run)
     print(f"[{package}]: Done building package {package}")
 
+package_force = []
+
+for pkg in PACKAGES.keys():
+    package_force.append(pkg in args.force_package)
+    if pkg in args.force_package:
+        print("Forcing build of",pkg)
+
 with ThreadPoolExecutor(max_workers=5) as executor:
-    results = list(executor.map(build_package, PACKAGES.keys()))
+    results = list(executor.map(build_package, PACKAGES.keys(), package_force))
 
 print(f"Finished. Queued builds: {builds}")

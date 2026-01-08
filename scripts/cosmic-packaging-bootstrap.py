@@ -5,8 +5,12 @@ import os
 import shutil
 import datetime
 from urllib.request import urlopen
+from urllib.parse import urlparse
 import json
 
+import sys
+
+import tempfile
 
 class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
@@ -282,30 +286,22 @@ class ProjectOperations:
             check=False,
         )
 
-    # Applies patches to the cloned git repo
-    #  note: Apply patches and zip self together will cause problems with applying patches
-    #  that will likely never occur, but just in case
-    def apply_patches_to_repo(self):
-        print("apply_patches_to_repo")
-        patch_dir = self.directory_info.fedora_project_directory
-        patches = sorted(patch_dir.glob("*.patch"))
-
-        if not patches:
-            print("No .patch files found.")
-            return
-
-        for patch in patches:
-            print(f"Applying {patch}...")
-            try:
-                subprocess.run(
-                    ["git", "am", str(patch)],
-                    cwd=self.directory_info.upstream_project_directory,
-                    check=True,
-                )
-            except subprocess.CalledProcessError:
-                print(
-                    f"Failed to apply {patch}. Resolve conflicts and run `git am --continue`."
-                )
+    def _apply_patch(patch: pathlib.Path | str, repo: pathlib.Path):
+        print("Applying patch:", patch)
+        ot = subprocess.run(
+            [
+                "git",
+                "apply",
+                # "am",
+                str(patch),
+            ],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+        )
+        if ot.returncode != 0:
+            print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
+            sys.exit(-1)
 
     # This function prepares the vendored artifacts for the package
     def vendor(self):
@@ -399,21 +395,10 @@ class ProjectOperations:
                 if file.strip() in self.project_info.ignore_patches:
                     print(f"Ignoring {file} due to override...")
                     continue
-                os.path.join(root, file)
-                print("Applying patch:", file)
-                ot = subprocess.run(
-                    [
-                        "git",
-                        "apply",
-                        str(os.path.join(root, file)),
-                    ],
-                    cwd=self.directory_info.fedora_project_directory,
-                    capture_output=True,
-                    text=True,
-                    check=True,
+                ProjectOperations._apply_patch(
+                    os.path.join(root, file),
+                    self.directory_info.fedora_project_directory,
                 )
-                if ot.returncode != 0:
-                    print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
 
         # Copy the files to the output
         self.copy_fedora_files_to_output()
@@ -421,23 +406,56 @@ class ProjectOperations:
         # Make spec file modifications
         with open(spec_path, "r") as f:
             spec_res = SpecFile(self.project_info, self.tag_info, f.read())
+            # If patches exist, and we preapply patches, do this now
+            if self.project_info.apply_patches_early:
+                patches = spec_res.get_listed_patches()
+                for patch in patches:
+                    if ProjectOperations._is_url(patch):
+                        ProjectOperations._apply_patch_from_url(
+                            patch, self.directory_info.upstream_project_directory
+                        )
+                    else:
+                        ProjectOperations._apply_patch_from_file(
+                            self.directory_info.fedora_project_directory.joinpath(patch), self.directory_info.upstream_project_directory
+                        )
             with open(output_path, "w") as f2:
                 f2.write(spec_res.spec_out)
+
+    def _is_url(value: str) -> bool:
+        parsed = urlparse(value)
+        return parsed.scheme in {"http", "https"}
+    
+    def _download_text(url: str, encoding: str = "utf-8") -> str:
+        with urlopen(url) as response:
+            return response.read().decode(encoding)
+
+    def _apply_patch_from_url(url: str, repo: pathlib.Path) -> None:
+        print("Pre-Applying patch from url:",url)
+        response = ProjectOperations._download_text(url)
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".patch") as tmp:
+            tmp.writelines(response)
+            tmp_path = tmp.name
+
+        try:
+            ProjectOperations._apply_patch(tmp_path, repo)
+        finally:
+            os.unlink(tmp_path)
+
+    def _apply_patch_from_file(path: str, repo: pathlib.Path) -> None:
+        print("Pre-Applying patch from file:",path)
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"Patch file not found: {path}")
+
+        ProjectOperations._apply_patch(path, repo)
 
     # Performs the remainder of setup needed to build the rpm
     def setup(self):
         print("setup")
-        # Apply project patches early if this flag is specified
-        if self.project_info.apply_patches_early:
-            print("Applying patches early.")
-            self.apply_patches_to_repo()
-        else:
-            print("Not applying patches early.")
+        # Prepare the Fedora spec side
+        self.prepare_spec_repo()
         # If we are building a project that needs vendoring, do that now
         if self.project_info.vendor:
             self.vendor()
-        # Finally, prepare the Fedora spec side
-        self.prepare_spec_repo()
         # If we want to zip our output as an artifact, do so now
         if self.project_info.zip_self:
             # tar -pczf cosmic-wallpapers-%{version_no_tilde}.tar.gz cosmic-wallpapers
@@ -548,6 +566,19 @@ class SpecFile:
                 out_str += out_line.rstrip() + "\n"
         return out_str
 
+    def get_listed_patches(self) -> list[str]:
+        patch_list = []
+        for line in self.spec_out.splitlines():
+            if not line.startswith("Patch:"):
+                continue
+
+            patch_ref = line[len("Patch:") :].strip()
+            if not patch_ref:
+                continue
+
+            patch_list.append(patch_ref)
+        return patch_list
+
 
 # Define every COSMIC package
 PACKAGES: dict[str, ProjectInfo] = {
@@ -573,7 +604,9 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-randr": ProjectInfo(rpm_name="cosmic-randr"),
     "cosmic-screenshot": ProjectInfo(rpm_name="cosmic-screenshot"),
     "cosmic-session": ProjectInfo(rpm_name="cosmic-session"),
-    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings", apply_patches_early=True), # TEMP: Until ppc64le is fixed
+    "cosmic-settings": ProjectInfo(
+        rpm_name="cosmic-settings", apply_patches_early=True
+    ),  # TEMP: Until ppc64le is fixed
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),

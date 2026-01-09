@@ -12,6 +12,7 @@ import sys
 
 import tempfile
 
+
 class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
     FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
@@ -416,7 +417,10 @@ class ProjectOperations:
                         )
                     else:
                         ProjectOperations._apply_patch_from_file(
-                            self.directory_info.fedora_project_directory.joinpath(patch), self.directory_info.upstream_project_directory
+                            self.directory_info.fedora_project_directory.joinpath(
+                                patch
+                            ),
+                            self.directory_info.upstream_project_directory,
                         )
             with open(output_path, "w") as f2:
                 f2.write(spec_res.spec_out)
@@ -424,15 +428,17 @@ class ProjectOperations:
     def _is_url(value: str) -> bool:
         parsed = urlparse(value)
         return parsed.scheme in {"http", "https"}
-    
+
     def _download_text(url: str, encoding: str = "utf-8") -> str:
         with urlopen(url) as response:
             return response.read().decode(encoding)
 
     def _apply_patch_from_url(url: str, repo: pathlib.Path) -> None:
-        print("Pre-Applying patch from url:",url)
+        print("Pre-Applying patch from url:", url)
         response = ProjectOperations._download_text(url)
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".patch") as tmp:
+        with tempfile.NamedTemporaryFile(
+            mode="w", delete=False, suffix=".patch"
+        ) as tmp:
             tmp.writelines(response)
             tmp_path = tmp.name
 
@@ -442,7 +448,7 @@ class ProjectOperations:
             os.unlink(tmp_path)
 
     def _apply_patch_from_file(path: str, repo: pathlib.Path) -> None:
-        print("Pre-Applying patch from file:",path)
+        print("Pre-Applying patch from file:", path)
         if not os.path.isfile(path):
             raise FileNotFoundError(f"Patch file not found: {path}")
 
@@ -604,9 +610,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     "cosmic-randr": ProjectInfo(rpm_name="cosmic-randr"),
     "cosmic-screenshot": ProjectInfo(rpm_name="cosmic-screenshot"),
     "cosmic-session": ProjectInfo(rpm_name="cosmic-session"),
-    "cosmic-settings": ProjectInfo(
-        rpm_name="cosmic-settings", apply_patches_early=True
-    ),  # TEMP: Until ppc64le is fixed
+    "cosmic-settings": ProjectInfo(rpm_name="cosmic-settings"),
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),

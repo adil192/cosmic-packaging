@@ -46,6 +46,7 @@ clean-rpmbuild-dir:
 
 clone-upstream:
     #!/usr/bin/env bash
+    set -ex
     rm -rf upstream/{{ NAME }}
     git clone https://src.fedoraproject.org/rpms/{{ NAME }}.git upstream/{{ NAME }}
     for p in $(ls patches/{{NAME}}/*.patch 2>/dev/null | sort); do
@@ -54,11 +55,13 @@ clone-upstream:
 
 create-patch-auto commit_msg:
     #!/usr/bin/env bash
-    patch_name="$(echo "$commit_msg" | tr ' ' '_')"
-    just create-patch "$commit_msg" "$patch_name"
+    set -ex
+    patch_name="$(echo "{{ commit_msg }}" | tr ' ' '_')"
+    just create-patch "{{ commit_msg }}" "$patch_name"
 
 create-patch commit_msg patch_name:
     #!/usr/bin/env bash
+    set -ex
     git -C upstream/{{ NAME }} add .
     git -C upstream/{{ NAME }} commit -m "{{ commit_msg }}"
     mkdir -p patches/{{ NAME }}

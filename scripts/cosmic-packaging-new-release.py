@@ -295,9 +295,8 @@ def build_package(package: str, force_build: bool):
 package_force = []
 
 for pkg in PACKAGES.keys():
-    if args.force_package:
-        package_force.append(pkg in args.force_package)
-    if pkg in args.force_package:
+    package_force.append(args.force_package and pkg in args.force_package)
+    if args.force_package and pkg in args.force_package:
         print("Forcing build of",pkg)
 
 with ThreadPoolExecutor(max_workers=5) as executor:

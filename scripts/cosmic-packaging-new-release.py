@@ -302,4 +302,5 @@ for pkg in PACKAGES.keys():
 with ThreadPoolExecutor(max_workers=5) as executor:
     results = list(executor.map(build_package, PACKAGES.keys(), package_force))
 
+builds.sort()
 print(f"Finished. Queued builds: {builds}")

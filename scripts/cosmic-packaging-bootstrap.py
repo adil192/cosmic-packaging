@@ -543,7 +543,9 @@ class SpecFile:
         skip = False
         for in_line in spec_in.splitlines():
             out_line = in_line
-            if (
+            if in_line.startswith("# Generated using the scripts"):
+                out_line = "# Generated using the scripts at # Generated using the scripts at https://forge.fedoraproject.org/cosmic/cosmic-packaging/src/branch/main/scripts"
+            elif (
                 in_line.startswith("%global commit ")
                 or in_line.startswith(
                     "# While our version corresponds to an upstream tag"

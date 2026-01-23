@@ -17,7 +17,7 @@ class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
     FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
 
-    COSMIC_PACKAGING_GIT = "https://pagure.io/fedora-cosmic/cosmic-packaging.git"
+    COSMIC_PACKAGING_GIT = "https://forge.fedoraproject.org/cosmic/cosmic-packaging.git"
 
     def __init__(
         self,

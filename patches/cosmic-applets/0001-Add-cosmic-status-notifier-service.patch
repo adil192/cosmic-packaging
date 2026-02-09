@@ -1,0 +1,37 @@
+From cc3fab1c2af90571a135ae111bd48727e805262a Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 9 Feb 2026 10:49:16 -0600
+Subject: [PATCH] Add cosmic status notifier service
+
+Co-authored-by: Jean-Marc Liger <ligenix@iscp.fr>
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-applets.spec | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/cosmic-applets.spec b/cosmic-applets.spec
+index d670ca6..f55937a 100644
+--- a/cosmic-applets.spec
++++ b/cosmic-applets.spec
+@@ -114,6 +114,9 @@ export VERGEN_GIT_SHA="%{commit}"
+ %cargo_test
+ %endif
+ 
++%post
++%systemd_user_post com.system76.CosmicStatusNotifierWatcher.service
++
+ %files
+ %license LICENSE
+ %license LICENSE.dependencies
+@@ -134,6 +137,8 @@ export VERGEN_GIT_SHA="%{commit}"
+ %{_bindir}/cosmic-applet-tiling
+ %{_bindir}/cosmic-applet-time
+ %{_bindir}/cosmic-applet-workspaces
++%{_userunitdir}/com.system76.CosmicStatusNotifierWatcher.service
++%{_datadir}/dbus-1/services/com.system76.CosmicStatusNotifierWatcher.service
+ %{_datadir}/applications/com.system76.CosmicAppList.desktop
+ %{_datadir}/applications/com.system76.CosmicAppletA11y.desktop
+ %{_datadir}/applications/com.system76.CosmicAppletAudio.desktop
+-- 
+2.51.1
+

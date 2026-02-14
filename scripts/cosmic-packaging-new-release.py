@@ -266,7 +266,7 @@ def run_iteration(rpm_name: str, force_build: bool, side_tag: str, dry_run: bool
         if not did_build_anything:
             print(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
     except Exception as e:
-        print(f"[{pkg.package}]: Failed to run iteration: {e}")
+        print(f"[{rpm_name}]: Failed to run iteration: {e}")
 
 parser = argparse.ArgumentParser(
     prog="cosmic_packaging_new_release",

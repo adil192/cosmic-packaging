@@ -595,7 +595,7 @@ PACKAGES: dict[str, ProjectInfo] = {
     ),
     "cosmic-applets": ProjectInfo(rpm_name="cosmic-applets"),
     "cosmic-bg": ProjectInfo(rpm_name="cosmic-bg"),
-    "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp"),
+    "cosmic-comp": ProjectInfo(rpm_name="cosmic-comp", apply_patches_early=True),
     "cosmic-edit": ProjectInfo(rpm_name="cosmic-edit"),
     "cosmic-files": ProjectInfo(rpm_name="cosmic-files"),
     "cosmic-greeter": ProjectInfo(rpm_name="cosmic-greeter", release_override="2"),

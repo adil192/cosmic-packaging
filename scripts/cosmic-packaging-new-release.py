@@ -39,8 +39,8 @@ PACKAGES: dict[str, str] = {
 }
 
 # Possible versions
-VERSIONS = ["rawhide", "f43", "f42"] # 41 is now EOL
-RAWHIDE_BRANCH = "f44"
+VERSIONS = ["rawhide", "f44", "f43", "f42"] # 41 is now EOL
+RAWHIDE_BRANCH = "f45"
 
 builds = []
 

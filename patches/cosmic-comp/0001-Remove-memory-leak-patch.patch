@@ -1,0 +1,78 @@
+From 0f882b4d950114c381d2df4abd9d15f5e9099036 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Tue, 17 Feb 2026 19:00:25 -0600
+Subject: [PATCH] Remove memory leak patch
+
+---
+ ...ch-to-fix-memory-leak-in-cosmic-comp.patch | 45 -------------------
+ cosmic-comp.spec                              |  2 -
+ 2 files changed, 47 deletions(-)
+ delete mode 100644 0001-Add-patch-to-fix-memory-leak-in-cosmic-comp.patch
+
+diff --git a/0001-Add-patch-to-fix-memory-leak-in-cosmic-comp.patch b/0001-Add-patch-to-fix-memory-leak-in-cosmic-comp.patch
+deleted file mode 100644
+index e240e54..0000000
+--- a/0001-Add-patch-to-fix-memory-leak-in-cosmic-comp.patch
++++ /dev/null
+@@ -1,45 +0,0 @@
+-From 1a12fe87a332f517fde1a89cf4387cbf423f7c9e Mon Sep 17 00:00:00 2001
+-From: Ryan Brue <ryanbrue.dev@gmail.com>
+-Date: Sat, 14 Feb 2026 12:20:29 -0600
+-Subject: [PATCH] Add patch to fix memory leak in cosmic-comp
+-
+-Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+----
+- .gitignore       | 1 +
+- cosmic-comp.spec | 2 ++
+- sources          | 1 +
+- 3 files changed, 4 insertions(+)
+-
+-diff --git a/.gitignore b/.gitignore
+-index a4e9472..21de4e2 100644
+---- a/.gitignore
+-+++ b/.gitignore
+-@@ -44,3 +44,4 @@
+- /vendor-1.0.4.tar.gz
+- /cosmic-comp-1.0.6.tar.gz
+- /vendor-1.0.6.tar.gz
+-+/epoch-1.0.6...3f6a9ab8ca1b1bc998554993efabdf2e71acecf1.patch
+-diff --git a/cosmic-comp.spec b/cosmic-comp.spec
+-index 9d9ec9c..6e43e63 100644
+---- a/cosmic-comp.spec
+-+++ b/cosmic-comp.spec
+-@@ -29,6 +29,8 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
+- # * mv vendor-config-%%{version_no_tilde}.toml ..
+- Source2:        vendor-config-%{version_no_tilde}.toml
+- 
+-+Patch: https://github.com/pop-os/cosmic-comp/compare/epoch-1.0.6...3f6a9ab8ca1b1bc998554993efabdf2e71acecf1.patch
+-+
+- BuildRequires:  cargo-rpm-macros >= 25
+- BuildRequires:  rustc
+- BuildRequires:  lld
+-diff --git a/sources b/sources
+-index b80c2cb..e807edb 100644
+---- a/sources
+-+++ b/sources
+-@@ -1,2 +1,3 @@
+- SHA512 (cosmic-comp-1.0.6.tar.gz) = 761bcaad259468c634d634261943614c936b171ab193a938f67f2eecb059a1bd8dc368317c374f5044029d1e4d5fca44197b435492fb719c97b70d20ce3e56a1
+- SHA512 (vendor-1.0.6.tar.gz) = 736b521b713f2d911cc29152acb12bc0472cec6a0a915a4131eaedb904d4630c9c846028e2e78d67877580ed8c7c9dd3b70318e7403fd7b029e2fcdfb90c882f
+-+SHA512 (epoch-1.0.6...3f6a9ab8ca1b1bc998554993efabdf2e71acecf1.patch) = 967b2812d75a1d2b714573443f75d6d2bd36dad0eece5dad133c50e4faa319df04250a833a4c83eb80db982a30be056a7cfa02c71e8196d7e8d85f1f26521199
+--- 
+-2.53.0
+-
+diff --git a/cosmic-comp.spec b/cosmic-comp.spec
+index 6e43e63..9d9ec9c 100644
+--- a/cosmic-comp.spec
++++ b/cosmic-comp.spec
+@@ -29,8 +29,6 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
+ # * mv vendor-config-%%{version_no_tilde}.toml ..
+ Source2:        vendor-config-%{version_no_tilde}.toml
+ 
+-Patch: https://github.com/pop-os/cosmic-comp/compare/epoch-1.0.6...3f6a9ab8ca1b1bc998554993efabdf2e71acecf1.patch
+-
+ BuildRequires:  cargo-rpm-macros >= 25
+ BuildRequires:  rustc
+ BuildRequires:  lld
+-- 
+2.53.0
+

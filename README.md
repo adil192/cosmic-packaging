@@ -1,11 +1,32 @@
 # Fedora Packaging Utilities for the COSMIC Desktop Environment
 
-![Fedora COSMIC Logo](logo.png)
+![Fedora COSMIC Logo](https://raw.githubusercontent.com/adil192/cosmic-packaging/refs/heads/main/logo.png)
 
-## [Nightly COSMIC Packages](https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/)
+### Description
 
-Be sure to report issues with the packaging in this repo. Report COSMIC related issues in [their repo](https://github.com/pop-os/cosmic-epoch/issues). If unsure whether an issue is with packaging or COSMIC itself, start here, in this repo.
+This copr repo contains tagged releases of COSMIC faster than those in the official Fedora repos.
 
-## Automation
+Use at your own risk!
 
-As of 2025-12-02 and prior, nightly COPR packages are automatically built via a GitHub action on ryanabx's copr automation repo: https://github.com/ryanabx/ryanabx-copr-automation
+### Installation Instructions
+
+Install the [Fedora COSMIC Spin](https://fedoraproject.org/spins/cosmic/) or install COSMIC on another Fedora variant:
+```sh
+sudo dnf install @cosmic-desktop-environment
+```
+
+Then install updates from [my copr repo](https://copr.fedorainfracloud.org/coprs/adil192/cosmic-epoch/):
+```sh
+sudo dnf copr enable adil192/cosmic-epoch
+sudo dnf update
+```
+
+### Credits
+
+All of the hard parts of packaging COSMIC are done by @ryanabx's repo here: [https://forge.fedoraproject.org/cosmic/cosmic-packaging](https://forge.fedoraproject.org/cosmic/cosmic-packaging).
+
+All I'm doing is locking it to the latest tagged release.
+I can release updates faster than the official packages because mine aren't going through Fedora's review process.
+
+This also means they are less tested, so if you're looking for a rock solid stable desktop, consider sticking to the official packages.
+Conversely, if you want the latest and greatest features, consider using [ryanabx's nightly copr packages](https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/) instead of my copr repo.

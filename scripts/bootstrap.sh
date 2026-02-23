@@ -4,7 +4,7 @@ export NAME=cosmic-term
 
 SCRIPT=cosmic-packaging-bootstrap.py
 RPM_REPO_NAME=cosmic-packaging
-RPM_REPO=https://forge.fedoraproject.org/cosmic/$RPM_REPO_NAME.git
+RPM_REPO=https://github.com/adil192/$RPM_REPO_NAME.git
 
 git clone $RPM_REPO
 

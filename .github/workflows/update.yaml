@@ -2,8 +2,8 @@ name: Update spec files
 on:
   workflow_dispatch:
   schedule:
-    # every 2 days at 2:09am (random time to avoid spikes in GitHub Actions usage)
-    - cron: "09 2 */2 * *"
+    # every day at 2:09am (random time to avoid spikes in GitHub Actions usage)
+    - cron: "09 2 * * *"
 
 jobs:
   update-mesa:

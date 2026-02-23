@@ -1,43 +1,30 @@
 # Fedora Packaging Utilities for the COSMIC Desktop Environment
 
-![Fedora COSMIC Logo](logo.png)
+![Fedora COSMIC Logo](https://raw.githubusercontent.com/adil192/cosmic-packaging/refs/heads/main/logo.png)
 
-- [Nightly COSMIC Packages](https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/)
+This copr repo contains tagged releases of COSMIC faster than those in the official Fedora repos.
 
-- [Upstream COSMIC Packages](https://src.fedoraproject.org/rpms/cosmic-session)
+Use at your own risk!
 
-Be sure to report issues with the packaging in this repo. Report COSMIC related issues in [their repo](https://github.com/pop-os/cosmic-epoch/issues). If unsure whether an issue is with packaging or COSMIC itself, start here, in this repo.
+### Installation Instructions
 
-## COSMIC Nightly Packaging Workflow
-
-- Nightly COPR packages are automatically built via a GitHub action on ryanabx's copr automation repo: https://github.com/ryanabx/ryanabx-copr-automation if there is a new commit from the upstream repo.
-
-### Installing nightly packages
-
-Non-Atomic:
-
+Install the [Fedora COSMIC Spin](https://fedoraproject.org/spins/cosmic/) or install COSMIC on another Fedora variant:
 ```sh
-sudo dnf copr enable ryanabx/cosmic-epoch
-sudo dnf install cosmic-desktop
+sudo dnf install @cosmic-desktop-environment
 ```
 
-Atomic (Using Fedora 44 as an example):
-
+Then install updates from [my copr repo](https://copr.fedorainfracloud.org/coprs/adil192/cosmic-epoch/):
 ```sh
-sudo curl https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-44/ryanabx-cosmic-epoch-fedora-44.repo -o /etc/yum.repos.d/ryanabx-cosmic-epoch-fedora-44.repo
-sudo rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:ryanabx:cosmic-epoch cosmic-app-library cosmic-applets cosmic-bg cosmic-comp cosmic-edit cosmic-files cosmic-greeter cosmic-icon-theme cosmic-idle cosmic-initial-setup cosmic-launcher cosmic-monitor cosmic-notifications cosmic-osd cosmic-panel cosmic-player cosmic-randr cosmic-screenshot cosmic-session cosmic-settings cosmic-settings-daemon cosmic-store cosmic-term cosmic-wallpapers cosmic-workspaces xdg-desktop-portal-cosmic pop-launcher
+sudo dnf copr enable adil192/cosmic-epoch
+sudo dnf update
 ```
 
-## COSMIC Upstream Packaging Workflow
+### Credits
 
-- New tags are released on `https://github.com/pop-os/`, typically every Tuesday
-- A copr build (for https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch-tagged) with the new tags is triggered by an automated action at `https://github.com/ryanabx/ryanabx-copr-automation/`.
-    - If any packages fail to build on x86 or aarch64, the package maintainer (ryanabx) will go look through the errors and try to fix problems, and make patches as needed.
-- Once all packages build successfully, the package maintainer will trigger the `scripts/cosmic-packaging-new-release.py` script to download the src rpms from the tagged copr and import them into the official repos (`src.fedoraproject.org/rpms/cosmic-*`).
-- Fedora Koji builds the COSMIC packages for upstream.
-- The package maintainer checks that all builds succeeded, and makes the update at `https://bodhi.fedoraproject.org`.
-- Update gets enough karma, and gets released.
+All of the hard parts of packaging COSMIC are done by @ryanabx's repo here: [https://forge.fedoraproject.org/cosmic/cosmic-packaging](https://forge.fedoraproject.org/cosmic/cosmic-packaging).
 
----
+All I'm doing is locking it to the latest tagged release.
+I can release updates faster than the official packages because mine aren't going through Fedora's review process.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+This also means they are less tested, so if you're looking for a rock solid stable desktop, consider sticking to the official packages.
+Conversely, if you want the latest and greatest features, consider using [ryanabx's nightly copr packages](https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/) instead of my copr repo.

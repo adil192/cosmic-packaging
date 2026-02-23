@@ -17,7 +17,7 @@ class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
     FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
 
-    COSMIC_PACKAGING_GIT = "https://forge.fedoraproject.org/cosmic/cosmic-packaging.git"
+    COSMIC_PACKAGING_GIT = "https://github.com/adil192/cosmic-packaging.git"
 
     def __init__(
         self,
@@ -544,7 +544,7 @@ class SpecFile:
         for in_line in spec_in.splitlines():
             out_line = in_line
             if in_line.startswith("# Generated using the scripts"):
-                out_line = "# Generated using the scripts at # Generated using the scripts at https://forge.fedoraproject.org/cosmic/cosmic-packaging/src/branch/main/scripts"
+                out_line = "# Generated using the scripts at # Generated using the scripts at https://github.com/adil192/cosmic-packaging/src/branch/main/scripts"
             elif (
                 in_line.startswith("%global commit ")
                 or in_line.startswith(
@@ -717,12 +717,9 @@ directory_info = DirectoryInfo(
     fedora_dir=pathlib.Path(args.fedora_dir) if args.fedora_dir else None,
 )
 # Normalize tag argument from the command line
-tag = args.tag
+LATEST_TAG = "1.0.6"
+tag = LATEST_TAG
 latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
-if args.tag == "latest":
-    tag = latest_tag
-elif tag == "nightly":
-    tag = None
 # Get information about tags, using the cloned project
 # This also gets the git project into the correct revision by checking out the proper rev
 tag_info = TagInfo(directory_info=directory_info, tag=tag, minver_tag=latest_tag)

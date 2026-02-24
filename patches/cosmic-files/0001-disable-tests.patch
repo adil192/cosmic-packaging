@@ -1,0 +1,30 @@
+From 95b0fe73cb05d73fc7feab5c3777d89775bdd667 Mon Sep 17 00:00:00 2001
+From: Adil Hanney <adilhanney@disroot.org>
+Date: Tue, 24 Feb 2026 21:44:58 +0000
+Subject: [PATCH] fix: disable tests for cosmic-files 1.0.8
+
+---
+ cosmic-files.spec | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/cosmic-files.spec b/cosmic-files.spec
+index 3ad95b1..869b616 100644
+--- a/cosmic-files.spec
++++ b/cosmic-files.spec
+@@ -89,11 +89,8 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
+ 
+ %check
+ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicFiles.desktop
+-%if %{with check}
+-export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+-export VERGEN_GIT_SHA="%{commit}"
+-%cargo_test
+-%endif
++# Tests are disabled for 1.0.8 due to https://github.com/pop-os/cosmic-files/issues/1654
++# Please remove this patch for 1.0.9
+ 
+ %files
+ %license LICENSE
+-- 
+2.53.0
+

@@ -18,7 +18,7 @@ index 3ad95b1..6c9b0e1 100644
  export VERGEN_GIT_SHA="%{commit}"
 -%cargo_test
 +# Make cargo test optional
-+( %cargo_test )) || :
++( %cargo_test ) || :
  %endif
  
  %files

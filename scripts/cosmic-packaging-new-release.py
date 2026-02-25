@@ -8,44 +8,17 @@ import datetime
 from http.client import HTTPResponse
 from typing import cast
 
-# Possible packages to build
-PACKAGES: dict[str, str] = {
-    "cosmic-app-library": "cosmic-applibrary",
-    "cosmic-applets": "cosmic-applets",
-    "cosmic-bg": "cosmic-bg",
-    "cosmic-comp": "cosmic-comp",
-    "cosmic-edit": "cosmic-edit",
-    "cosmic-files": "cosmic-files",
-    "cosmic-greeter": "cosmic-greeter",
-    "cosmic-icon-theme": "cosmic-icons",
-    "cosmic-idle": "cosmic-idle",
-    "cosmic-initial-setup": "cosmic-initial-setup",
-    "cosmic-launcher": "cosmic-launcher",
-    "cosmic-notifications": "cosmic-notifications",
-    "cosmic-osd": "cosmic-osd",
-    "cosmic-panel": "cosmic-panel",
-    "cosmic-player": "cosmic-player",
-    "cosmic-randr": "cosmic-randr",
-    "cosmic-screenshot": "cosmic-screenshot",
-    "cosmic-session": "cosmic-session",
-    "cosmic-settings": "cosmic-settings",
-    "cosmic-settings-daemon": "cosmic-settings-daemon",
-    "cosmic-store": "cosmic-store",
-    "cosmic-term": "cosmic-term",
-    "cosmic-wallpapers": "cosmic-wallpapers",
-    "cosmic-workspaces": "cosmic-workspaces-epoch",
-    "xdg-desktop-portal-cosmic": "xdg-desktop-portal-cosmic",
-    "pop-launcher": "launcher",
-}
+from scripts.cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH 
 
-# Possible versions
-VERSIONS = ["rawhide", "f44", "f43", "f42"] # 41 is now EOL
-RAWHIDE_BRANCH = "f45"
+import glob
 
 builds = []
 
+
 class PackageBuilder:
-    def __init__(self, package: str, force_build: bool, dry_run: bool, working_directory: Path):
+    def __init__(
+        self, package: str, force_build: bool, dry_run: bool, working_directory: Path
+    ):
         self.package = package
         self.force_build = force_build
         self.dry_run = dry_run
@@ -53,15 +26,44 @@ class PackageBuilder:
         self.tag = PackageBuilder.get_latest_tag(self.package)
         print(f"[{self.package}]: Latest tag for package: {self.tag}")
         self.src_rpm = self.working_directory.joinpath(f"{self.package}.src.rpm")
-        # Download src rpm, and return the version
-        # Remove any build numbers at the end i.e. 1.0.0~beta.8"-1"
-        self.version = PackageBuilder.download_package(self.package, self.src_rpm).rsplit("-", maxsplit=1)[0]
-        self.version = self.version.split(":", 1)[-1]
+        existing_rpms = glob.glob(
+            str(self.working_directory.joinpath(f"{self.package}*.src.rpm"))
+        )
+        if not existing_rpms:  # Download package
+            # Download src rpm, and return the version
+            # Remove any build numbers at the end i.e. 1.0.0~beta.8"-1"
+            self.version = PackageBuilder.download_package(
+                self.package, self.src_rpm
+            ).rsplit("-", maxsplit=1)[0]
+            self.version = self.version.split(":", 1)[-1]
+        elif existing_rpms[0]:  # We have an RPM already built or downloaded
+            try:
+                print(
+                    f"Found existing RPMS: {existing_rpms}. Choosing the one {existing_rpms[0]}"
+                )
+                rpm_file = Path(existing_rpms[0])
+                self.version = rpm_file.name.removeprefix(
+                    f"{self.package}-"
+                ).removesuffix(
+                    ".src.rpm"
+                )  # For example, cosmic-app-library-1.0.8-1.fc45.src.rpm -> 1.0.8-1.fc45
+                self.version = self.version.split("-", 1)[0]  # 1.0.8-1.fc45 -> 1.0.8
+                print(
+                    f"Copying {rpm_file} -> {self.src_rpm}. Got version {self.version} from file."
+                )
+                rpm_file.copy(
+                    self.src_rpm
+                )  # Rename the versioned file to an unversioned one
+            except Exception as e:
+                raise Exception(
+                    f"File {existing_rpms[0]} has invalid version info. Aborting."
+                )
+        else:
+            raise Exception(f"File {existing_rpms[0]} has no version info. Aborting.")
         print(f"[{self.package}]: Latest built version for package: {self.version}")
         self.repo_dir = self.working_directory.joinpath(self.package)
         self.commit_msg = f"Update to {self.version}"
 
-    
     # Get the latest tag from the pop-os repo
     def get_latest_tag(package: str) -> str:
         repo_name = PACKAGES[package]
@@ -71,7 +73,7 @@ class PackageBuilder:
             res: str = data[0]["name"].strip()
             # Return the name with epoch- removed and with `-` replaced with `~`
             return res.split("epoch-", 1)[1].replace("-", "~")
-    
+
     # Download the source rpm to the specified path
     def download_package(rpm_name: str, output_path: Path) -> str:
         # Get package download link
@@ -82,7 +84,7 @@ class PackageBuilder:
         print(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
         urlretrieve(source_package, output_path)
         return data["builds"]["latest_succeeded"]["source_package"]["version"]
-    
+
     # Clones the relevant repo from https://src.fedoraproject.org
     def clone_fedpkg_repo(self):
         # Clone fedpkg repo
@@ -107,7 +109,7 @@ class PackageBuilder:
             check=True,
         ).stdout.strip()
         return old_commit_msg != self.commit_msg
-    
+
     # True if we should build, false otherwise
     def should_build(self, branch: str) -> bool:
         if self.force_build:
@@ -139,7 +141,9 @@ class PackageBuilder:
         currently_finished = check.stdout.strip()
         currently_building = check2.stdout.strip()
         if currently_finished != "":
-            print(f"[{self.package}, {branch}]: Found finished builds: {currently_finished.split('\n')}\n")
+            print(
+                f"[{self.package}, {branch}]: Found finished builds: {currently_finished.split('\n')}\n"
+            )
         if currently_building != "":
             print(
                 f"[{self.package}, {branch}]: Found currently building builds: {currently_building.split('\n')}\n"
@@ -150,14 +154,16 @@ class PackageBuilder:
             and check.stderr.strip() == ""
             and check2.stderr.strip() == ""
         )
-    
+
     # Convert the branch string to a number
     def branch_to_number(branch: str) -> str:
         return branch[1:] if branch != "rawhide" else RAWHIDE_BRANCH[1:]
-    
+
     # Returns true if something was built, false otherwise
     def build_branch(self, branch: str, side_tag: str) -> bool:
-        print(f"[{self.package}, {branch}]: Attempting to build branch {branch} for package {self.package}")
+        print(
+            f"[{self.package}, {branch}]: Attempting to build branch {branch} for package {self.package}"
+        )
         subprocess.run(
             ["fedpkg", "switch-branch", branch],
             cwd=self.repo_dir,
@@ -165,7 +171,7 @@ class PackageBuilder:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        print(f"[{self.package}, {branch}]: Checking if should commit...");
+        print(f"[{self.package}, {branch}]: Checking if should commit...")
         if self.should_commit():
             if not self.dry_run:
                 subprocess.run(
@@ -196,7 +202,9 @@ class PackageBuilder:
                     finally:
                         i += 1
         else:
-            print(f"[{self.package}, {branch}]: Commit skipped. Commit messages matched.")
+            print(
+                f"[{self.package}, {branch}]: Commit skipped. Commit messages matched."
+            )
         print(f"[{self.package}, {branch}]: Checking if should build...")
         if self.should_build(branch):
             try:
@@ -222,13 +230,15 @@ class PackageBuilder:
                 builds.append(f"{self.package} {branch}")
                 return True
         else:
-            print(f"[{self.package}, {branch}]: Build skipped. A build was found with matching version {self.version}\n")
+            print(
+                f"[{self.package}, {branch}]: Build skipped. A build was found with matching version {self.version}\n"
+            )
             return False
-    
+
     # Returns true if anything was built, false otherwise
     def build_with_side_tag(self, side_tag: str) -> bool:
         did_build_anything = False
-        for br in VERSIONS:
+        for br in FEDORA_BRANCHES:
             if br == "all":
                 continue
             try:
@@ -239,18 +249,31 @@ class PackageBuilder:
         return did_build_anything
 
 
-def run_iteration(rpm_name: str, force_build: bool, side_tag: str, dry_run: bool):
+def run_iteration(
+    rpm_name: str,
+    force_build: bool,
+    side_tag: str,
+    dry_run: bool,
+    workdir: Path | None = None,
+):
     try:
-        working_directory = Path.home().joinpath("workdir").joinpath(rpm_name)
+        working_directory = (
+            workdir if workdir else Path.home().joinpath("workdir").joinpath(rpm_name)
+        )
         Path.mkdir(working_directory, exist_ok=True, parents=True)
+        print(working_directory)
         pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
 
         if pkg.tag == "":
-            print(f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}")
+            print(
+                f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}"
+            )
             return
 
         if pkg.version != pkg.tag:
-            print(f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting")
+            print(
+                f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting"
+            )
             return
         # Clone repo
         pkg.clone_fedpkg_repo()
@@ -268,6 +291,7 @@ def run_iteration(rpm_name: str, force_build: bool, side_tag: str, dry_run: bool
     except Exception as e:
         print(f"[{rpm_name}]: Failed to run iteration: {e}")
 
+
 parser = argparse.ArgumentParser(
     prog="cosmic_packaging_new_release",
     description="Program to manage new releases of COSMIC packages in upstream fedora repos",
@@ -279,7 +303,17 @@ parser.add_argument(
     "--force-package",
     action="append",
     help="Force update/build package",
-    choices=PACKAGES.keys()
+    choices=list(PACKAGES.keys()),
+)
+parser.add_argument(
+    "--rpm_name",
+    help="Name of the RPM to build (defaults to all of them)",
+    choices=list(PACKAGES.keys()),
+)
+parser.add_argument(
+    "--workdir",
+    type=Path,
+    help="Working directory",
 )
 
 args = parser.parse_args()
@@ -287,20 +321,36 @@ args = parser.parse_args()
 # Run multithreaded
 from concurrent.futures import ThreadPoolExecutor
 
-def build_package(package: str, force_build: bool):
+
+def build_package(package: str, force_build: bool, workdir: Path | None):
     print(f"[{package}]: Building package {package}")
-    run_iteration(package, force_build, args.side_tag, args.dry_run)
+    run_iteration(package, force_build, args.side_tag, args.dry_run, workdir)
     print(f"[{package}]: Done building package {package}")
+
 
 package_force = []
 
-for pkg in PACKAGES.keys():
-    package_force.append(args.force_package and pkg in args.force_package)
-    if args.force_package and pkg in args.force_package:
-        print("Forcing build of",pkg)
+if not args.rpm_name:  # All packages
+    for pkg in PACKAGES.keys():
+        package_force.append(args.force_package and pkg in args.force_package)
+        if args.force_package and pkg in args.force_package:
+            print("Forcing build of", pkg)
 
-with ThreadPoolExecutor(max_workers=5) as executor:
-    results = list(executor.map(build_package, PACKAGES.keys(), package_force))
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(
+            executor.map(
+                build_package,
+                PACKAGES.keys(),
+                package_force,
+                [args.workdir] * len(PACKAGES.keys()),
+            )
+        )
+else:  # One package
+    build_package(
+        args.rpm_name,
+        args.force_package and args.rpm_name in args.force_package,
+        args.workdir,
+    )
 
 builds.sort()
 print(f"Finished. Queued builds: {builds}")

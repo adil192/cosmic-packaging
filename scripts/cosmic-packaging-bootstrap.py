@@ -589,7 +589,7 @@ class SpecFile:
 
 
 # Define every COSMIC package
-PACKAGES: dict[str, ProjectInfo] = {
+PACKAGE_INFO: dict[str, ProjectInfo] = {
     "cosmic-app-library": ProjectInfo(
         rpm_name="cosmic-app-library", crate_name="cosmic-applibrary"
     ),
@@ -656,7 +656,7 @@ parser = argparse.ArgumentParser(
     description="Setup a nightly build of cosmic-packaging",
 )
 
-parser.add_argument("rpm_name", choices=PACKAGES.keys())
+parser.add_argument("rpm_name", choices=list(PACKAGE_INFO.keys()))
 parser.add_argument(
     "--tag",
     help="Tag to use. Defaults to latest commit (Nightly). Specify --tag latest to get latest tag",
@@ -693,7 +693,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 # Identify project
-project_info = PACKAGES[args.rpm_name]
+project_info = PACKAGE_INFO[args.rpm_name]
 
 # Overrides
 if args.pre_apply_spec_patches:

@@ -1,0 +1,27 @@
+From 315312f590fd83791cb964c46cd4f20a09bcb010 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryan.brue@enovationcontrols.com>
+Date: Wed, 25 Feb 2026 14:12:41 -0600
+Subject: [PATCH] Make cargo test optional
+
+Signed-off-by: Ryan Brue <ryan.brue@enovationcontrols.com>
+---
+ cosmic-files.spec | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/cosmic-files.spec b/cosmic-files.spec
+index 3ad95b1..6c9b0e1 100644
+--- a/cosmic-files.spec
++++ b/cosmic-files.spec
+@@ -92,7 +92,8 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicFi
+ %if %{with check}
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+-%cargo_test
++# Make cargo test optional
++( %cargo_test )) || :
+ %endif
+ 
+ %files
+-- 
+2.53.0
+

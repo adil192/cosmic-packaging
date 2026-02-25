@@ -723,7 +723,7 @@ directory_info = DirectoryInfo(
     fedora_dir=pathlib.Path(args.fedora_dir) if args.fedora_dir else None,
 )
 # Normalize tag argument from the command line
-LATEST_TAG = "1.0.8"
+LATEST_TAG = "1.0.11"
 tag = LATEST_TAG
 latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
 # Get information about tags, using the cloned project

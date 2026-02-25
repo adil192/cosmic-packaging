@@ -5,13 +5,15 @@ import subprocess
 import os
 import sys
 
-RAWHIDE_NUMBER = "45"
+from scripts.cosmic_common import PACKAGES, RAWHIDE_NUMBER
 
 script_directory = pathlib.Path(__file__).parent.resolve()
 
 parser = argparse.ArgumentParser(prog="Local COSMIC RPM Build")
 
-parser.add_argument("rpm_name", help="Name of the RPM to build")
+parser.add_argument(
+    "rpm_name", choices=list(PACKAGES.keys()), help="Name of the RPM to build"
+)
 parser.add_argument(
     "version", help="Name of the version to build ('nightly' for nightly)"
 )

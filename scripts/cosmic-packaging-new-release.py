@@ -8,41 +8,9 @@ import datetime
 from http.client import HTTPResponse
 from typing import cast
 
+from scripts.cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH 
+
 import glob
-
-# Possible packages to build
-PACKAGES: dict[str, str] = {
-    "cosmic-app-library": "cosmic-applibrary",
-    "cosmic-applets": "cosmic-applets",
-    "cosmic-bg": "cosmic-bg",
-    "cosmic-comp": "cosmic-comp",
-    "cosmic-edit": "cosmic-edit",
-    "cosmic-files": "cosmic-files",
-    "cosmic-greeter": "cosmic-greeter",
-    "cosmic-icon-theme": "cosmic-icons",
-    "cosmic-idle": "cosmic-idle",
-    "cosmic-initial-setup": "cosmic-initial-setup",
-    "cosmic-launcher": "cosmic-launcher",
-    "cosmic-notifications": "cosmic-notifications",
-    "cosmic-osd": "cosmic-osd",
-    "cosmic-panel": "cosmic-panel",
-    "cosmic-player": "cosmic-player",
-    "cosmic-randr": "cosmic-randr",
-    "cosmic-screenshot": "cosmic-screenshot",
-    "cosmic-session": "cosmic-session",
-    "cosmic-settings": "cosmic-settings",
-    "cosmic-settings-daemon": "cosmic-settings-daemon",
-    "cosmic-store": "cosmic-store",
-    "cosmic-term": "cosmic-term",
-    "cosmic-wallpapers": "cosmic-wallpapers",
-    "cosmic-workspaces": "cosmic-workspaces-epoch",
-    "xdg-desktop-portal-cosmic": "xdg-desktop-portal-cosmic",
-    "pop-launcher": "launcher",
-}
-
-# Possible versions
-VERSIONS = ["rawhide", "f44", "f43", "f42"]  # 41 is now EOL
-RAWHIDE_BRANCH = "f45"
 
 builds = []
 
@@ -270,7 +238,7 @@ class PackageBuilder:
     # Returns true if anything was built, false otherwise
     def build_with_side_tag(self, side_tag: str) -> bool:
         did_build_anything = False
-        for br in VERSIONS:
+        for br in FEDORA_BRANCHES:
             if br == "all":
                 continue
             try:
@@ -335,7 +303,7 @@ parser.add_argument(
     "--force-package",
     action="append",
     help="Force update/build package",
-    choices=PACKAGES.keys(),
+    choices=list(PACKAGES.keys()),
 )
 parser.add_argument(
     "--rpm_name",

@@ -3,6 +3,7 @@ import argparse
 import pathlib
 import subprocess
 import os
+import sys
 
 RAWHIDE_NUMBER = "45"
 
@@ -105,12 +106,18 @@ if args.build_rpm:
         f"{args.rpm_name}-{args.version}-1.fc{RAWHIDE_NUMBER}.src.rpm"
     )
     # Run Mock Again
-    subprocess.run(
-        [
-            "mock",
-            "-r",
-            "fedora-rawhide-x86_64",
-            "rebuild",
-            src_rpm_dir,
-        ]
-    )
+    try:
+        subprocess.run(
+            [
+                "mock",
+                "-r",
+                "fedora-rawhide-x86_64",
+                "rebuild",
+                src_rpm_dir,
+            ],
+            check=True,
+        )
+        print("Success")
+    except Exception as e:
+        print(f"Failed to build RPM: {e}")
+        sys.exit(1)

@@ -1,0 +1,27 @@
+From b38e9d874a6b546c29092a34c23cc4ae4fcabc82 Mon Sep 17 00:00:00 2001
+From: Adil Hanney <adilhanney@disroot.org>
+Date: Wed, 25 Feb 2026 15:37:46 +0000
+Subject: [PATCH] Add qt6ct as dependency of cosmic-settings-daemon for Qt
+ theming
+
+---
+ cosmic-settings-daemon.spec | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cosmic-settings-daemon.spec b/cosmic-settings-daemon.spec
+index d0f8d75..c75a34b 100644
+--- a/cosmic-settings-daemon.spec
++++ b/cosmic-settings-daemon.spec
+@@ -50,6 +50,9 @@ BuildRequires:  openssl-devel
+ Requires:       acpid
+ Requires:       adw-gtk3-theme
+ Requires:       pop-sound-theme
++Requires:       qt5ct
++Requires:       qt6ct
++Recommends:     breeze-icon-theme
+ Recommends:     geoclue2
+ Recommends:     playerctl
+ 
+-- 
+2.53.0
+

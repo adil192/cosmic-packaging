@@ -30,5 +30,6 @@ PACKAGES: dict[str, str] = {
 
 # Possible versions
 FEDORA_BRANCHES = ["rawhide", "f44", "f43", "f42"]  # 41 is now EOL
+SIDE_TAG_BRANCHES = ["rawhide"]
 RAWHIDE_NUMBER = "45"
 RAWHIDE_BRANCH = f"f{RAWHIDE_NUMBER}"

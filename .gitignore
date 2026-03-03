@@ -6,3 +6,5 @@ venv/
 .env
 
 .out/
+
+*__pycache__*

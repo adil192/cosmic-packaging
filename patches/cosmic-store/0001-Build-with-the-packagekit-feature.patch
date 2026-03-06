@@ -17,7 +17,7 @@ index b02ca18..f13f596 100644
  export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
  export VERGEN_GIT_SHA="%{commit}"
 -%cargo_build
-+%cargo_build --features packagekit
++%{cargo_build} --features packagekit
  %{cargo_license_summary}
  %{cargo_license} > LICENSE.dependencies
  %{cargo_vendor_manifest}
@@ -26,7 +26,7 @@ index b02ca18..f13f596 100644
  export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
  export VERGEN_GIT_SHA="%{commit}"
 -%cargo_test
-+%cargo_test --features packagekit
++%{cargo_test} --features packagekit
  %endif
  
  %files

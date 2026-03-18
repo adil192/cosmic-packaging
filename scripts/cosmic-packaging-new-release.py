@@ -8,7 +8,7 @@ import datetime
 from http.client import HTTPResponse
 from typing import cast
 
-from scripts.cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH 
+from cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH, SIDE_TAG_BRANCHES
 
 import glob
 
@@ -209,7 +209,7 @@ class PackageBuilder:
         if self.should_build(branch):
             try:
                 if not self.dry_run:
-                    if side_tag and branch == "rawhide":
+                    if side_tag and branch in SIDE_TAG_BRANCHES:
                         subprocess.run(
                             ["fedpkg", "build", f"--target={side_tag}"],
                             cwd=self.repo_dir,

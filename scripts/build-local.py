@@ -5,7 +5,7 @@ import subprocess
 import os
 import sys
 
-from scripts.cosmic_common import PACKAGES, RAWHIDE_NUMBER
+from cosmic_common import PACKAGES, RAWHIDE_NUMBER
 
 script_directory = pathlib.Path(__file__).parent.resolve()
 

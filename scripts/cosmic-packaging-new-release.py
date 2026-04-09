@@ -353,4 +353,4 @@ else:  # One package
     )
 
 builds.sort()
-print(f"Finished. Queued builds: {builds}")
+print(f"Finished. Queued {len(builds)} builds: {builds}")

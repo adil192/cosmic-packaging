@@ -8,3 +8,5 @@ venv/
 .out/
 
 *__pycache__*
+
+cosmic-packaging-new-release.log

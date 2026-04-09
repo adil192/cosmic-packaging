@@ -8,11 +8,23 @@ import datetime
 from http.client import HTTPResponse
 from typing import cast
 
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    handlers=[
+        logging.FileHandler("cosmic-packaging-new-release.log"),
+        logging.StreamHandler(),
+    ],
+    level=logging.INFO,
+)
+
 from cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH, SIDE_TAG_BRANCHES
 
 import glob
 
 builds = []
+errored = []
 
 
 class PackageBuilder:
@@ -24,7 +36,7 @@ class PackageBuilder:
         self.dry_run = dry_run
         self.working_directory = working_directory
         self.tag = PackageBuilder.get_latest_tag(self.package)
-        print(f"[{self.package}]: Latest tag for package: {self.tag}")
+        logger.debug(f"[{self.package}]: Latest tag for package: {self.tag}")
         self.src_rpm = self.working_directory.joinpath(f"{self.package}.src.rpm")
         existing_rpms = glob.glob(
             str(self.working_directory.joinpath(f"{self.package}*.src.rpm"))
@@ -38,7 +50,7 @@ class PackageBuilder:
             self.version = self.version.split(":", 1)[-1]
         elif existing_rpms[0]:  # We have an RPM already built or downloaded
             try:
-                print(
+                logger.debug(
                     f"Found existing RPMS: {existing_rpms}. Choosing the one {existing_rpms[0]}"
                 )
                 rpm_file = Path(existing_rpms[0])
@@ -48,7 +60,7 @@ class PackageBuilder:
                     ".src.rpm"
                 )  # For example, cosmic-app-library-1.0.8-1.fc45.src.rpm -> 1.0.8-1.fc45
                 self.version = self.version.split("-", 1)[0]  # 1.0.8-1.fc45 -> 1.0.8
-                print(
+                logger.debug(
                     f"Copying {rpm_file} -> {self.src_rpm}. Got version {self.version} from file."
                 )
                 rpm_file.copy(
@@ -60,7 +72,9 @@ class PackageBuilder:
                 )
         else:
             raise Exception(f"File {existing_rpms[0]} has no version info. Aborting.")
-        print(f"[{self.package}]: Latest built version for package: {self.version}")
+        logger.debug(
+            f"[{self.package}]: Latest built version for package: {self.version}"
+        )
         self.repo_dir = self.working_directory.joinpath(self.package)
         self.commit_msg = f"Update to {self.version}"
 
@@ -81,7 +95,7 @@ class PackageBuilder:
         with requests.get(url) as response:
             data = response.json()
         source_package = data["builds"]["latest_succeeded"]["source_package"]["url"]
-        print(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
+        logger.debug(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
         urlretrieve(source_package, output_path)
         return data["builds"]["latest_succeeded"]["source_package"]["version"]
 
@@ -141,11 +155,11 @@ class PackageBuilder:
         currently_finished = check.stdout.strip()
         currently_building = check2.stdout.strip()
         if currently_finished != "":
-            print(
+            logger.info(
                 f"[{self.package}, {branch}]: Found finished builds: {currently_finished.split('\n')}\n"
             )
         if currently_building != "":
-            print(
+            logger.info(
                 f"[{self.package}, {branch}]: Found currently building builds: {currently_building.split('\n')}\n"
             )
         return (
@@ -161,7 +175,7 @@ class PackageBuilder:
 
     # Returns true if something was built, false otherwise
     def build_branch(self, branch: str, side_tag: str) -> bool:
-        print(
+        logger.debug(
             f"[{self.package}, {branch}]: Attempting to build branch {branch} for package {self.package}"
         )
         subprocess.run(
@@ -171,7 +185,7 @@ class PackageBuilder:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        print(f"[{self.package}, {branch}]: Checking if should commit...")
+        logger.debug(f"[{self.package}, {branch}]: Checking if should commit...")
         if self.should_commit():
             if not self.dry_run:
                 subprocess.run(
@@ -202,10 +216,10 @@ class PackageBuilder:
                     finally:
                         i += 1
         else:
-            print(
+            logger.info(
                 f"[{self.package}, {branch}]: Commit skipped. Commit messages matched."
             )
-        print(f"[{self.package}, {branch}]: Checking if should build...")
+        logger.debug(f"[{self.package}, {branch}]: Checking if should build...")
         if self.should_build(branch):
             try:
                 if not self.dry_run:
@@ -226,11 +240,11 @@ class PackageBuilder:
                             stderr=subprocess.DEVNULL,
                         )
             except subprocess.TimeoutExpired:
-                print(f"[{self.package}, {branch}]: Building version {branch}\n")
+                logger.info(f"[{self.package}, {branch}]: Building version {branch}\n")
                 builds.append(f"{self.package} {branch}")
                 return True
         else:
-            print(
+            logger.info(
                 f"[{self.package}, {branch}]: Build skipped. A build was found with matching version {self.version}\n"
             )
             return False
@@ -245,7 +259,7 @@ class PackageBuilder:
                 built_package = self.build_branch(br, side_tag)
                 did_build_anything = did_build_anything or built_package
             except Exception as e:
-                print(f"[{self.package}, {br}]: Error({br}): {e}\n")
+                logger.error(f"[{self.package}, {br}]: Error({br}): {e}\n")
         return did_build_anything
 
 
@@ -261,17 +275,17 @@ def run_iteration(
             workdir if workdir else Path.home().joinpath("workdir").joinpath(rpm_name)
         )
         Path.mkdir(working_directory, exist_ok=True, parents=True)
-        print(working_directory)
+        logger.debug(working_directory)
         pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
 
         if pkg.tag == "":
-            print(
+            logger.error(
                 f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}"
             )
             return
 
         if pkg.version != pkg.tag:
-            print(
+            logger.error(
                 f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting"
             )
             return
@@ -284,12 +298,13 @@ def run_iteration(
         time_after = datetime.datetime.now()
 
         elapsed = time_after - time_before
-        print(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
+        logger.info(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
 
         if not did_build_anything:
-            print(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
+            logger.info(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
     except Exception as e:
-        print(f"[{rpm_name}]: Failed to run iteration: {e}")
+        logger.error(f"[{rpm_name}]: Failed to run iteration: {e}")
+        errored.append(f"{pkg.package} all")
 
 
 parser = argparse.ArgumentParser(
@@ -323,9 +338,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 def build_package(package: str, force_build: bool, workdir: Path | None):
-    print(f"[{package}]: Building package {package}")
+    logger.debug(f"[{package}]: Building package {package}")
     run_iteration(package, force_build, args.side_tag, args.dry_run, workdir)
-    print(f"[{package}]: Done building package {package}")
+    logger.debug(f"[{package}]: Done building package {package}")
 
 
 package_force = []
@@ -334,7 +349,7 @@ if not args.rpm_name:  # All packages
     for pkg in PACKAGES.keys():
         package_force.append(args.force_package and pkg in args.force_package)
         if args.force_package and pkg in args.force_package:
-            print("Forcing build of", pkg)
+            logger.warning("Forcing build of", pkg)
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(
@@ -353,4 +368,4 @@ else:  # One package
     )
 
 builds.sort()
-print(f"Finished. Queued {len(builds)} builds: {builds}")
+logger.info(f"Finished. Queued {len(builds)} builds: {builds}\nerrors: {errored}")

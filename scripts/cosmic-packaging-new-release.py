@@ -7,6 +7,7 @@ from pathlib import Path
 import datetime
 from http.client import HTTPResponse
 from typing import cast
+import time
 
 import logging
 
@@ -101,14 +102,25 @@ class PackageBuilder:
 
     # Clones the relevant repo from https://src.fedoraproject.org
     def clone_fedpkg_repo(self):
-        # Clone fedpkg repo
-        subprocess.run(
-            ["fedpkg", "clone", self.package],
-            cwd=self.working_directory,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        max_attempts = 5
+        i = 0
+        while not self.repo_dir.exists():
+            if i >= max_attempts:
+                raise Exception(f"{self.package}: Could not clone repo")
+            try:
+                # Clone fedpkg repo
+                subprocess.run(
+                    ["fedpkg", "clone", self.package],
+                    cwd=self.working_directory,
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            except Exception as e:
+                logger.warning(f"[{self.package}] Could not clone repo: {e} (Attempt {i}/{max_attempts})")
+            finally:
+                i += 1
+                time.sleep(0.5)
 
     # True if a commit should happen
     def should_commit(self) -> bool:
@@ -260,6 +272,7 @@ class PackageBuilder:
                 did_build_anything = did_build_anything or built_package
             except Exception as e:
                 logger.error(f"[{self.package}, {br}]: Error({br}): {e}\n")
+                errored.append(f"[{self.package} {br}]")
         return did_build_anything
 
 
@@ -304,7 +317,7 @@ def run_iteration(
             logger.info(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
     except Exception as e:
         logger.error(f"[{rpm_name}]: Failed to run iteration: {e}")
-        errored.append(f"{pkg.package} all")
+        errored.append(f"{rpm_name} all")
 
 
 parser = argparse.ArgumentParser(

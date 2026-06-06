@@ -11,6 +11,7 @@ PACKAGES: dict[str, str] = {
     "cosmic-idle": "cosmic-idle",
     "cosmic-initial-setup": "cosmic-initial-setup",
     "cosmic-launcher": "cosmic-launcher",
+    "cosmic-monitor": "cosmic-monitor",
     "cosmic-notifications": "cosmic-notifications",
     "cosmic-osd": "cosmic-osd",
     "cosmic-panel": "cosmic-panel",

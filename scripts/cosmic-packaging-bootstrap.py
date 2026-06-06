@@ -605,6 +605,7 @@ PACKAGE_INFO: dict[str, ProjectInfo] = {
     "cosmic-idle": ProjectInfo(rpm_name="cosmic-idle"),
     "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", zip_self=True),
     "cosmic-launcher": ProjectInfo(rpm_name="cosmic-launcher"),
+    "cosmic-monitor": ProjectInfo(rpm_name="cosmic-monitor", staging=True),
     "cosmic-notifications": ProjectInfo(rpm_name="cosmic-notifications"),
     "cosmic-osd": ProjectInfo(rpm_name="cosmic-osd"),
     "cosmic-panel": ProjectInfo(rpm_name="cosmic-panel"),

@@ -29,6 +29,7 @@ class ProjectInfo:
         staging: bool = False,
         upstream_tag: str = "",
         release_override: str | None = None,
+        latest_tag: str | None = None,
     ):
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
@@ -41,6 +42,7 @@ class ProjectInfo:
         self.fedora_git = ProjectInfo.FEDORA_GIT + self.rpm_name + ".git"
         self.release_override = release_override
         self.ignore_patches: list[str] = []
+        self.latest_tag = latest_tag
 
     def clone_upstream_git(
         self,
@@ -613,7 +615,9 @@ PACKAGE_INFO: dict[str, ProjectInfo] = {
     "cosmic-idle": ProjectInfo(rpm_name="cosmic-idle"),
     "cosmic-initial-setup": ProjectInfo(rpm_name="cosmic-initial-setup", zip_self=True),
     "cosmic-launcher": ProjectInfo(rpm_name="cosmic-launcher"),
-    "cosmic-monitor": ProjectInfo(rpm_name="cosmic-monitor", staging=True),
+    "cosmic-monitor": ProjectInfo(
+        rpm_name="cosmic-monitor", staging=True, latest_tag="epoch-1.0.15"
+    ),
     "cosmic-notifications": ProjectInfo(rpm_name="cosmic-notifications"),
     "cosmic-osd": ProjectInfo(rpm_name="cosmic-osd"),
     "cosmic-panel": ProjectInfo(rpm_name="cosmic-panel"),
@@ -727,7 +731,12 @@ directory_info = DirectoryInfo(
 )
 # Normalize tag argument from the command line
 tag = args.tag
-latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
+
+if project_info.latest_tag is None:
+    latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
+else:
+    latest_tag = project_info.latest_tag
+
 if args.tag == "latest":
     tag = latest_tag
 elif tag == "nightly":

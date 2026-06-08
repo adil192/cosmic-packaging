@@ -171,6 +171,7 @@ class DirectoryInfo:
 
 class TagInfo:
     # Get the latest tag from the pop-os repo
+    @staticmethod
     def get_latest_tag(package: str) -> str:
         repo_name = package
         url = f"https://api.github.com/repos/pop-os/{repo_name}/tags"
@@ -180,7 +181,9 @@ class TagInfo:
             # Return the name with epoch- removed and with `-` replaced with `~`
             return res.split("epoch-", 1)[1].replace("-", "~")
 
-    def __init__(self, directory_info: DirectoryInfo, tag: str, minver_tag: str | None):
+    def __init__(
+        self, directory_info: DirectoryInfo, tag: str | None, minver_tag: str | None
+    ):
         # Nightly specified if tag not specified
         self.nightly = tag is None
         # If nightly
@@ -287,6 +290,7 @@ class ProjectOperations:
             check=False,
         )
 
+    @staticmethod
     def _apply_patch(patch: pathlib.Path | str, repo: pathlib.Path):
         print("Applying patch:", patch)
         ot = subprocess.run(
@@ -425,14 +429,17 @@ class ProjectOperations:
             with open(output_path, "w") as f2:
                 f2.write(spec_res.spec_out)
 
+    @staticmethod
     def _is_url(value: str) -> bool:
         parsed = urlparse(value)
         return parsed.scheme in {"http", "https"}
 
+    @staticmethod
     def _download_text(url: str, encoding: str = "utf-8") -> str:
         with urlopen(url) as response:
             return response.read().decode(encoding)
 
+    @staticmethod
     def _apply_patch_from_url(url: str, repo: pathlib.Path) -> None:
         print("Pre-Applying patch from url:", url)
         response = ProjectOperations._download_text(url)
@@ -447,7 +454,8 @@ class ProjectOperations:
         finally:
             os.unlink(tmp_path)
 
-    def _apply_patch_from_file(path: str, repo: pathlib.Path) -> None:
+    @staticmethod
+    def _apply_patch_from_file(path: pathlib.Path, repo: pathlib.Path) -> None:
         print("Pre-Applying patch from file:", path)
         if not os.path.isfile(path):
             raise FileNotFoundError(f"Patch file not found: {path}")
@@ -575,7 +583,7 @@ class SpecFile:
         return out_str
 
     def get_listed_patches(self) -> list[str]:
-        patch_list = []
+        patch_list: list[str] = []
         for line in self.spec_out.splitlines():
             if not line.startswith("Patch:"):
                 continue

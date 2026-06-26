@@ -21,6 +21,7 @@ Requires:       cosmic-idle
 Requires:       cosmic-initial-setup
 Requires:       cosmic-launcher
 Requires:       cosmic-notifications
+Requires:       cosmic-monitor
 Requires:       cosmic-osd
 Requires:       cosmic-panel
 Requires:       cosmic-player
@@ -35,7 +36,6 @@ Requires:       cosmic-wallpapers
 Requires:       cosmic-workspaces
 Requires:       pop-launcher
 Requires:       xdg-desktop-portal-cosmic
-
 
 %global _description %{expand:
 %{summary}.}

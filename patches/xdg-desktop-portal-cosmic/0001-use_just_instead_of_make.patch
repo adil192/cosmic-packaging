@@ -1,0 +1,25 @@
+From 50237bf2f5c5f55c6ec11062ebae3a5d63b11595 Mon Sep 17 00:00:00 2001
+From: wiiznokes <78230769+wiiznokes@users.noreply.github.com>
+Date: Sun, 28 Jun 2026 23:50:32 +0200
+Subject: [PATCH] use just instead of make
+
+---
+ xdg-desktop-portal-cosmic.spec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xdg-desktop-portal-cosmic.spec b/xdg-desktop-portal-cosmic.spec
+index 6cbb1d3..b542b6d 100644
+--- a/xdg-desktop-portal-cosmic.spec
++++ b/xdg-desktop-portal-cosmic.spec
+@@ -83,7 +83,7 @@ sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' -i cargo-vendor.txt
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+-make install DESTDIR=%{buildroot} prefix=%{_prefix}
++just rootdir=%{buildroot} prefix=%{_prefix} install
+ 
+ %if %{with check}
+ %check
+-- 
+2.54.0
+

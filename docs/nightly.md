@@ -16,4 +16,4 @@ You can use the justfile file to help you.
    - fish: `set -gx NAME cosmic-initial-setup`
 2. Call `just clone-upstream`
 3. Make your change
-4. Call `just create-patch "commit msg" patch_name`.
+4. Call `just create-patch "commit msg"`.

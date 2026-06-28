@@ -53,13 +53,13 @@ clone-upstream:
         git -C upstream/{{ NAME }} am "../../$p"
     done
 
-create-patch-auto commit_msg:
+create-patch commit_msg:
     #!/usr/bin/env bash
     set -ex
     patch_name="$(echo "{{ commit_msg }}" | tr ' ' '_')"
     just create-patch "{{ commit_msg }}" "$patch_name"
 
-create-patch commit_msg patch_name:
+create-patch-manual commit_msg patch_name:
     #!/usr/bin/env bash
     set -ex
     git -C upstream/{{ NAME }} add .

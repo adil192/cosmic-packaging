@@ -741,7 +741,7 @@ if project_info.latest_tag is None:
 else:
     latest_tag = project_info.latest_tag
 
-LATEST_TAG = "1.1.0"
+LATEST_TAG = "1.2.0"
 tag = LATEST_TAG
 # Get information about tags, using the cloned project
 # This also gets the git project into the correct revision by checking out the proper rev

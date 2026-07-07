@@ -8,6 +8,7 @@ import argparse
 import json
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -140,13 +141,20 @@ def get_rust_licenses(repo_dir: pathlib.Path) -> str:
 
 
 def clone_or_pull(repo_url: str, target_dir: pathlib.Path) -> None:
-    """Clone a git repo, or pull if it already exists."""
-    if target_dir.exists():
+    """Clone a git repo, or pull if it already exists and is a git repo."""
+    is_git_repo = (
+        target_dir.exists()
+        and (target_dir / ".git").exists()
+    )
+    if is_git_repo:
         subprocess.run(
             ["git", "-C", str(target_dir), "pull"],
             check=True,
         )
     else:
+        # Clean up any existing non-git directory
+        if target_dir.exists():
+            shutil.rmtree(target_dir)
         subprocess.run(
             ["git", "clone", repo_url, str(target_dir)],
             check=True,
@@ -222,6 +230,158 @@ def create_git_patch(
         patch_files[0].rename(patch_path)
 
 
+def parse_spec_file(spec_path: pathlib.Path) -> tuple[str, str | None]:
+    """Parse a spec file to extract the package name and URL.
+
+    Returns (name, url) tuple. URL may be None if not found.
+    """
+    name = None
+    url = None
+
+    content = spec_path.read_text()
+    for line in content.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("Name: "):
+            name = stripped[len("Name: "):].strip()
+        elif stripped.startswith("URL: "):
+            url = stripped[len("URL: "):].strip()
+
+    return name, url
+
+
+def extract_repo_url(github_url: str) -> tuple[str, str]:
+    """Extract the git clone URL from a GitHub web URL.
+
+    Handles both https://github.com/org/repo and
+    https://github.com/org/repo.git formats.
+
+    Returns (clean_url, git_url) tuple.
+    """
+    # Remove trailing / if present
+    clean_url = github_url.rstrip("/")
+    # Ensure it ends with .git for cloning
+    git_url = clean_url + ".git"
+    return clean_url, git_url
+
+
+def process_single_spec(
+    spec_path: pathlib.Path,
+    dry_run: bool = False,
+) -> None:
+    """Process a single spec file: parse URL, clone repo, get license, update spec."""
+    print(f"\n{'=' * 60}")
+    print(f"Processing spec: {spec_path}")
+
+    # --- Step 1: Parse spec file ---
+    pkg_name, github_url = parse_spec_file(spec_path)
+    if not pkg_name:
+        print("  ERROR: Could not extract package name from spec file.", file=sys.stderr)
+        sys.exit(1)
+
+    if not github_url:
+        print("  ERROR: Could not extract URL from spec file.", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"  Package name: {pkg_name}")
+    print(f"  GitHub URL: {github_url}")
+
+    clean_url, git_url = extract_repo_url(github_url)
+
+    # --- Step 2: Clone GitHub repo and get licenses ---
+    github_dir = pathlib.Path(tempfile.mkdtemp(prefix="cosmic-license-update-"))
+    try:
+        print(f"  Cloning GitHub repo: {git_url}")
+        try:
+            clone_or_pull(git_url, github_dir)
+        except subprocess.CalledProcessError as e:
+            print(f"  ERROR: Failed to clone GitHub repo: {e}", file=sys.stderr)
+            sys.exit(1)
+
+        print("  Fetching license information...")
+        new_license = get_rust_licenses(github_dir)
+        if not new_license:
+            print("  WARNING: Could not determine licenses, skipping.")
+            return
+
+        print(f"  New license: {new_license}")
+
+        # --- Step 3: Update spec file ---
+        # Read current license for comparison
+        old_license = None
+        for line in spec_path.read_text().splitlines():
+            stripped = line.strip()
+            if stripped.startswith("License: "):
+                old_license = stripped[len("License: "):]
+                break
+
+        if dry_run:
+            if old_license != new_license:
+                print(f"  [DRY RUN] Would update license from:")
+                print(f"    {old_license}")
+                print(f"    to:")
+                print(f"    {new_license}")
+            else:
+                print(f"  [DRY RUN] License is already up to date.")
+            return
+
+        changed = update_spec_license(spec_path, new_license)
+
+        if not changed:
+            print(f"  License is already up to date.")
+            return
+
+        # --- Step 4: Validate SPDX expression ---
+        print("  Validating license expression with spdx-tools...")
+        try:
+            from license_expression import ExpressionParseError
+            from spdx_tools.common.spdx_licensing import (
+                spdx_licensing,
+            )
+
+            try:
+                spdx_licensing.parse(new_license, validate=True, strict=True)
+                print("  SPDX expression is valid.")
+            except ExpressionParseError as spdx_err:
+                print(
+                    f"  WARNING: SPDX expression is invalid:\n{spdx_err}",
+                    file=sys.stderr,
+                )
+        except ImportError:
+            print(
+                "  WARNING: spdx-tools not installed, skipping SPDX validation. Install with: pip install spdx-tools license-expression",
+                file=sys.stderr,
+            )
+
+        # --- Step 5: Validate with rpmlint ---
+        print("  Validating specfile with rpmlint...")
+        try:
+            result = subprocess.run(
+                ["rpmlint", str(spec_path)],
+                capture_output=True,
+                text=True,
+            )
+            rpmlint_output = result.stdout.strip()
+            if result.returncode != 0:
+                print(
+                    f"  WARNING: rpmlint found issues:\n{rpmlint_output}",
+                    file=sys.stderr,
+                )
+            elif rpmlint_output:
+                print(f"  rpmlint output:\n{rpmlint_output}", file=sys.stderr)
+            else:
+                print("  rpmlint passed.")
+        except FileNotFoundError:
+            print(
+                "  WARNING: rpmlint not found, skipping validation.",
+            )
+
+        print(f"  License updated successfully!")
+
+    finally:
+        # Clean up temp directory
+        shutil.rmtree(github_dir, ignore_errors=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Update licenses in cosmic-* specfiles"
@@ -237,9 +397,23 @@ def main() -> None:
         action="store_true",
         help="Show what would be done without making changes",
     )
+    parser.add_argument(
+        "--spec",
+        type=pathlib.Path,
+        help="Path to a single spec file to update (bypasses default behavior)",
+    )
     args = parser.parse_args()
 
     check_cargo_license()
+
+    # If --spec is provided, process only that spec file
+    if args.spec:
+        if not args.spec.exists():
+            print(f"ERROR: Spec file not found: {args.spec}", file=sys.stderr)
+            sys.exit(1)
+
+        process_single_spec(args.spec, dry_run=args.dry_run)
+        return
 
     # Determine which packages to process
     if args.package:
@@ -317,7 +491,7 @@ def main() -> None:
             for line in spec_path.read_text().splitlines():
                 stripped = line.strip()
                 if stripped.startswith("License: "):
-                    old_license = stripped[len("License: ") :]
+                    old_license = stripped[len("License: "):]
                     break
 
             if args.dry_run:
@@ -381,7 +555,6 @@ def main() -> None:
             except FileNotFoundError:
                 print(
                     "  WARNING: rpmlint not found, skipping validation.",
-                    file=sys.stderr,
                 )
 
             # --- Step 5: Create patch ---

@@ -1,0 +1,25 @@
+From 2c5ac6971ea4b6e1afec408032a52eeff2b93d32 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 6 Jul 2026 21:24:54 -0500
+Subject: [PATCH] Update license
+
+---
+ cosmic-session.spec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cosmic-session.spec b/cosmic-session.spec
+index a84a76f..83c425b 100644
+--- a/cosmic-session.spec
++++ b/cosmic-session.spec
+@@ -19,7 +19,7 @@ Version: 1.1.0
+ Release:        %autorelease
+ Summary:        Session manager for the COSMIC desktop environment
+ 
+-License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR BSD-3-Clause) AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 OR MIT OR Zlib) AND BSD-3-Clause AND GPL-3.0-only AND MIT AND (MIT OR Unlicense) AND MPL-2.0 AND Zlib
++License: (0BSD OR Apache-2.0 OR MIT) AND (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR BSD-2-Clause OR MIT) AND (Apache-2.0 OR LGPL-2.1-or-later OR MIT) AND (Apache-2.0 OR MIT OR Zlib) AND (Apache-2.0 OR MIT) AND (MIT OR Unlicense) AND Apache-2.0 AND GPL-3.0-only AND MIT AND MPL-2.0 AND Unicode-3.0 AND Zlib
+ 
+ URL:            https://github.com/pop-os/cosmic-session
+ 
+-- 
+2.54.0
+

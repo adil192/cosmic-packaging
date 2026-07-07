@@ -1,0 +1,25 @@
+From bd7357e85f518ff0a4aa12c1d1f789a381093b4a Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 6 Jul 2026 21:24:50 -0500
+Subject: [PATCH] Update license
+
+---
+ cosmic-randr.spec | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cosmic-randr.spec b/cosmic-randr.spec
+index 612c63a..cd86f4e 100644
+--- a/cosmic-randr.spec
++++ b/cosmic-randr.spec
+@@ -16,7 +16,7 @@ Version: 1.1.0
+ Release:        %autorelease
+ Summary:        Display configuration command line tool
+ 
+-License:        (0BSD OR Apache-2.0 OR MIT) AND Apache-2.0 AND (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 OR MIT OR Zlib) AND GPL-3.0-only AND ISC AND MIT AND (MIT OR Unlicense) AND MPL-2.0 AND Zlib
++License: (Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT) AND (Apache-2.0 OR MIT) AND (MIT OR Unlicense) AND Apache-2.0 AND GPL-3.0-only AND MIT AND MPL-2.0 AND Unicode-3.0 AND Zlib
+ 
+ URL:            https://github.com/pop-os/cosmic-randr
+ 
+-- 
+2.54.0
+

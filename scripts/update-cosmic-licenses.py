@@ -423,7 +423,7 @@ def main() -> None:
         packages_to_process = [
             name
             for name in PACKAGES
-            if name.startswith("cosmic-") and name not in NON_RUST_PACKAGES
+            if name not in NON_RUST_PACKAGES
         ]
 
     print(

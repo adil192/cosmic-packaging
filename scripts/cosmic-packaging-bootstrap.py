@@ -4,13 +4,68 @@ import pathlib
 import os
 import shutil
 import datetime
+import sys
+import tempfile
+import atexit
 from urllib.request import urlopen
 from urllib.parse import urlparse
 import json
 
-import sys
+# ── Logging with timestamps and colors ──────────────────────────────────────
 
-import tempfile
+# ANSI color codes
+COLOR_RESET = "\033[0m"
+COLOR_INFO = "\033[96m"      # cyan
+COLOR_WARN = "\033[93m"      # yellow
+COLOR_ERROR = "\033[91m"     # red
+COLOR_OK = "\033[92m"        # green
+
+# Track all temporary / cloned directories for cleanup on exit
+temp_dirs_to_cleanup: list[str] = []
+
+
+def _cleanup_temp_dirs() -> None:
+    """Remove every tracked temporary directory so nothing is left behind."""
+    for d in temp_dirs_to_cleanup:
+        p = pathlib.Path(d)
+        if p.is_dir():
+            try:
+                shutil.rmtree(d)
+                print(f"{COLOR_WARN}[{datetime.datetime.now().strftime('%H:%M:%S')}] WARN: cleaned up leftover directory: {d}{COLOR_RESET}")
+            except Exception:
+                print(f"{COLOR_ERROR}[{datetime.datetime.now().strftime('%H:%M:%S')}] ERROR: could not clean up {d}{COLOR_RESET}")
+
+
+atexit.register(_cleanup_temp_dirs)
+
+
+def _log(level: str, msg: str, color: str) -> None:
+    ts = datetime.datetime.now().strftime("%H:%M:%S")
+    print(f"{color}[{ts}] {level}: {msg}{COLOR_RESET}")
+
+
+def info(msg: str) -> None:
+    _log("INFO", msg, COLOR_INFO)
+
+
+def warn(msg: str) -> None:
+    _log("WARN", msg, COLOR_WARN)
+
+
+def error(msg: str) -> None:
+    _log("ERROR", msg, COLOR_ERROR)
+
+
+def ok(msg: str) -> None:
+    _log("OK", msg, COLOR_OK)
+
+
+def _track_temp_dir(d: str) -> None:
+    """Register a directory for cleanup on exit."""
+    temp_dirs_to_cleanup.append(d)
+
+
+# ── End logging helpers ─────────────────────────────────────────────────────
 
 
 class ProjectInfo:
@@ -48,7 +103,7 @@ class ProjectInfo:
         self,
         base_dir: pathlib.Path,
     ):
-        print("clone_upstream_git")
+        info(f"Cloning upstream git: {self.upstream_git}")
         subprocess.run(
             [
                 "git",
@@ -64,9 +119,9 @@ class ProjectInfo:
         self,
         base_dir: pathlib.Path,
     ):
-        print("clone_fedora_git")
+        info(f"Cloning fedora git: {self.fedora_git}")
         if self.staging:
-            # Clone cosmic-packaging git and copy the proper subdirectory to the base dir
+            info("Using staging layout")
             subprocess.run(
                 [
                     "git",
@@ -157,18 +212,11 @@ class DirectoryInfo:
         if not fedora_dir:
             project_info.clone_fedora_git(base_dir=self.fedora_project_directory.parent)
 
-        print(
-            "input_dir:",
-            self.input_dir,
-            "output_dir:",
-            self.output_dir,
-            "patch_directory:",
-            self.patch_directory,
-            "upstream_project_directory:",
-            self.upstream_project_directory,
-            "fedora_project_directory:",
-            self.fedora_project_directory,
-        )
+        info(f"input_dir: {self.input_dir}")
+        info(f"output_dir: {self.output_dir}")
+        info(f"patch_directory: {self.patch_directory}")
+        info(f"upstream_project_directory: {self.upstream_project_directory}")
+        info(f"fedora_project_directory: {self.fedora_project_directory}")
 
 
 class TagInfo:
@@ -192,8 +240,7 @@ class TagInfo:
         commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-")  # type: ignore
 
         if self.nightly:
-            print("Nightly, so tag is accessed through rev-parse")
-            # When we don't get a specific tag (i.e. nightly), our 'tag' becomes the shortcommit
+            info("Nightly build – tag resolved via rev-parse")
             commit = subprocess.run(
                 ["git", "rev-parse", "HEAD"],
                 capture_output=True,
@@ -201,14 +248,14 @@ class TagInfo:
                 cwd=directory_info.upstream_project_directory,
                 check=True,
             ).stdout.strip()
-            print(f"Commit: {commit}")
+            info(f"Commit: {commit}")
             tag = commit[:7]
 
         self.tag = tag
         self.tag_no_tilde = self.tag.replace("~", "-")  # type: ignore
         self.minver_tag = minver_tag
 
-        print("Git reset")
+        info("Git reset")
         subprocess.run(
             ["git", "reset", "--hard", commit],
             cwd=directory_info.upstream_project_directory,
@@ -220,7 +267,7 @@ class TagInfo:
             check=True,
         )
 
-        print("Git rev-parse")
+        info("Git rev-parse")
         self.commit = subprocess.run(
             ["git", "rev-parse", "HEAD"],
             capture_output=True,
@@ -244,18 +291,11 @@ class TagInfo:
             check=True,
         ).stdout.strip()
 
-        print(
-            "tag:",
-            self.tag,
-            "tag_no_tilde:",
-            self.tag_no_tilde,
-            "commit:",
-            self.commit,
-            "commit_date:",
-            self.commit_date,
-            "commit_date_string:",
-            self.commit_date_string,
-        )
+        info(f"tag: {self.tag}")
+        info(f"tag_no_tilde: {self.tag_no_tilde}")
+        info(f"commit: {self.commit}")
+        info(f"commit_date: {self.commit_date}")
+        info(f"commit_date_string: {self.commit_date_string}")
 
 
 class ProjectOperations:
@@ -271,7 +311,7 @@ class ProjectOperations:
 
     # Patches crates that are known to have bad executable bits
     def patch_vendored_crates(self):
-        print("patch_vendored_crates")
+        info("patch_vendored_crates")
 
         # remove executable bit of some .rs files
         subprocess.run(
@@ -293,8 +333,8 @@ class ProjectOperations:
         )
 
     @staticmethod
-    def _apply_patch(patch: pathlib.Path | str, repo: pathlib.Path):
-        print("Applying patch:", patch)
+    def _apply_patch(patch: pathlib.Path | str, repo: pathlib.Path) -> None:
+        info(f"Applying patch: {patch}")
         ot = subprocess.run(
             [
                 "git",
@@ -307,24 +347,26 @@ class ProjectOperations:
             text=True,
         )
         if ot.returncode != 0:
-            print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
+            error(f"Patch failed: {patch}")
+            error(f"stdout: {ot.stdout.strip()}")
+            error(f"stderr: {ot.stderr.strip()}")
             sys.exit(-1)
 
     # Apply patches from the fedora repo to the upstream vendoring repository
     def _apply_patches_to_upstream(self, repo: pathlib.Path) -> None:
-        print("Applying patches to upstream repository from fedora repo")
+        info("Applying patches to upstream repository from fedora repo")
         fedora_patch_dir = self.directory_info.fedora_project_directory
         if not fedora_patch_dir.exists():
-            print(f"No fedora project directory found: {fedora_patch_dir}")
+            warn(f"No fedora project directory found: {fedora_patch_dir}")
             return
 
         patch_files = sorted(fedora_patch_dir.glob("*.patch"))
         failed_patches: list[str] = []
         for patch_file in patch_files:
             if patch_file.name in self.project_info.ignore_patches:
-                print(f"Ignoring {patch_file.name} due to override...")
+                warn(f"Ignoring {patch_file.name} due to override...")
                 continue
-            print(f"Applying patch: {patch_file.name}")
+            info(f"Applying patch: {patch_file.name}")
             ot = subprocess.run(
                 [
                     "git",
@@ -336,29 +378,28 @@ class ProjectOperations:
                 text=True,
             )
             if ot.returncode != 0:
-                print(f"Patch failed: {patch_file.name}")
-                print(f"  stdout: {ot.stdout.strip()}")
-                print(f"  stderr: {ot.stderr.strip()}")
+                error(f"Patch failed: {patch_file.name}")
+                error(f"  stdout: {ot.stdout.strip()}")
+                error(f"  stderr: {ot.stderr.strip()}")
                 failed_patches.append(patch_file.name)
 
         if failed_patches:
-            print(
-                f"\nERROR: {len(failed_patches)} patch(es) failed to apply to the upstream repository:"
-            )
+            error(f"{len(failed_patches)} patch(es) failed to apply to the upstream repository:")
             for failed in failed_patches:
-                print(f"  - {failed}")
-            print("\nPlease ensure all patches are applicable to the upstream repository.")
+                error(f"  - {failed}")
+            error("Please ensure all patches are applicable to the upstream repository.")
             sys.exit(-1)
-        print(f"Successfully applied {len(patch_files)} patch(es)")
+        ok(f"Successfully applied {len(patch_files)} patch(es)")
 
     # This function prepares the vendored artifacts for the package
     def vendor(self):
-        print("vendor")
+        info("vendor")
         # Clone upstream to a temporary directory for patching and vendoring
         vendoring_temp_dir = tempfile.mkdtemp()
         vendoring_temp_path = pathlib.Path(vendoring_temp_dir)
+        _track_temp_dir(vendoring_temp_dir)
         try:
-            print(f"Cloning upstream to temp directory for vendoring: {vendoring_temp_dir}")
+            info(f"Cloning upstream to temp directory for vendoring: {vendoring_temp_dir}")
             subprocess.run(
                 [
                     "git",
@@ -373,7 +414,7 @@ class ProjectOperations:
             vendoring_repo = vendoring_temp_path / "repo"
 
             # Checkout the correct commit
-            print(f"Checking out commit: {self.tag_info.commit}")
+            info(f"Checking out commit: {self.tag_info.commit}")
             subprocess.run(
                 ["git", "reset", "--hard", self.tag_info.commit],
                 cwd=vendoring_repo,
@@ -395,7 +436,7 @@ class ProjectOperations:
                 cwd=vendoring_repo,
                 check=True,
             )
-            print("Cargo vendor output\n", cargo_vendor_output.stderr.strip(), "\n")
+            info("Cargo vendor output\n" + cargo_vendor_output.stderr.strip() + "\n")
 
             # Write the vendor config to the output directory
             with open(
@@ -422,20 +463,23 @@ class ProjectOperations:
                 cwd=vendoring_repo,
                 check=True,
             )
+        except Exception:
+            error(f"Vendoring failed, cleaning up temp directory: {vendoring_temp_dir}")
+            raise
         finally:
             # Always clean up the temporary vendoring directory
-            print(f"Cleaning up vendoring temp directory: {vendoring_temp_dir}")
+            info(f"Cleaning up vendoring temp directory: {vendoring_temp_dir}")
             shutil.rmtree(vendoring_temp_dir)
 
     # This function copies files from the fedora upstream rpm source to the output directory
     def copy_fedora_files_to_output(self):
-        print("copy_fedora_files_to_output")
+        info("copy_fedora_files_to_output")
         for root, _dirs, files in os.walk(self.directory_info.fedora_project_directory):
             # Skip .git
             if pathlib.Path(root).is_relative_to(
                 self.directory_info.fedora_project_directory.joinpath(".git")
             ):
-                print(f"Found .git directory. {root} Continuing...")
+                warn(f"Skipping .git directory: {root}")
                 continue
             relative_path = os.path.relpath(
                 root, self.directory_info.fedora_project_directory
@@ -454,7 +498,7 @@ class ProjectOperations:
                         os.path.join(root, file), os.path.join(dest_path, file)
                     )  # Preserve metadata
                 except Exception as e:
-                    print(f"Could not copy file {os.path.join(root, file)}: ", e)
+                    error(f"Could not copy file {os.path.join(root, file)}: {e}")
         # Don't copy sources (since we have the sources in our directory now presumably)
         self.directory_info.output_dir.joinpath("sources").unlink(missing_ok=True)
         self.directory_info.output_dir.joinpath(
@@ -463,8 +507,8 @@ class ProjectOperations:
 
     # Prepare the rpm spec repo by applying patches and modifying the spec file
     def prepare_spec_repo(self):
-        print("prepare_spec_repo")
-        print(f"Patches to ignore: {self.project_info.ignore_patches}")
+        info("prepare_spec_repo")
+        info(f"Patches to ignore: {self.project_info.ignore_patches}")
         spec_path = self.directory_info.fedora_project_directory.joinpath(
             f"{self.project_info.rpm_name}.spec"
         )
@@ -475,7 +519,7 @@ class ProjectOperations:
         for root, _dirs, files in os.walk(self.directory_info.patch_directory):
             for file in files:
                 if file.strip() in self.project_info.ignore_patches:
-                    print(f"Ignoring {file} due to override...")
+                    warn(f"Ignoring {file} due to override...")
                     continue
                 ProjectOperations._apply_patch(
                     os.path.join(root, file),
@@ -518,7 +562,7 @@ class ProjectOperations:
 
     @staticmethod
     def _apply_patch_from_url(url: str, repo: pathlib.Path) -> None:
-        print("Pre-Applying patch from url:", url)
+        info(f"Pre-Applying patch from url: {url}")
         response = ProjectOperations._download_text(url)
         with tempfile.NamedTemporaryFile(
             mode="w", delete=False, suffix=".patch"
@@ -533,7 +577,7 @@ class ProjectOperations:
 
     @staticmethod
     def _apply_patch_from_file(path: pathlib.Path, repo: pathlib.Path) -> None:
-        print("Pre-Applying patch from file:", path)
+        info(f"Pre-Applying patch from file: {path}")
         if not os.path.isfile(path):
             raise FileNotFoundError(f"Patch file not found: {path}")
 
@@ -541,7 +585,7 @@ class ProjectOperations:
 
     # Performs the remainder of setup needed to build the rpm
     def setup(self):
-        print("setup")
+        info("setup")
         # Prepare the Fedora spec side
         self.prepare_spec_repo()
         # If we are building a project that needs vendoring, do that now
@@ -562,7 +606,7 @@ class ProjectOperations:
                 capture_output=True,
                 check=True,
             )
-            print(zip_result.stdout.strip())
+            info(zip_result.stdout.strip())
 
 
 # Spec file processing class
@@ -599,12 +643,12 @@ class SpecFile:
                 skip = False
             elif in_line.startswith("Version: "):
                 if project_info.upstream_tag:
-                    print(
+                    info(
                         f"Version: {project_info.upstream_tag}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
                     )
                     out_line = f"Version: {project_info.upstream_tag}^git%{{commitdate}}.%{{shortcommit}}"
                 else:
-                    print(
+                    info(
                         f"Version: {tag_info.minver_tag}^git{tag_info.commit_date}.{tag_info.commit[:7]}"
                     )
                     out_line = f"Version: {tag_info.minver_tag}^git%{{commitdate}}.%{{shortcommit}}"
@@ -823,13 +867,17 @@ project_operations.setup()
 
 # We are now set up with all the variables we need to prepare the output for rpm building
 # Finally, clean up by removing the cloned repos
-if not args.upstream_dir:
-    shutil.rmtree(directory_info.upstream_project_directory)
-if not args.fedora_dir:
-    shutil.rmtree(directory_info.fedora_project_directory.parent)
+try:
+    if not args.upstream_dir:
+        shutil.rmtree(directory_info.upstream_project_directory)
+    if not args.fedora_dir:
+        shutil.rmtree(directory_info.fedora_project_directory.parent)
+except Exception as e:
+    error(f"Failed to remove cloned repos: {e}")
+    sys.exit(-1)
 
+ok("Build preparation complete")
 
-print("ls -a")
 ls_result = subprocess.run(
     [
         "ls",
@@ -840,4 +888,4 @@ ls_result = subprocess.run(
     capture_output=True,
     check=True,
 )
-print(ls_result.stdout.strip())
+info(f"Output directory contents:\n{ls_result.stdout.strip()}")

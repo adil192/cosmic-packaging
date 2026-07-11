@@ -12,6 +12,22 @@ Be sure to report issues with the packaging in this repo. Report COSMIC related 
 
 - Nightly COPR packages are automatically built via a GitHub action on ryanabx's copr automation repo: https://github.com/ryanabx/ryanabx-copr-automation if there is a new commit from the upstream repo.
 
+### Installing nightly packages
+
+Non-Atomic:
+
+```sh
+sudo dnf copr enable ryanabx/cosmic-epoch
+sudo dnf install cosmic-desktop
+```
+
+Atomic (Using Fedora 44 as an example):
+
+```sh
+sudo curl https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-44/ryanabx-cosmic-epoch-fedora-44.repo -o /etc/yum.repos.d/ryanabx-cosmic-epoch-fedora-44.repo
+sudo rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:ryanabx:cosmic-epoch cosmic-app-library cosmic-applets cosmic-bg cosmic-comp cosmic-edit cosmic-files cosmic-greeter cosmic-icon-theme cosmic-idle cosmic-initial-setup cosmic-launcher cosmic-monitor cosmic-notifications cosmic-osd cosmic-panel cosmic-player cosmic-randr cosmic-screenshot cosmic-session cosmic-settings cosmic-settings-daemon cosmic-store cosmic-term cosmic-wallpapers cosmic-workspaces xdg-desktop-portal-cosmic pop-launcher
+```
+
 ## COSMIC Upstream Packaging Workflow
 
 - New tags are released on `https://github.com/pop-os/`, typically every Tuesday

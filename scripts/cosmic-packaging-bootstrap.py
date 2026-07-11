@@ -310,47 +310,122 @@ class ProjectOperations:
             print("Patch failed!\n", ot.stdout.strip(), ot.stderr.strip())
             sys.exit(-1)
 
+    # Apply patches from the fedora repo to the upstream vendoring repository
+    def _apply_patches_to_upstream(self, repo: pathlib.Path) -> None:
+        print("Applying patches to upstream repository from fedora repo")
+        fedora_patch_dir = self.directory_info.fedora_project_directory
+        if not fedora_patch_dir.exists():
+            print(f"No fedora project directory found: {fedora_patch_dir}")
+            return
+
+        patch_files = sorted(fedora_patch_dir.glob("*.patch"))
+        failed_patches: list[str] = []
+        for patch_file in patch_files:
+            if patch_file.name in self.project_info.ignore_patches:
+                print(f"Ignoring {patch_file.name} due to override...")
+                continue
+            print(f"Applying patch: {patch_file.name}")
+            ot = subprocess.run(
+                [
+                    "git",
+                    "apply",
+                    str(patch_file),
+                ],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+            )
+            if ot.returncode != 0:
+                print(f"Patch failed: {patch_file.name}")
+                print(f"  stdout: {ot.stdout.strip()}")
+                print(f"  stderr: {ot.stderr.strip()}")
+                failed_patches.append(patch_file.name)
+
+        if failed_patches:
+            print(
+                f"\nERROR: {len(failed_patches)} patch(es) failed to apply to the upstream repository:"
+            )
+            for failed in failed_patches:
+                print(f"  - {failed}")
+            print("\nPlease ensure all patches are applicable to the upstream repository.")
+            sys.exit(-1)
+        print(f"Successfully applied {len(patch_files)} patch(es)")
+
     # This function prepares the vendored artifacts for the package
     def vendor(self):
         print("vendor")
-        # Run cargo vendor
-        cargo_vendor_output = subprocess.run(
-            [
-                "cargo",
-                "vendor",
-                "--locked",
-            ],
-            capture_output=True,
-            text=True,
-            cwd=self.directory_info.upstream_project_directory,
-            check=True,
-        )
-        print("Cargo vendor output\n", cargo_vendor_output.stderr.strip(), "\n")
-        # Write the vendor config to the output directory
-        with open(
-            self.directory_info.output_dir.joinpath(
-                "vendor-config-" + self.tag_info.tag_no_tilde + ".toml"
-            ),
-            "w",
-        ) as f:
-            f.write(cargo_vendor_output.stdout.strip())
-        # Patch crates that need patching
-        self.patch_vendored_crates()
-        # Zip up the vendored crates
-        subprocess.run(
-            [
-                "tar",
-                "-C",
-                self.directory_info.upstream_project_directory,
-                "-pczf",
+        # Clone upstream to a temporary directory for patching and vendoring
+        vendoring_temp_dir = tempfile.mkdtemp()
+        vendoring_temp_path = pathlib.Path(vendoring_temp_dir)
+        try:
+            print(f"Cloning upstream to temp directory for vendoring: {vendoring_temp_dir}")
+            subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "--recurse-submodules",
+                    self.project_info.upstream_git,
+                    str(vendoring_temp_path / "repo"),
+                ],
+                cwd=vendoring_temp_path,
+                check=True,
+            )
+            vendoring_repo = vendoring_temp_path / "repo"
+
+            # Checkout the correct commit
+            print(f"Checking out commit: {self.tag_info.commit}")
+            subprocess.run(
+                ["git", "reset", "--hard", self.tag_info.commit],
+                cwd=vendoring_repo,
+                check=True,
+            )
+
+            # Apply patches from the patches directory to the vendoring repo
+            self._apply_patches_to_upstream(vendoring_repo)
+
+            # Run cargo vendor
+            cargo_vendor_output = subprocess.run(
+                [
+                    "cargo",
+                    "vendor",
+                    "--locked",
+                ],
+                capture_output=True,
+                text=True,
+                cwd=vendoring_repo,
+                check=True,
+            )
+            print("Cargo vendor output\n", cargo_vendor_output.stderr.strip(), "\n")
+
+            # Write the vendor config to the output directory
+            with open(
                 self.directory_info.output_dir.joinpath(
-                    "vendor-" + self.tag_info.tag_no_tilde + ".tar.gz"
+                    "vendor-config-" + self.tag_info.tag_no_tilde + ".toml"
                 ),
-                "vendor",
-            ],
-            cwd=self.directory_info.output_dir,
-            check=True,
-        )
+                "w",
+            ) as f:
+                f.write(cargo_vendor_output.stdout.strip())
+
+            # Patch crates that need patching
+            self.patch_vendored_crates()
+
+            # Zip up the vendored crates
+            subprocess.run(
+                [
+                    "tar",
+                    "-pczf",
+                    self.directory_info.output_dir.joinpath(
+                        "vendor-" + self.tag_info.tag_no_tilde + ".tar.gz"
+                    ),
+                    "vendor",
+                ],
+                cwd=vendoring_repo,
+                check=True,
+            )
+        finally:
+            # Always clean up the temporary vendoring directory
+            print(f"Cleaning up vendoring temp directory: {vendoring_temp_dir}")
+            shutil.rmtree(vendoring_temp_dir)
 
     # This function copies files from the fedora upstream rpm source to the output directory
     def copy_fedora_files_to_output(self):

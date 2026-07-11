@@ -1,0 +1,25 @@
+From 4ed21fb3c49f5496cf01762f07f5b187c67ab954 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Fri, 10 Jul 2026 20:25:02 -0500
+Subject: [PATCH] Add libdav1d-devel for avif support
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-bg.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-bg.spec b/cosmic-bg.spec
+index 4cc82e6..0b26426 100644
+--- a/cosmic-bg.spec
++++ b/cosmic-bg.spec
+@@ -37,6 +37,7 @@ BuildRequires:  wayland-devel
+ BuildRequires:  libxkbcommon-devel
+ BuildRequires:  just
+ BuildRequires:  desktop-backgrounds-compat
++BuildRequires:  libdav1d-devel
+ 
+ Requires:       cosmic-icon-theme >= %{cosmic_minver}
+ Requires:       desktop-backgrounds-compat
+-- 
+2.54.0
+

@@ -310,7 +310,7 @@ class ProjectOperations:
         self.tag_info = tag_info
 
     # Patches crates that are known to have bad executable bits
-    def patch_vendored_crates(self):
+    def patch_vendored_crates(self, vendoring_repo):
         info("patch_vendored_crates")
 
         # remove executable bit of some .rs files
@@ -328,7 +328,7 @@ class ProjectOperations:
                 "{}",
                 "+",
             ],
-            cwd=self.directory_info.upstream_project_directory,
+            cwd=vendoring_repo,
             check=False,
         )
 
@@ -448,7 +448,7 @@ class ProjectOperations:
                 f.write(cargo_vendor_output.stdout.strip())
 
             # Patch crates that need patching
-            self.patch_vendored_crates()
+            self.patch_vendored_crates(vendoring_repo)
 
             # Zip up the vendored crates
             subprocess.run(

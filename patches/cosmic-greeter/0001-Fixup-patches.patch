@@ -1,0 +1,80 @@
+From 99c2dba335a3340348bdc2f63641ac347176ebde Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Tue, 14 Jul 2026 18:52:12 -0500
+Subject: [PATCH] Fixup patches
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ 0001-Make-service-a-display-manager.patch | 26 +++++++++++++++++++++++
+ cosmic-greeter.spec                       |  2 +-
+ service.patch                             | 12 -----------
+ 3 files changed, 27 insertions(+), 13 deletions(-)
+ create mode 100644 0001-Make-service-a-display-manager.patch
+ delete mode 100644 service.patch
+
+diff --git a/0001-Make-service-a-display-manager.patch b/0001-Make-service-a-display-manager.patch
+new file mode 100644
+index 0000000..c9f64d9
+--- /dev/null
++++ b/0001-Make-service-a-display-manager.patch
+@@ -0,0 +1,26 @@
++From 455c98d429a93c385b535e695b908913a8a16295 Mon Sep 17 00:00:00 2001
++From: Ryan Brue <ryanbrue.dev@gmail.com>
++Date: Tue, 14 Jul 2026 18:51:20 -0500
++Subject: [PATCH] Make service a display manager
++
++Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
++---
++ debian/cosmic-greeter.service | 5 ++---
++ 1 file changed, 2 insertions(+), 3 deletions(-)
++
++diff --git a/debian/cosmic-greeter.service b/debian/cosmic-greeter.service
++index 278e591..70dcad3 100644
++--- a/debian/cosmic-greeter.service
+++++ b/debian/cosmic-greeter.service
++@@ -17,6 +17,5 @@ RestartSec=1
++ StartLimitBurst=5
++ StartLimitInterval=30
++ 
++-# Managed by debconf
++-#[Install]
++-#Alias=display-manager.service
+++[Install]
+++Alias=display-manager.service
++-- 
++2.54.0
++
+diff --git a/cosmic-greeter.spec b/cosmic-greeter.spec
+index 41acd1f..050d82d 100644
+--- a/cosmic-greeter.spec
++++ b/cosmic-greeter.spec
+@@ -30,7 +30,7 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
+ # * mv vendor-config-%%{version_no_tilde}.toml ..
+ Source2:        vendor-config-%{version_no_tilde}.toml
+ 
+-Patch:          service.patch
++Patch:          0001-Make-service-a-display-manager.patch
+ Patch:          include-greetd.patch
+ 
+ BuildRequires:  cargo-rpm-macros >= 25
+diff --git a/service.patch b/service.patch
+deleted file mode 100644
+index 3602bbd..0000000
+--- a/service.patch
++++ /dev/null
+@@ -1,12 +0,0 @@
+---- ./debian/cosmic-greeter.service	2024-02-27 11:31:17.946973142 -0600
+-+++ ./debian/cosmic-greeter.patched.service	2024-02-27 11:32:11.538968615 -0600
+-@@ -16,6 +16,5 @@ RestartSec=1
+- StartLimitBurst=5
+- StartLimitInterval=30
+- 
+--# Managed by debconf
+--#[Install]
+--#Alias=display-manager.service
+-+[Install]
+-+Alias=display-manager.service
+-\ No newline at end of file
+-- 
+2.54.0
+

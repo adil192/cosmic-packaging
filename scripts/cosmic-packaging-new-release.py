@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import functools
 import json
 import logging
 import shutil
@@ -10,7 +11,9 @@ from pathlib import Path
 from typing import cast
 from urllib.request import urlopen, urlretrieve
 
+import koji
 import requests
+import rpm
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -27,6 +30,206 @@ from cosmic_common import FEDORA_BRANCHES, PACKAGES, RAWHIDE_BRANCH, SIDE_TAG_BR
 
 builds = []
 errored = []
+
+KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
+
+# Fedora release markers used in Koji build release strings (e.g. "1.fc45")
+FEDORA_TAGS = {
+    "Rawhide": "fc45",
+    "F44": "fc44",
+    "F43": "fc43",
+}
+
+
+TASK_STATES = {
+    koji.TASK_STATES["FREE"]: "QUEUED",
+    koji.TASK_STATES["OPEN"]: "BUILDING",
+    koji.TASK_STATES["ASSIGNED"]: "BUILDING",
+    koji.TASK_STATES["CLOSED"]: "COMPLETE",
+    koji.TASK_STATES["FAILED"]: "FAILED",
+    koji.TASK_STATES["CANCELED"]: "CANCELED",
+}
+
+
+def _get_task_status(session, build):
+    """Get human-readable task status for a build."""
+    task_id = build.get("task_id")
+    if not task_id:
+        return "UNKNOWN"
+    task = session.getTaskInfo(task_id)
+    return TASK_STATES.get(task["state"], str(task["state"]))
+
+
+def _compare_builds(a, b):
+    """Compare two Koji builds using RPM version ordering."""
+    return rpm.labelCompare(
+        (str(a.get("epoch") or 0), a["version"], a["release"]),
+        (str(b.get("epoch") or 0), b["version"], b["release"]),
+    )
+
+
+def _newest_build(builds):
+    """Return the newest build from a list using RPM version ordering."""
+    return max(builds, key=functools.cmp_to_key(_compare_builds))
+
+
+def _branch_for_release(release):
+    """Map a Koji build release string to a branch name."""
+    for branch, marker in FEDORA_TAGS.items():
+        if marker in release:
+            return branch
+    return None
+
+
+def _version_matches(build, expected_version):
+    """Check if a build's version matches the expected version string."""
+    return build["version"] == expected_version
+
+
+def _status_color(status: str) -> str:
+    """Return ANSI color code for a build status, or empty string for default."""
+    if status == "FAILED":
+        return "\033[91m"  # red
+    if status == "BUILDING":
+        return "\033[93m"  # yellow
+    return ""
+
+
+def check_koji_status(packages: dict[str, str], expected_version: str | None = None) -> None:
+    """Use the Koji API to show per-Fedora-version build status for all cosmic packages.
+
+    For each package, queries all builds by package ID and groups them by Fedora branch
+    using RPM release markers (e.g. fc44). Finds the newest version across all branches
+    and shows the build/task status for that version (or the latest available) in each branch.
+    If expected_version is provided, it is used as the reference "latest" version instead.
+    """
+    client: koji.ClientSession = koji.ClientSession(KOJI_HUB)
+
+    print()
+    print(f"{'Package':<35}", end="")
+    for branch in FEDORA_TAGS:
+        print(f" {branch:<25}", end="")
+    print()
+    print("-" * (35 + 26 * len(FEDORA_TAGS)))
+
+    for rpm_name in sorted(packages.keys()):
+        try:
+            package_id = client.getPackageID(rpm_name)
+            if not package_id:
+                print(f"{rpm_name:<35}", end="")
+                for _ in FEDORA_TAGS:
+                    print(f" {'N/A':<25}", end="")
+                print()
+                continue
+
+            # Get all builds for this package
+            all_builds = client.listBuilds(
+                packageID=package_id,
+                queryOpts={"limit": 500},
+            )
+
+            if not all_builds:
+                print(f"{rpm_name:<35}", end="")
+                for _ in FEDORA_TAGS:
+                    print(f" {'N/A':<25}", end="")
+                print()
+                continue
+
+            # Group builds by branch using release field
+            branch_builds: dict[str, list[dict]] = {
+                branch: []
+                for branch in FEDORA_TAGS
+            }
+
+            for build in all_builds:
+                branch = _branch_for_release(build["release"])
+                if branch:
+                    branch_builds[branch].append(build)
+
+            # Find newest version across all branches
+            all_branch_builds = [
+                b
+                for builds in branch_builds.values()
+                for b in builds
+            ]
+
+            if not all_branch_builds:
+                print(f"{rpm_name:<35}", end="")
+                for _ in FEDORA_TAGS:
+                    print(f" {'N/A':<25}", end="")
+                print()
+                continue
+
+            latest = _newest_build(all_branch_builds)
+
+            # Determine the reference version for coloring
+            if expected_version:
+                ref_version = expected_version
+            else:
+                ref_version = latest["version"]
+
+            # Print row
+            print(f"{rpm_name:<35}", end="")
+
+            for branch in FEDORA_TAGS:
+                builds = branch_builds[branch]
+
+                if not builds:
+                    print(f" {'N/A':<25}", end="")
+                    continue
+
+                # Prefer the global newest version if this branch has it
+                matching = [
+                    b
+                    for b in builds
+                    if _compare_builds(b, latest) == 0
+                ]
+
+                if matching:
+                    build = _newest_build(matching)
+                else:
+                    build = _newest_build(builds)
+
+                release_clean = build["release"].replace(".fc45", "").replace(".fc44", "").replace(".fc43", "")
+                version_str = f"{build['version']}-{release_clean}"
+                status = _get_task_status(client, build)
+                is_latest = _version_matches(build, ref_version)
+
+                # Apply colors
+                version_color = ""
+                status_color = _status_color(status)
+                reset = "\033[0m"
+
+                if not is_latest:
+                    version_color = "\033[91m"  # red
+
+                if version_color or status_color:
+                    print(
+                        f" {version_color}{version_str}{reset} "
+                        f"({status_color}{status}{reset})",
+                        end="",
+                    )
+                else:
+                    print(f" {version_str} ({status})", end="")
+
+            print()
+        except Exception as e:
+            logger.error(f"Error checking {rpm_name}: {e}")
+            print(f"{rpm_name:<35}", end="")
+            for _ in FEDORA_TAGS:
+                print(f" {'ERROR':<25}", end="")
+            print()
+
+    print()
+    print(f"Queried {len(packages)} packages via Koji ({KOJI_HUB})")
+    print()
+
+
+def check_koji_status_for_package(
+    package: str, packages: dict[str, str], expected_version: str | None = None
+) -> None:
+    """Check Koji status for a single package."""
+    check_koji_status({package: packages[package]}, expected_version)
 
 
 class PackageBuilder:
@@ -340,12 +543,35 @@ parser.add_argument(
     choices=list(PACKAGES.keys()),
 )
 parser.add_argument(
+    "--koji-status",
+    action="store_true",
+    help="Show all cosmic packages with per-Fedora-version build status (fc43/fc44/fc45). "
+    "Highlights non-latest versions and non-COMPLETE statuses.",
+)
+parser.add_argument(
+    "--koji-package",
+    help="Show Koji status for a specific package (requires --koji-status)",
+    choices=list(PACKAGES.keys()),
+)
+parser.add_argument(
+    "--latest-version",
+    help="Specify the expected latest version (defaults to highest version found in Koji)",
+)
+parser.add_argument(
     "--workdir",
     type=Path,
     help="Working directory",
 )
 
 args = parser.parse_args()
+
+# Handle --koji-status flag
+if args.koji_status:
+    if args.koji_package:
+        check_koji_status_for_package(args.koji_package, PACKAGES, args.latest_version)
+    else:
+        check_koji_status(PACKAGES, args.latest_version)
+    exit(0)
 
 # Run multithreaded
 import tempfile

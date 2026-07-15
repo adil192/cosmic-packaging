@@ -1,15 +1,15 @@
-import subprocess
 import argparse
-import json
-from urllib.request import urlopen, urlretrieve
-import requests
-from pathlib import Path
 import datetime
-from http.client import HTTPResponse
-from typing import cast
-import time
-
+import json
 import logging
+import subprocess
+import time
+from http.client import HTTPResponse
+from pathlib import Path
+from typing import cast
+from urllib.request import urlopen, urlretrieve
+
+import requests
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -20,9 +20,9 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-from cosmic_common import PACKAGES, FEDORA_BRANCHES, RAWHIDE_BRANCH, SIDE_TAG_BRANCHES
-
 import glob
+
+from cosmic_common import FEDORA_BRANCHES, PACKAGES, RAWHIDE_BRANCH, SIDE_TAG_BRANCHES
 
 builds = []
 errored = []
@@ -117,7 +117,9 @@ class PackageBuilder:
                     stderr=subprocess.DEVNULL,
                 )
             except Exception as e:
-                logger.warning(f"[{self.package}] Could not clone repo: {e} (Attempt {i}/{max_attempts})")
+                logger.warning(
+                    f"[{self.package}] Could not clone repo: {e} (Attempt {i}/{max_attempts})"
+                )
             finally:
                 i += 1
                 time.sleep(0.5)
@@ -281,12 +283,10 @@ def run_iteration(
     force_build: bool,
     side_tag: str,
     dry_run: bool,
-    workdir: Path | None = None,
+    workdir: Path,
 ):
     try:
-        working_directory = (
-            workdir if workdir else Path.home().joinpath("workdir").joinpath(rpm_name)
-        )
+        working_directory = workdir.joinpath(rpm_name)
         Path.mkdir(working_directory, exist_ok=True, parents=True)
         logger.debug(working_directory)
         pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
@@ -347,16 +347,19 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Run multithreaded
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 
-def build_package(package: str, force_build: bool, workdir: Path | None):
+def build_package(package: str, force_build: bool, workdir: Path):
     logger.debug(f"[{package}]: Building package {package}")
     run_iteration(package, force_build, args.side_tag, args.dry_run, workdir)
     logger.debug(f"[{package}]: Done building package {package}")
 
 
 package_force = []
+
+workdir = args.workdir if args.workdir else Path(tempfile.mkdtemp())
 
 if not args.rpm_name:  # All packages
     for pkg in PACKAGES.keys():
@@ -370,14 +373,14 @@ if not args.rpm_name:  # All packages
                 build_package,
                 PACKAGES.keys(),
                 package_force,
-                [args.workdir] * len(PACKAGES.keys()),
+                [workdir] * len(PACKAGES.keys()),
             )
         )
 else:  # One package
     build_package(
         args.rpm_name,
         args.force_package and args.rpm_name in args.force_package,
-        args.workdir,
+        workdir,
     )
 
 builds.sort()

@@ -2,6 +2,7 @@ import argparse
 import datetime
 import json
 import logging
+import shutil
 import subprocess
 import time
 from http.client import HTTPResponse
@@ -286,7 +287,7 @@ def run_iteration(
     workdir: Path,
 ):
     try:
-        working_directory = workdir.joinpath(rpm_name)
+        working_directory = workdir
         Path.mkdir(working_directory, exist_ok=True, parents=True)
         logger.debug(working_directory)
         pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
@@ -352,9 +353,15 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 def build_package(package: str, force_build: bool, workdir: Path):
-    logger.debug(f"[{package}]: Building package {package}")
-    run_iteration(package, force_build, args.side_tag, args.dry_run, workdir)
-    logger.debug(f"[{package}]: Done building package {package}")
+    working_directory = workdir.joinpath(package)
+    try:
+        logger.debug(f"[{package}]: Building package {package}")
+        run_iteration(
+            package, force_build, args.side_tag, args.dry_run, working_directory
+        )
+        logger.debug(f"[{package}]: Done building package {package}")
+    finally:
+        shutil.rmtree(working_directory)
 
 
 package_force = []

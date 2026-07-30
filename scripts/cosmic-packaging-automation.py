@@ -1,8 +1,9 @@
 """Automation script for the Fedora COSMIC packaging workflow.
 
 Handles SSH agent setup, Kerberos authentication, side tag creation,
-queuing builds via cosmic-packaging-new-release.py, and monitoring
-Koji build status until all packages are complete.
+queuing builds via cosmic-packaging-new-release.py, monitoring
+Koji build status until all packages are complete, and optionally
+submitting updates to Bodhi for testing/stable push.
 """
 
 import argparse
@@ -11,6 +12,8 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+
+from cosmic_common import PACKAGES
 
 
 def run_cmd(
@@ -275,6 +278,136 @@ def evaluate_koji_status(
         return "complete"
 
 
+KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
+
+# Maps Koji release markers to human-readable names and Bodhi release identifiers
+FEDORA_RELEASES = {
+    "fc45": "Rawhide",
+    "fc44": "F44",
+    "fc43": "F43",
+}
+
+
+def get_completed_build_nvrs(
+    packages: dict[str, str],
+    expected_version: str | None = None,
+) -> dict[str, list[str]]:
+    """Query Koji for completed build NVRs, grouped by Fedora release.
+
+    Returns a dict mapping release name (e.g. 'F44') to a list of NVR strings
+    like ['cosmic-term-0.1.0-1.fc44', 'cosmic-applets-0.1.0-1.fc44', ...].
+    Only includes builds whose task state is COMPLETE.
+    """
+    client = __import__("koji").ClientSession(KOJI_HUB)
+    nvrs_by_release: dict[str, list[str]] = {
+        release: [] for release in FEDORA_RELEASES.values()
+    }
+
+    for rpm_name in sorted(packages.keys()):
+        try:
+            package_id = client.getPackageID(rpm_name)
+            if not package_id:
+                continue
+
+            all_builds = client.listBuilds(
+                packageID=package_id,
+                queryOpts={"limit": 500},
+            )
+
+            for build in all_builds:
+                # Only include COMPLETE builds
+                task_id = build.get("task_id")
+                if not task_id:
+                    continue
+                task = client.getTaskInfo(task_id)
+                if task["state"] != __import__("koji").TASK_STATES["CLOSED"]:
+                    continue
+
+                # Filter by expected version if provided
+                if expected_version and build["version"] != expected_version:
+                    continue
+
+                # Determine which release this build belongs to
+                release_str = build["release"]
+                matched = False
+                for marker, release_name in FEDORA_RELEASES.items():
+                    if marker in release_str:
+                        nvr = f"{build['name']}-{build['version']}-{build['release']}"
+                        nvrs_by_release[release_name].append(nvr)
+                        matched = True
+                        break
+
+                if not matched:
+                    # Fallback: use the raw release string
+                    nvr = f"{build['name']}-{build['version']}-{build['release']}"
+                    nvrs_by_release[release_str] = nvrs_by_release.get(release_str, [])
+                    nvrs_by_release[release_str].append(nvr)
+
+        except Exception as e:
+            print(
+                f"  WARNING: Error querying Koji for {rpm_name}: {e}", file=sys.stderr
+            )
+
+    return nvrs_by_release
+
+
+def create_bodhi_updates(
+    nvrs_by_release: dict[str, list[str]],
+    notes: str | None = None,
+    staging: bool = False,
+) -> None:
+    """Create Bodhi updates for each release that has completed builds.
+
+    Creates one Bodhi update per Fedora release, grouping all COSMIC
+    package builds for that release together.
+    """
+    from bodhi.client.bindings import BodhiClient
+
+    client = BodhiClient(staging=staging)
+    instance = "staging" if staging else "production"
+
+    created_updates: list[tuple[str, str]] = []  # (release, alias)
+
+    for release, nvrs in sorted(nvrs_by_release.items()):
+        if not nvrs:
+            continue
+
+        print(f"  Creating Bodhi update for {release} ({len(nvrs)} builds)...")
+
+        if not notes:
+            notes = f"Update COSMIC packages to latest version for {release}"
+
+        try:
+            response = client.save(
+                builds=nvrs,
+                type="enhancement",
+                notes=notes,
+                request="testing",
+                autotime=True,
+                autokarma=True,
+                stable_karma=3,
+                unstable_karma=-3,
+                close_bugs=True,
+            )
+
+            alias = response["alias"]
+            title = response.get("title", alias)
+            url = client.base_url.rstrip("/") + f"updates/{alias}"
+            created_updates.append((release, alias))
+            print(f"    Update created: {title}")
+            print(f"    Alias: {alias}")
+            print(f"    URL:   {url}")
+
+        except Exception as e:
+            print(f"    ERROR creating update for {release}: {e}", file=sys.stderr)
+
+    if created_updates:
+        print()
+        print(f"  Created {len(created_updates)} Bodhi update(s) on {instance}.")
+    else:
+        print("  No updates created (no completed builds found).")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="cosmic-packaging-automation",
@@ -319,6 +452,20 @@ def main() -> None:
         type=int,
         default=10,
         help="Time in minutes to wait between Koji status checks (default: 10)",
+    )
+    parser.add_argument(
+        "--bodhi",
+        action="store_true",
+        help="After Koji builds complete, create Bodhi updates for each Fedora release",
+    )
+    parser.add_argument(
+        "--bodhi-notes",
+        help="Custom notes for Bodhi updates (default: auto-generated from version)",
+    )
+    parser.add_argument(
+        "--bodhi-staging",
+        action="store_true",
+        help="Use the Bodhi staging instance for update submission",
     )
 
     args = parser.parse_args()
@@ -411,10 +558,35 @@ def main() -> None:
         result = evaluate_koji_status(output)
 
         if result == "complete":
+            expected_version = determine_expected_version(parse_koji_status(output))
+
             print()
             print("=" * 60)
             print("SUCCESS: All packages are COMPLETE!")
             print("=" * 60)
+
+            # Step 6: Submit to Bodhi (optional)
+            if args.bodhi:
+                print()
+                print("=" * 60)
+                print("Step 6: Creating Bodhi updates...")
+                print("=" * 60)
+                nvrs_by_release = get_completed_build_nvrs(PACKAGES, expected_version)
+
+                # Show what we found
+                for release, nvrs in sorted(nvrs_by_release.items()):
+                    if nvrs:
+                        print(f"  {release}: {len(nvrs)} build(s)")
+                        for nvr in nvrs:
+                            print(f"    - {nvr}")
+                print()
+
+                create_bodhi_updates(
+                    nvrs_by_release,
+                    notes=args.bodhi_notes,
+                    staging=args.bodhi_staging,
+                )
+
             sys.exit(0)
         elif result == "building":
             print(

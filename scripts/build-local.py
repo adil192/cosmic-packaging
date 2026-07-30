@@ -1,8 +1,8 @@
 # Build RPM locally
 import argparse
+import os
 import pathlib
 import subprocess
-import os
 import sys
 
 from cosmic_common import PACKAGES, RAWHIDE_NUMBER

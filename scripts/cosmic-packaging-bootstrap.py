@@ -1,24 +1,24 @@
 import argparse
-import subprocess
-import pathlib
-import os
-import shutil
+import atexit
 import datetime
+import json
+import os
+import pathlib
+import shutil
+import subprocess
 import sys
 import tempfile
-import atexit
-from urllib.request import urlopen
 from urllib.parse import urlparse
-import json
+from urllib.request import urlopen
 
 # ── Logging with timestamps and colors ──────────────────────────────────────
 
 # ANSI color codes
 COLOR_RESET = "\033[0m"
-COLOR_INFO = "\033[96m"      # cyan
-COLOR_WARN = "\033[93m"      # yellow
-COLOR_ERROR = "\033[91m"     # red
-COLOR_OK = "\033[92m"        # green
+COLOR_INFO = "\033[96m"  # cyan
+COLOR_WARN = "\033[93m"  # yellow
+COLOR_ERROR = "\033[91m"  # red
+COLOR_OK = "\033[92m"  # green
 
 # Track all temporary / cloned directories for cleanup on exit
 temp_dirs_to_cleanup: list[str] = []
@@ -31,9 +31,13 @@ def _cleanup_temp_dirs() -> None:
         if p.is_dir():
             try:
                 shutil.rmtree(d)
-                print(f"{COLOR_WARN}[{datetime.datetime.now().strftime('%H:%M:%S')}] WARN: cleaned up leftover directory: {d}{COLOR_RESET}")
+                print(
+                    f"{COLOR_WARN}[{datetime.datetime.now().strftime('%H:%M:%S')}] WARN: cleaned up leftover directory: {d}{COLOR_RESET}"
+                )
             except Exception:
-                print(f"{COLOR_ERROR}[{datetime.datetime.now().strftime('%H:%M:%S')}] ERROR: could not clean up {d}{COLOR_RESET}")
+                print(
+                    f"{COLOR_ERROR}[{datetime.datetime.now().strftime('%H:%M:%S')}] ERROR: could not clean up {d}{COLOR_RESET}"
+                )
 
 
 atexit.register(_cleanup_temp_dirs)
@@ -384,10 +388,14 @@ class ProjectOperations:
                 failed_patches.append(patch_file.name)
 
         if failed_patches:
-            error(f"{len(failed_patches)} patch(es) failed to apply to the upstream repository:")
+            error(
+                f"{len(failed_patches)} patch(es) failed to apply to the upstream repository:"
+            )
             for failed in failed_patches:
                 error(f"  - {failed}")
-            error("Please ensure all patches are applicable to the upstream repository.")
+            error(
+                "Please ensure all patches are applicable to the upstream repository."
+            )
             sys.exit(-1)
         ok(f"Successfully applied {len(patch_files)} patch(es)")
 
@@ -399,7 +407,9 @@ class ProjectOperations:
         vendoring_temp_path = pathlib.Path(vendoring_temp_dir)
         _track_temp_dir(vendoring_temp_dir)
         try:
-            info(f"Cloning upstream to temp directory for vendoring: {vendoring_temp_dir}")
+            info(
+                f"Cloning upstream to temp directory for vendoring: {vendoring_temp_dir}"
+            )
             subprocess.run(
                 [
                     "git",

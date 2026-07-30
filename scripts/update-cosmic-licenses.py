@@ -142,10 +142,7 @@ def get_rust_licenses(repo_dir: pathlib.Path) -> str:
 
 def clone_or_pull(repo_url: str, target_dir: pathlib.Path) -> None:
     """Clone a git repo, or pull if it already exists and is a git repo."""
-    is_git_repo = (
-        target_dir.exists()
-        and (target_dir / ".git").exists()
-    )
+    is_git_repo = target_dir.exists() and (target_dir / ".git").exists()
     if is_git_repo:
         subprocess.run(
             ["git", "-C", str(target_dir), "pull"],
@@ -242,9 +239,9 @@ def parse_spec_file(spec_path: pathlib.Path) -> tuple[str, str | None]:
     for line in content.splitlines():
         stripped = line.strip()
         if stripped.startswith("Name: "):
-            name = stripped[len("Name: "):].strip()
+            name = stripped[len("Name: ") :].strip()
         elif stripped.startswith("URL: "):
-            url = stripped[len("URL: "):].strip()
+            url = stripped[len("URL: ") :].strip()
 
     return name, url
 
@@ -275,7 +272,9 @@ def process_single_spec(
     # --- Step 1: Parse spec file ---
     pkg_name, github_url = parse_spec_file(spec_path)
     if not pkg_name:
-        print("  ERROR: Could not extract package name from spec file.", file=sys.stderr)
+        print(
+            "  ERROR: Could not extract package name from spec file.", file=sys.stderr
+        )
         sys.exit(1)
 
     if not github_url:
@@ -311,7 +310,7 @@ def process_single_spec(
         for line in spec_path.read_text().splitlines():
             stripped = line.strip()
             if stripped.startswith("License: "):
-                old_license = stripped[len("License: "):]
+                old_license = stripped[len("License: ") :]
                 break
 
         if dry_run:
@@ -421,9 +420,7 @@ def main() -> None:
     else:
         # Default: all cosmic-* packages that are Rust-based
         packages_to_process = [
-            name
-            for name in PACKAGES
-            if name not in NON_RUST_PACKAGES
+            name for name in PACKAGES if name not in NON_RUST_PACKAGES
         ]
 
     print(
@@ -491,7 +488,7 @@ def main() -> None:
             for line in spec_path.read_text().splitlines():
                 stripped = line.strip()
                 if stripped.startswith("License: "):
-                    old_license = stripped[len("License: "):]
+                    old_license = stripped[len("License: ") :]
                     break
 
             if args.dry_run:

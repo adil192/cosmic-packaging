@@ -95,7 +95,9 @@ def _status_color(status: str) -> str:
     return ""
 
 
-def check_koji_status(packages: dict[str, str], expected_version: str | None = None) -> None:
+def check_koji_status(
+    packages: dict[str, str], expected_version: str | None = None
+) -> None:
     """Use the Koji API to show per-Fedora-version build status for all cosmic packages.
 
     For each package, queries all builds by package ID and groups them by Fedora branch
@@ -137,8 +139,7 @@ def check_koji_status(packages: dict[str, str], expected_version: str | None = N
 
             # Group builds by branch using release field
             branch_builds: dict[str, list[dict]] = {
-                branch: []
-                for branch in FEDORA_TAGS
+                branch: [] for branch in FEDORA_TAGS
             }
 
             for build in all_builds:
@@ -147,11 +148,7 @@ def check_koji_status(packages: dict[str, str], expected_version: str | None = N
                     branch_builds[branch].append(build)
 
             # Find newest version across all branches
-            all_branch_builds = [
-                b
-                for builds in branch_builds.values()
-                for b in builds
-            ]
+            all_branch_builds = [b for builds in branch_builds.values() for b in builds]
 
             if not all_branch_builds:
                 print(f"{rpm_name:<35}", end="")
@@ -179,18 +176,19 @@ def check_koji_status(packages: dict[str, str], expected_version: str | None = N
                     continue
 
                 # Prefer the global newest version if this branch has it
-                matching = [
-                    b
-                    for b in builds
-                    if _compare_builds(b, latest) == 0
-                ]
+                matching = [b for b in builds if _compare_builds(b, latest) == 0]
 
                 if matching:
                     build = _newest_build(matching)
                 else:
                     build = _newest_build(builds)
 
-                release_clean = build["release"].replace(".fc45", "").replace(".fc44", "").replace(".fc43", "")
+                release_clean = (
+                    build["release"]
+                    .replace(".fc45", "")
+                    .replace(".fc44", "")
+                    .replace(".fc43", "")
+                )
                 version_str = f"{build['version']}-{release_clean}"
                 status = _get_task_status(client, build)
                 is_latest = _version_matches(build, ref_version)

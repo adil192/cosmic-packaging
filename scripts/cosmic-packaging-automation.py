@@ -13,7 +13,9 @@ import time
 from pathlib import Path
 
 
-def run_cmd(cmd: list[str], input_data: str | None = None, check: bool = True) -> subprocess.CompletedProcess:
+def run_cmd(
+    cmd: list[str], input_data: str | None = None, check: bool = True
+) -> subprocess.CompletedProcess:
     """Run a command and return the CompletedProcess result."""
     env = dict(__import__("os").environ)
     result = subprocess.run(
@@ -51,6 +53,7 @@ def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
 
     # Export the variables so ssh-add can find the agent
     import os
+
     os.environ["SSH_AUTH_SOCK"] = env_vars["SSH_AUTH_SOCK"]
     os.environ["SSH_AGENT_PID"] = env_vars["SSH_AGENT_PID"]
 
@@ -143,7 +146,9 @@ def run_new_release(side_tag: str) -> tuple[bool, list[str]]:
         errors_str = errors_match.group(1)
         # Parse the list - it contains strings like 'cosmic-edit f43'
         errors_list = [
-            e.strip().strip("'\"") for e in errors_str.strip("[]").split(",") if e.strip()
+            e.strip().strip("'\"")
+            for e in errors_str.strip("[]").split(",")
+            if e.strip()
         ]
 
     has_errors = result.returncode != 0 or bool(errors_list)
@@ -168,6 +173,11 @@ def check_koji_status() -> str:
     return combined
 
 
+def _strip_ansi(text: str) -> str:
+    """Remove ANSI escape sequences from text."""
+    return re.sub(r"\x1b\[[0-9;]*m", "", text)
+
+
 def parse_koji_status(output: str) -> dict[str, dict[str, tuple[str, str]]]:
     """Parse the Koji status table output.
 
@@ -175,6 +185,9 @@ def parse_koji_status(output: str) -> dict[str, dict[str, tuple[str, str]]]:
     Branches are like 'rawhide', 'f44', 'f43'.
     """
     packages = {}
+    # Strip ANSI color codes before parsing
+    output = _strip_ansi(output)
+
     # Match lines like:
     # cosmic-app-library                  1.5.0-1 (BUILDING) 1.5.0-1 (BUILDING) 1.5.0-1 (BUILDING)
     # cosmic-osd                          1.4.0-1 (COMPLETE) 1.5.0-1 (BUILDING) 1.5.0-1 (BUILDING)
@@ -198,7 +211,9 @@ def parse_koji_status(output: str) -> dict[str, dict[str, tuple[str, str]]]:
     return packages
 
 
-def determine_expected_version(status: dict[str, dict[str, tuple[str, str]]]) -> str | None:
+def determine_expected_version(
+    status: dict[str, dict[str, tuple[str, str]]],
+) -> str | None:
     """Determine the expected version from the Koji status.
 
     Finds the most common version across all packages and branches.
@@ -215,6 +230,7 @@ def determine_expected_version(status: dict[str, dict[str, tuple[str, str]]]) ->
 
     # Find the most common version
     from collections import Counter
+
     counter = Counter(versions)
     return counter.most_common(1)[0][0]
 

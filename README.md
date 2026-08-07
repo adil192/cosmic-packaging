@@ -6,6 +6,16 @@ This copr repo contains tagged releases of COSMIC faster than those in the offic
 
 Use at your own risk!
 
+Our packages apply the following additional patches:
+1. **Four finger gestures for app library and workspace overview**
+    (https://github.com/pop-os/cosmic-comp/pull/1799)
+
+    This PR has not been accepted upstream yet since they first want to work on their settings UI for gestures.
+
+    It's fine for us to use this patch with these caveats:
+    - Behaviour is likely to change once support lands properly upstream.
+    - There are no 1-to-1 animations like in GNOME.
+
 ### Installation Instructions
 
 Install the [Fedora COSMIC Spin](https://fedoraproject.org/spins/cosmic/) or install COSMIC on another Fedora variant:

@@ -722,6 +722,8 @@ class SpecFile:
                 out_line = f"Version: {tag_info.tag}"
             elif in_line.startswith("Source0: "):
                 out_line = out_line.replace("%{commit}", "epoch-%{version_no_tilde}")
+            elif in_line.startswith("Release: ") and project_info.release_override:
+                out_line = f"Release: {project_info.release_override}"
             elif in_line.startswith("%autosetup "):
                 out_line = out_line.replace("%{commit}", "epoch-%{version_no_tilde}")
 

@@ -1,0 +1,25 @@
+From cb3b6db2f6c5e7d12ceb40070aed1c44968a655a Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Tue, 18 Aug 2026 21:29:34 -0500
+Subject: [PATCH] Add libdav1d
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ cosmic-greeter.spec | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cosmic-greeter.spec b/cosmic-greeter.spec
+index 688ae22..70dade2 100644
+--- a/cosmic-greeter.spec
++++ b/cosmic-greeter.spec
+@@ -44,6 +44,7 @@ BuildRequires:  pam-devel
+ BuildRequires:  just
+ BuildRequires:  libudev-devel
+ BuildRequires:  libinput-devel
++BuildRequires:  libdav1d-devel
+ 
+ BuildRequires:   systemd-rpm-macros
+ %{?sysusers_requires_compat}
+-- 
+2.55.0
+

@@ -61,13 +61,15 @@ logging.basicConfig(
 KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
 
 FEDORA_TAGS = {
-    "Rawhide": "fc45",
+    "Rawhide": "fc46",
+    "F45": "fc45",
     "F44": "fc44",
     "F43": "fc43",
 }
 
 FEDORA_RELEASES = {
-    "fc45": "Rawhide",
+    "fc46": "Rawhide",
+    "fc45": "F45",
     "fc44": "F44",
     "fc43": "F43",
 }

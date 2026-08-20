@@ -33,9 +33,10 @@ errored = []
 
 KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
 
-# Fedora release markers used in Koji build release strings (e.g. "1.fc45")
+# Fedora release markers used in Koji build release strings (e.g. "1.fc46")
 FEDORA_TAGS = {
-    "Rawhide": "fc45",
+    "Rawhide": "fc46",
+    "F45": "fc45",
     "F44": "fc44",
     "F43": "fc43",
 }
@@ -185,6 +186,7 @@ def check_koji_status(
 
                 release_clean = (
                     build["release"]
+                    .replace(".fc46", "")
                     .replace(".fc45", "")
                     .replace(".fc44", "")
                     .replace(".fc43", "")
@@ -543,7 +545,7 @@ parser.add_argument(
 parser.add_argument(
     "--koji-status",
     action="store_true",
-    help="Show all cosmic packages with per-Fedora-version build status (fc43/fc44/fc45). "
+    help="Show all cosmic packages with per-Fedora-version build status (fc43/fc44/fc45/fc46). "
     "Highlights non-latest versions and non-COMPLETE statuses.",
 )
 parser.add_argument(

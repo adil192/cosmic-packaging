@@ -393,6 +393,7 @@ def check_koji_status(
                     .replace(".fc46", "")
                     .replace(".fc45", "")
                     .replace(".fc44", "")
+                    .replace(".fc43", "")
                 )
                 version_str = f"{build['version']}-{release_clean}"
                 status = _get_task_status(client, build)
@@ -453,9 +454,11 @@ def parse_koji_status(output: str) -> dict[str, dict[str, tuple[str, str]]]:
     packages = {}
     output = _strip_ansi(output)
 
-    # One table column per branch, in FEDORA_TAGS order
+    # One table column per branch, in FEDORA_TAGS order. The version
+    # pattern tolerates a leftover "<version>-<release>.fcNN" string in
+    # case the display forgot to strip the release marker.
     branches = [branch.lower() for branch in FEDORA_TAGS]
-    column = r"([\d.]+-[\d.]+)\s+\((\w+)\)"
+    column = r"([\d.]+-[\d.]+(?:\.fc\d+)?)\s+\((\w+)\)"
     line_pattern = re.compile(r"^(\S+)\s+" + r"\s+".join([column] * len(branches)))
 
     for line in output.splitlines():
@@ -1187,7 +1190,7 @@ def main() -> None:
     parser.add_argument(
         "--koji-status",
         action="store_true",
-        help="Show all cosmic packages with per-Fedora-version build status (fc44/fc45/fc46). "
+        help="Show all cosmic packages with per-Fedora-version build status (fc43/fc44/fc45/fc46). "
         "Highlights non-latest versions and non-COMPLETE statuses.",
     )
     parser.add_argument(

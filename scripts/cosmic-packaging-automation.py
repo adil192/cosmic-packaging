@@ -18,11 +18,8 @@ import io
 import json
 import logging
 import os
-import pty
 import re
-import select
 import shutil
-import signal
 import subprocess
 import sys
 import tempfile
@@ -37,6 +34,7 @@ import rpm
 from cosmic_common import (
     FEDORA_BRANCHES,
     PACKAGES,
+    RAWHIDE_BRANCH,
     RAWHIDE_NUMBER,
     SIDE_TAG_BRANCHES,
 )
@@ -87,6 +85,13 @@ TASK_STATES = {
 MAX_RATE_LIMIT_RETRIES = 5
 RATE_LIMIT_FALLBACK_WAIT_SECONDS = 300
 
+# Retries for transient Koji/Bodhi failures (e.g. the Koji proxy
+# reconfiguring itself, dropped Bodhi connections)
+MAX_KOJI_QUERY_RETRIES = 3
+KOJI_QUERY_RETRY_DELAY_SECONDS = 5
+MAX_BODHI_SAVE_ATTEMPTS = 5
+BODHI_SAVE_RETRY_DELAY_SECONDS = 10
+
 # ---------------------------------------------------------------------------
 # Shell helpers
 # ---------------------------------------------------------------------------
@@ -113,61 +118,7 @@ def run_cmd(
 # ---------------------------------------------------------------------------
 
 
-def run_interactive(
-    cmd: list[str],
-    prompts: list[tuple[bytes, str]],
-    timeout: float = 60.0,
-) -> tuple[int, str]:
-    """Run a command in a pseudo-terminal and feed it answers to prompts.
-
-    Programs like ssh-add and fkinit read input from the terminal (not
-    stdin), so we spawn the command with a pty and type each response
-    once its prompt appears in the output. ``prompts`` is a list of
-    (prompt_text, response) pairs. Returns (returncode, output).
-    """
-    master, slave = pty.openpty()
-    pid = os.fork()
-    if pid == 0:
-        # Child process: attach stdin/stdout/stderr to the pty.
-        os.close(master)
-        os.dup2(slave, 0)
-        os.dup2(slave, 1)
-        os.dup2(slave, 2)
-        os.close(slave)
-        os.execvp(cmd[0], cmd)
-    os.close(slave)
-
-    output = b""
-    answered = [False] * len(prompts)
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        remaining = max(0.0, deadline - time.monotonic())
-        ready, _, _ = select.select([master], [], [], min(0.1, remaining))
-        if not ready:
-            continue
-        try:
-            chunk = os.read(master, 4096)
-        except OSError:  # pty closed -> child exited
-            break
-        if not chunk:
-            break
-        output += chunk
-        for index, (prompt, response) in enumerate(prompts):
-            if not answered[index] and prompt.lower() in output.lower():
-                os.write(master, (response + "\n").encode())
-                answered[index] = True
-
-    # Reap the child (kill it if it is still stuck at the prompt).
-    wpid, status = os.waitpid(pid, os.WNOHANG)
-    if wpid == 0:
-        os.kill(pid, signal.SIGKILL)
-        wpid, status = os.waitpid(pid, 0)
-    os.close(master)
-    returncode = os.waitstatus_to_exitcode(status)
-    return returncode, output.decode(errors="replace")
-
-
-def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
+def setup_ssh_agent(ssh_key: str) -> None:
     """Start ssh-agent and add the given key."""
     ssh_key_path = Path(ssh_key).expanduser()
 
@@ -194,34 +145,28 @@ def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
     os.environ["SSH_AGENT_PID"] = env_vars["SSH_AGENT_PID"]
 
     print(f"Adding SSH key: {ssh_key_path}")
-    # ssh-add prompts for the passphrase on the terminal, not stdin
-    returncode, output = run_interactive(
-        ["ssh-add", str(ssh_key_path)], [(b"passphrase", ssh_password)]
-    )
+    # ssh-add prompts for the passphrase on the terminal; run it with the
+    # user's terminal attached so they can enter it manually.
+    result = subprocess.run(["ssh-add", str(ssh_key_path)])
 
-    if returncode != 0:
-        print(f"ERROR: Failed to add SSH key: {output.strip()}", file=sys.stderr)
+    if result.returncode != 0:
+        print("ERROR: Failed to add SSH key", file=sys.stderr)
         sys.exit(1)
 
-    print(f"SSH key added successfully: {output.strip()}")
+    print("SSH key added successfully")
 
 
-def authenticate_kerberos(fk_user: str, fk_password: str) -> None:
+def authenticate_kerberos(fk_user: str) -> None:
     """Authenticate with Kerberos using fkinit."""
     print(f"Authenticating with Kerberos as {fk_user}...")
 
-    # fkinit prompts for the password (and optional OTP) on the terminal,
-    # not stdin; answer the OTP prompt with a blank line if not configured
-    returncode, output = run_interactive(
-        ["fkinit", "-u", fk_user],
-        [(b"FAS password", fk_password), (b"FAS OTP", "")],
-    )
+    # fkinit prompts for the password (and optional OTP) on the terminal;
+    # run it with the user's terminal attached so they can enter it
+    # manually.
+    result = subprocess.run(["fkinit", "-u", fk_user])
 
-    if returncode != 0 or "Ticket cache:" not in output:
-        print(
-            f"ERROR: Kerberos authentication failed.\nOutput:\n{output}",
-            file=sys.stderr,
-        )
+    if result.returncode != 0:
+        print("ERROR: Kerberos authentication failed", file=sys.stderr)
         sys.exit(1)
 
     print("Kerberos authentication successful.")
@@ -545,55 +490,79 @@ def get_completed_build_nvrs(
 
     Returns a dict mapping release name (e.g. 'F44') to a list of NVR strings
     like ['cosmic-term-0.1.0-1.fc44', 'cosmic-applets-0.1.0-1.fc44', ...].
-    Only includes builds whose task state is COMPLETE.
+    Only includes builds whose task state is COMPLETE, and at most one
+    build per package (the one with the newest release number), since a
+    Bodhi update can only reference a single build per package.
     """
     client = __import__("koji").ClientSession(KOJI_HUB)
-    nvrs_by_release: dict[str, list[str]] = {
-        release: [] for release in FEDORA_RELEASES.values()
+    # release name -> package name -> (release number, nvr) of newest build
+    latest_builds: dict[str, dict[str, tuple[int, str]]] = {
+        release: {} for release in FEDORA_RELEASES.values()
     }
 
     for rpm_name in sorted(packages.keys()):
-        try:
-            package_id = client.getPackageID(rpm_name)
-            if not package_id:
-                continue
+        for attempt in range(1, MAX_KOJI_QUERY_RETRIES + 1):
+            try:
+                package_id = client.getPackageID(rpm_name)
+                if not package_id:
+                    break
 
-            all_builds = client.listBuilds(
-                packageID=package_id,
-                queryOpts={"limit": 500},
-            )
+                all_builds = client.listBuilds(
+                    packageID=package_id,
+                    queryOpts={"limit": 500},
+                )
 
-            for build in all_builds:
-                task_id = build.get("task_id")
-                if not task_id:
-                    continue
-                task = client.getTaskInfo(task_id)
-                if task["state"] != __import__("koji").TASK_STATES["CLOSED"]:
-                    continue
+                for build in all_builds:
+                    task_id = build.get("task_id")
+                    if not task_id:
+                        continue
+                    task = client.getTaskInfo(task_id)
+                    if task["state"] != __import__("koji").TASK_STATES["CLOSED"]:
+                        continue
 
-                if expected_version and build["version"] != expected_version:
-                    continue
+                    if expected_version and build["version"] != expected_version:
+                        continue
 
-                release_str = build["release"]
-                matched = False
-                for marker, release_name in FEDORA_RELEASES.items():
-                    if marker in release_str:
-                        nvr = f"{build['name']}-{build['version']}-{build['release']}"
-                        nvrs_by_release[release_name].append(nvr)
-                        matched = True
-                        break
+                    release_str = build["release"]  # e.g. "2.fc45"
+                    nvr = f"{build['name']}-{build['version']}-{release_str}"
+                    release_num = int(re.split(r"\.", release_str)[0])
+                    release_name = next(
+                        (
+                            name
+                            for marker, name in FEDORA_RELEASES.items()
+                            if marker in release_str
+                        ),
+                        release_str,
+                    )
 
-                if not matched:
-                    nvr = f"{build['name']}-{build['version']}-{build['release']}"
-                    nvrs_by_release[release_str] = nvrs_by_release.get(release_str, [])
-                    nvrs_by_release[release_str].append(nvr)
+                    per_package = latest_builds.setdefault(release_name, {})
+                    current = per_package.get(rpm_name)
+                    if current is None or release_num > current[0]:
+                        per_package[rpm_name] = (release_num, nvr)
 
-        except Exception as e:
-            print(
-                f"  WARNING: Error querying Koji for {rpm_name}: {e}", file=sys.stderr
-            )
+                break
+            except Exception as e:
+                # E.g. "configuration error": the Koji proxy periodically
+                # reloads its configuration and fails requests in that window.
+                if attempt < MAX_KOJI_QUERY_RETRIES:
+                    print(
+                        f"  WARNING: Error querying Koji for {rpm_name} "
+                        f"(attempt {attempt}/{MAX_KOJI_QUERY_RETRIES}): {e}. "
+                        f"Retrying in {KOJI_QUERY_RETRY_DELAY_SECONDS}s...",
+                        file=sys.stderr,
+                    )
+                    time.sleep(KOJI_QUERY_RETRY_DELAY_SECONDS)
+                else:
+                    print(
+                        f"  WARNING: Error querying Koji for {rpm_name} "
+                        f"after {attempt} attempts: {e}",
+                        file=sys.stderr,
+                    )
 
-    return nvrs_by_release
+    return {
+        release: sorted(nvr for _, nvr in per_package.values())
+        for release, per_package in latest_builds.items()
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -601,15 +570,150 @@ def get_completed_build_nvrs(
 # ---------------------------------------------------------------------------
 
 
+def _in_progress_updates_for(
+    client, release: str, nvrs: list[str]
+) -> dict[str, dict]:
+    """Find in-progress Bodhi updates containing any of the given builds.
+
+    Returns a dict mapping alias -> {"builds": set of the given builds
+    that are in that update, "status": the update status}. Only updates
+    that are not finished (status pending, testing or unpushed) and
+    belong to ``release`` are considered.
+    """
+    result: dict[str, dict] = {}
+    try:
+        query = client.query(builds=" ".join(nvrs))
+    except Exception as e:
+        print(
+            f"    WARNING: Could not query existing {release} updates: {e}",
+            file=sys.stderr,
+        )
+        return result
+    wanted = set(nvrs)
+    # The rawhide release is named after the branch (e.g. "F46"), not
+    # "Rawhide"; older data may still use "rawhide". Everything else
+    # matches case-insensitively.
+    if release.lower() == "rawhide":
+        release_names = {f"f{RAWHIDE_NUMBER}".lower(), "rawhide"}
+    else:
+        release_names = {release.lower()}
+    for update in query.get("updates", []):
+        if update["status"] not in ("pending", "testing", "unpushed"):
+            continue
+        if update["release"]["name"].lower() not in release_names:
+            continue
+        ours = {b["nvr"] for b in update["builds"]} & wanted
+        if ours:
+            result[update["alias"]] = {"builds": ours, "status": update["status"]}
+    return result
+
+
+def _save_bodhi_update(
+    client,
+    release: str,
+    nvrs: list[str],
+    notes: str,
+    existing_alias: str | None = None,
+    from_tag: str | None = None,
+) -> tuple[dict, list[str]]:
+    """Create (or extend) a Bodhi update, dropping builds that already have
+    an update.
+
+    If ``from_tag`` is given, the update is created from that Koji tag:
+    the server pulls (and refreshes) the build list from the tag, so no
+    builds are passed. Otherwise, if ``existing_alias`` is given, the
+    existing update is edited and its build list is *replaced* by ``nvrs``,
+    so the full list (existing builds plus new ones) must be passed, not
+    just the new builds. Bodhi rejects the whole batch if even one build
+    is already part of another update, so we retry with the offending
+    builds removed.
+    Returns (response, skipped_nvrs).
+    """
+    skipped: list[str] = []
+    edited_kwarg = {"edited": existing_alias} if existing_alias else {}
+
+    if from_tag:
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                response = client.save(
+                    from_tag=from_tag,
+                    **edited_kwarg,
+                    type="enhancement",
+                    notes=notes,
+                    request="testing",
+                    autotime=True,
+                    autokarma=True,
+                    stable_karma=3,
+                    unstable_karma=-3,
+                    close_bugs=True,
+                )
+                return response, skipped
+            except Exception as e:
+                if attempt >= MAX_BODHI_SAVE_ATTEMPTS:
+                    raise
+                print(
+                    f"    WARNING: Error saving {release} update "
+                    f"(attempt {attempt}/{MAX_BODHI_SAVE_ATTEMPTS}): {e}. "
+                    f"Retrying in {BODHI_SAVE_RETRY_DELAY_SECONDS}s..."
+                )
+                time.sleep(BODHI_SAVE_RETRY_DELAY_SECONDS)
+
+    remaining = list(nvrs)
+    while remaining:
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                response = client.save(
+                    builds=remaining,
+                    **edited_kwarg,
+                    type="enhancement",
+                    notes=notes,
+                    request="testing",
+                    autotime=True,
+                    autokarma=True,
+                    stable_karma=3,
+                    unstable_karma=-3,
+                    close_bugs=True,
+                )
+                return response, skipped
+            except Exception as e:
+                offending = [
+                    nvr
+                    for nvr in remaining
+                    if f"for {nvr} already exists" in str(e)
+                ]
+                if offending:
+                    skipped.extend(offending)
+                    remaining = [nvr for nvr in remaining if nvr not in offending]
+                    break
+                if attempt >= MAX_BODHI_SAVE_ATTEMPTS:
+                    raise
+                # E.g. transient connection drops to the Bodhi server
+                print(
+                    f"    WARNING: Error saving {release} update "
+                    f"(attempt {attempt}/{MAX_BODHI_SAVE_ATTEMPTS}): {e}. "
+                    f"Retrying in {BODHI_SAVE_RETRY_DELAY_SECONDS}s..."
+                )
+                time.sleep(BODHI_SAVE_RETRY_DELAY_SECONDS)
+
+    return {}, skipped
+
+
 def create_bodhi_updates(
     nvrs_by_release: dict[str, list[str]],
     notes: str | None = None,
     staging: bool = False,
+    side_tag: str | None = None,
 ) -> None:
     """Create Bodhi updates for each release that has completed builds.
 
     Creates one Bodhi update per Fedora release, grouping all COSMIC
-    package builds for that release together.
+    package builds for that release together. The Rawhide update is
+    created *from* the side tag the builds were made against, so the
+    builds do not need the release build tag.
     """
     from bodhi.client.bindings import BodhiClient
 
@@ -622,40 +726,131 @@ def create_bodhi_updates(
         if not nvrs:
             continue
 
-        print(f"  Creating Bodhi update for {release} ({len(nvrs)} builds)...")
+        update_notes = notes or (
+            f"Update COSMIC packages to latest version for {release}"
+        )
 
-        if not notes:
-            notes = f"Update COSMIC packages to latest version for {release}"
+        # Look for in-progress updates that already contain some of these
+        # builds (e.g. created by a previous, interrupted run of this
+        # pipeline) so that missing builds can be added to them instead of
+        # creating another update.
+        in_progress = _in_progress_updates_for(client, release, nvrs)
+        for alias, info in in_progress.items():
+            print(
+                f"    {len(info['builds'])} build(s) already in in-progress "
+                f"update {alias} (status: {info['status']})"
+            )
+        primary_alias = (
+            max(in_progress, key=lambda a: len(in_progress[a]["builds"]))
+            if in_progress
+            else None
+        )
+        primary_info = in_progress[primary_alias] if primary_alias else None
+        primary_builds = primary_info["builds"] if primary_info else set()
+        missing = [nvr for nvr in nvrs if nvr not in primary_builds]
+
+        # The Rawhide update is created *from* the side tag: the Bodhi
+        # server pulls (and refreshes) the build list from the tag, so
+        # the builds do not need the release build tag. (Bodhi names the
+        # release "F46"; note RAWHIDE_BRANCH is the Koji tag "f46".)
+        from_tag = (
+            side_tag
+            if side_tag and release.lower() == "rawhide"
+            else None
+        )
+
+        if not missing:
+            if primary_info["status"] == "unpushed":
+                # The update was revoked (or never pushed): re-request it to
+                # testing so the builds actually get released.
+                print(
+                    f"  Update {primary_alias} is unpushed (revoked or never "
+                    f"pushed): re-requesting testing..."
+                )
+                try:
+                    _save_bodhi_update(
+                        client,
+                        release,
+                        sorted(primary_builds),
+                        update_notes,
+                        existing_alias=primary_alias,
+                        from_tag=from_tag,
+                    )
+                except Exception as e:
+                    print(
+                        f"    ERROR re-requesting update {primary_alias}: {e}",
+                        file=sys.stderr,
+                    )
+            else:
+                print(
+                    f"    Nothing to do for {release}: all builds already in "
+                    f"update {primary_alias}."
+                )
+            continue
+
+        if from_tag:
+            if primary_alias:
+                print(
+                    f"  Refreshing update {primary_alias} from side tag "
+                    f"{from_tag} ({len(missing)} new build(s))..."
+                )
+            else:
+                print(
+                    f"  Creating {release} Bodhi update from side tag "
+                    f"{from_tag} ({len(missing)} build(s))..."
+                )
+            builds_to_save = missing
+        elif primary_alias:
+            print(
+                f"  Adding {len(missing)} build(s) to existing update "
+                f"{primary_alias}..."
+            )
+            # Bodhi replaces the update's build list when editing it, so the
+            # full set (existing builds plus the new ones) has to be passed
+            # to keep the existing builds.
+            builds_to_save = sorted(set(missing) | primary_builds)
+        else:
+            print(f"  Creating Bodhi update for {release} ({len(missing)} builds)...")
+            builds_to_save = missing
 
         try:
-            response = client.save(
-                builds=nvrs,
-                type="enhancement",
-                notes=notes,
-                request="testing",
-                autotime=True,
-                autokarma=True,
-                stable_karma=3,
-                unstable_karma=-3,
-                close_bugs=True,
+            response, skipped = _save_bodhi_update(
+                client,
+                release,
+                builds_to_save,
+                update_notes,
+                existing_alias=primary_alias,
+                from_tag=from_tag,
             )
-
-            alias = response["alias"]
-            title = response.get("title", alias)
-            url = client.base_url.rstrip("/") + f"updates/{alias}"
-            created_updates.append((release, alias))
-            print(f"    Update created: {title}")
-            print(f"    Alias: {alias}")
-            print(f"    URL:   {url}")
-
         except Exception as e:
             print(f"    ERROR creating update for {release}: {e}", file=sys.stderr)
+            continue
+
+        for nvr in skipped:
+            print(f"    Skipping {nvr}: an update for it already exists")
+
+        if not response:
+            print(
+                f"    Nothing to create for {release}: all builds already "
+                "have updates."
+            )
+            continue
+
+        alias = response["alias"]
+        url = f"{client.base_url.rstrip('/')}/updates/{alias}"
+        created_updates.append((release, alias))
+        if primary_alias:
+            print(f"    Added to update {alias}")
+        else:
+            print(f"    Update created: {response.get('title', alias)}")
+        print(f"    Alias: {alias}")
+        print(f"    URL:   {url}")
 
     if created_updates:
         print()
         print(f"  Created {len(created_updates)} Bodhi update(s) on {instance}.")
     else:
-        print("  No updates created (no completed builds found).")
+        print("  No updates created.")
 
 
 # ---------------------------------------------------------------------------
@@ -1122,22 +1317,14 @@ def main() -> None:
         help="Path to the SSH key (e.g., ~/.ssh/id_ed25519)",
     )
     parser.add_argument(
-        "--ssh-password",
-        help="Password for the SSH key",
-    )
-    parser.add_argument(
         "--fk-user",
         help="Kerberos (FAS) username to log in with",
-    )
-    parser.add_argument(
-        "--fk-password",
-        help="Kerberos (FAS) password",
     )
     parser.add_argument(
         "--skip-setup",
         action="store_true",
         help="Skip SSH agent and Kerberos authentication setup. "
-        "If specified, --ssh-key, --ssh-password, --fk-user, and --fk-password are not required.",
+        "If specified, --ssh-key and --fk-user are not required.",
     )
 
     # Build options
@@ -1224,12 +1411,8 @@ def main() -> None:
         missing = []
         if not args.ssh_key:
             missing.append("--ssh-key")
-        if not args.ssh_password:
-            missing.append("--ssh-password")
         if not args.fk_user:
             missing.append("--fk-user")
-        if not args.fk_password:
-            missing.append("--fk-password")
 
         if missing:
             print(
@@ -1260,13 +1443,13 @@ def main() -> None:
         print("=" * 60)
         print("Step 1: Setting up SSH agent...")
         print("=" * 60)
-        setup_ssh_agent(args.ssh_key, args.ssh_password)
+        setup_ssh_agent(args.ssh_key)
 
         print()
         print("=" * 60)
         print("Step 2: Authenticating with Kerberos...")
         print("=" * 60)
-        authenticate_kerberos(args.fk_user, args.fk_password)
+        authenticate_kerberos(args.fk_user)
         print()
 
     # ------------------------------------------------------------------
@@ -1333,6 +1516,7 @@ def main() -> None:
                     nvrs_by_release,
                     notes=args.bodhi_notes,
                     staging=args.bodhi_staging,
+                    side_tag=side_tag,
                 )
 
             sys.exit(0)

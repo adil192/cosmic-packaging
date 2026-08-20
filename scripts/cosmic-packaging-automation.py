@@ -3,9 +3,10 @@
 Handles the complete lifecycle:
   1. SSH agent setup & Kerberos authentication
   2. Side tag creation in Koji
-  3. Building packages via COPR-sourced SRPMs into Koji (with side tags)
-  4. Monitoring Koji build status until all packages complete
-  5. Optionally creating Bodhi updates for each Fedora release
+  3. Looping until all builds finish: check Koji status, queue builds for
+     packages that are not already BUILDING or COMPLETE at the target
+     version, then wait between checks
+  4. Optionally creating Bodhi updates for each Fedora release
 """
 
 import argparse
@@ -17,8 +18,11 @@ import io
 import json
 import logging
 import os
+import pty
 import re
+import select
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -77,6 +81,10 @@ TASK_STATES = {
     koji.TASK_STATES["CANCELED"]: "CANCELED",
 }
 
+# Retries after HTTP 403 rate limit errors (e.g. the GitHub API)
+MAX_RATE_LIMIT_RETRIES = 5
+RATE_LIMIT_FALLBACK_WAIT_SECONDS = 300
+
 # ---------------------------------------------------------------------------
 # Shell helpers
 # ---------------------------------------------------------------------------
@@ -91,6 +99,7 @@ def run_cmd(
         cmd,
         input=input_data,
         text=True,
+        capture_output=True,
         env=env,
         check=check,
     )
@@ -102,6 +111,60 @@ def run_cmd(
 # ---------------------------------------------------------------------------
 
 
+def run_interactive(
+    cmd: list[str],
+    prompts: list[tuple[bytes, str]],
+    timeout: float = 60.0,
+) -> tuple[int, str]:
+    """Run a command in a pseudo-terminal and feed it answers to prompts.
+
+    Programs like ssh-add and fkinit read input from the terminal (not
+    stdin), so we spawn the command with a pty and type each response
+    once its prompt appears in the output. ``prompts`` is a list of
+    (prompt_text, response) pairs. Returns (returncode, output).
+    """
+    master, slave = pty.openpty()
+    pid = os.fork()
+    if pid == 0:
+        # Child process: attach stdin/stdout/stderr to the pty.
+        os.close(master)
+        os.dup2(slave, 0)
+        os.dup2(slave, 1)
+        os.dup2(slave, 2)
+        os.close(slave)
+        os.execvp(cmd[0], cmd)
+    os.close(slave)
+
+    output = b""
+    answered = [False] * len(prompts)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        remaining = max(0.0, deadline - time.monotonic())
+        ready, _, _ = select.select([master], [], [], min(0.1, remaining))
+        if not ready:
+            continue
+        try:
+            chunk = os.read(master, 4096)
+        except OSError:  # pty closed -> child exited
+            break
+        if not chunk:
+            break
+        output += chunk
+        for index, (prompt, response) in enumerate(prompts):
+            if not answered[index] and prompt.lower() in output.lower():
+                os.write(master, (response + "\n").encode())
+                answered[index] = True
+
+    # Reap the child (kill it if it is still stuck at the prompt).
+    wpid, status = os.waitpid(pid, os.WNOHANG)
+    if wpid == 0:
+        os.kill(pid, signal.SIGKILL)
+        wpid, status = os.waitpid(pid, 0)
+    os.close(master)
+    returncode = os.waitstatus_to_exitcode(status)
+    return returncode, output.decode(errors="replace")
+
+
 def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
     """Start ssh-agent and add the given key."""
     ssh_key_path = Path(ssh_key).expanduser()
@@ -110,14 +173,16 @@ def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
         print(f"ERROR: SSH key not found at {ssh_key_path}", file=sys.stderr)
         sys.exit(1)
 
-    agent_output = run_cmd(["ssh-agent", "-s"]).stdout.strip()
+    # ssh-agent -s prints its export statements on stderr
+    agent_result = run_cmd(["ssh-agent", "-s"])
+    agent_output = (agent_result.stderr or agent_result.stdout).strip()
     print(f"SSH agent started: {agent_output}")
 
     env_vars = {}
     for line in agent_output.splitlines():
-        match = re.match(r'export (\w+)="(.+)"', line)
+        match = re.match(r"(?P<var>\w+)=(?P<val>.+?);", line)
         if match:
-            env_vars[match.group(1)] = match.group(2)
+            env_vars[match.group("var")] = match.group("val")
 
     if "SSH_AUTH_SOCK" not in env_vars or "SSH_AGENT_PID" not in env_vars:
         print("ERROR: Failed to parse ssh-agent output", file=sys.stderr)
@@ -127,38 +192,32 @@ def setup_ssh_agent(ssh_key: str, ssh_password: str) -> None:
     os.environ["SSH_AGENT_PID"] = env_vars["SSH_AGENT_PID"]
 
     print(f"Adding SSH key: {ssh_key_path}")
-    result = subprocess.run(
-        ["ssh-add", str(ssh_key_path)],
-        input=ssh_password + "\n",
-        text=True,
-        capture_output=True,
-        check=False,
+    # ssh-add prompts for the passphrase on the terminal, not stdin
+    returncode, output = run_interactive(
+        ["ssh-add", str(ssh_key_path)], [(b"passphrase", ssh_password)]
     )
 
-    if result.returncode != 0:
-        print(f"ERROR: Failed to add SSH key: {result.stderr.strip()}", file=sys.stderr)
+    if returncode != 0:
+        print(f"ERROR: Failed to add SSH key: {output.strip()}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"SSH key added successfully: {result.stdout.strip()}")
+    print(f"SSH key added successfully: {output.strip()}")
 
 
 def authenticate_kerberos(fk_user: str, fk_password: str) -> None:
     """Authenticate with Kerberos using fkinit."""
     print(f"Authenticating with Kerberos as {fk_user}...")
 
-    result = subprocess.run(
+    # fkinit prompts for the password (and optional OTP) on the terminal,
+    # not stdin; answer the OTP prompt with a blank line if not configured
+    returncode, output = run_interactive(
         ["fkinit", "-u", fk_user],
-        input=fk_password + "\n",
-        text=True,
-        capture_output=True,
-        check=False,
+        [(b"FAS password", fk_password), (b"FAS OTP", "")],
     )
 
-    combined_output = result.stdout + result.stderr
-
-    if result.returncode != 0 or "Ticket cache:" not in combined_output:
+    if returncode != 0 or "Ticket cache:" not in output:
         print(
-            f"ERROR: Kerberos authentication failed.\nOutput:\n{combined_output}",
+            f"ERROR: Kerberos authentication failed.\nOutput:\n{output}",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -329,9 +388,9 @@ def check_koji_status(
 
                 release_clean = (
                     build["release"]
+                    .replace(".fc46", "")
                     .replace(".fc45", "")
                     .replace(".fc44", "")
-                    .replace(".fc43", "")
                 )
                 version_str = f"{build['version']}-{release_clean}"
                 status = _get_task_status(client, build)
@@ -387,26 +446,22 @@ def parse_koji_status(output: str) -> dict[str, dict[str, tuple[str, str]]]:
     """Parse the Koji status table output.
 
     Returns a dict mapping package name -> {branch: (version_str, status)}.
-    Branches are like 'rawhide', 'f44', 'f43'.
+    Branches are like 'rawhide', 'f45', 'f44'.
     """
     packages = {}
     output = _strip_ansi(output)
 
-    line_pattern = re.compile(
-        r"^(\S+)\s+"
-        r"([\d.]+-[\d.]+)\s+\((\w+)\)\s+"
-        r"([\d.]+-[\d.]+)\s+\((\w+)\)\s+"
-        r"([\d.]+-[\d.]+)\s+\((\w+)\)"
-    )
+    # One table column per branch, in FEDORA_TAGS order
+    branches = [branch.lower() for branch in FEDORA_TAGS]
+    column = r"([\d.]+-[\d.]+)\s+\((\w+)\)"
+    line_pattern = re.compile(r"^(\S+)\s+" + r"\s+".join([column] * len(branches)))
 
     for line in output.splitlines():
         match = line_pattern.match(line)
         if match:
-            pkg_name = match.group(1)
-            packages[pkg_name] = {
-                "rawhide": (match.group(2), match.group(3)),
-                "f44": (match.group(4), match.group(5)),
-                "f43": (match.group(6), match.group(7)),
+            packages[match.group(1)] = {
+                branches[i]: (match.group(2 + i * 2), match.group(3 + i * 2))
+                for i in range(len(branches))
             }
 
     return packages
@@ -752,7 +807,9 @@ class PackageBuilder:
     def branch_to_number(branch: str) -> str:
         return branch[1:] if branch != "rawhide" else RAWHIDE_NUMBER
 
-    def build_branch(self, branch: str, side_tag: str) -> bool:
+    def build_branch(
+        self, branch: str, side_tag: str, needs_build: bool | None = None
+    ) -> bool:
         logger.debug(
             f"[{self.package}, {branch}]: Attempting to build branch {branch} for package {self.package}"
         )
@@ -799,7 +856,9 @@ class PackageBuilder:
                 f"[{self.package}, {branch}]: Commit skipped. Commit messages matched."
             )
         logger.debug(f"[{self.package}, {branch}]: Checking if should build...")
-        if self.should_build(branch):
+        if needs_build is None:
+            needs_build = self.should_build(branch)
+        if needs_build:
             if not self.dry_run:
                 if side_tag and branch in SIDE_TAG_BRANCHES:
                     try:
@@ -840,22 +899,56 @@ class PackageBuilder:
 
     def build_with_side_tag(self, side_tag: str) -> bool:
         did_build_anything = False
-        errored_local = []
         for br in FEDORA_BRANCHES:
             if br == "all":
                 continue
+            # Partial rebuild: skip branches where the expected version is
+            # already COMPLETE or BUILDING in Koji
+            if not self.should_build(br):
+                logger.info(
+                    f"[{self.package}]: {br} skipped: {self.version} is already "
+                    "COMPLETE or BUILDING in Koji"
+                )
+                continue
             try:
-                built_package = self.build_branch(br, side_tag)
+                built_package = self.build_branch(br, side_tag, needs_build=True)
                 did_build_anything = did_build_anything or built_package
             except Exception as e:
+                if _is_rate_limit_error(e):
+                    raise
                 logger.error(f"[{self.package}, {br}]: Error({br}): {e}\n")
-                errored_local.append(f"[{self.package} {br}]")
         return did_build_anything
 
 
 # ---------------------------------------------------------------------------
 # Single-package iteration
 # ---------------------------------------------------------------------------
+
+
+def _is_rate_limit_error(exc: Exception) -> bool:
+    """True if the exception looks like an HTTP 403 rate limit error."""
+    return "403" in str(exc) and "rate limit" in str(exc).lower()
+
+
+def _rate_limit_wait_time(exc: Exception) -> float:
+    """Seconds to wait before retrying after a rate limit error.
+
+    Uses the reset time advertised by the API when available (GitHub sends
+    ``X-RateLimit-Reset`` as a Unix timestamp, some APIs send
+    ``Retry-After`` as a delay), otherwise falls back to a fixed delay.
+    """
+    headers = getattr(exc, "headers", None)
+    if headers:
+        try:
+            reset = headers.get("X-RateLimit-Reset")
+            if reset:
+                return max(10.0, float(reset) - time.time())
+            retry_after = headers.get("Retry-After")
+            if retry_after:
+                return max(10.0, float(retry_after))
+        except (TypeError, ValueError):
+            pass
+    return float(RATE_LIMIT_FALLBACK_WAIT_SECONDS)
 
 
 def run_iteration(
@@ -865,38 +958,65 @@ def run_iteration(
     dry_run: bool,
     workdir: Path,
 ):
-    errored = []
-    try:
-        working_directory = workdir
-        Path.mkdir(working_directory, exist_ok=True, parents=True)
-        logger.debug(working_directory)
-        pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
+    """Run one package's build, retrying after HTTP 403 rate limit errors.
 
-        if pkg.tag == "":
-            logger.error(
-                f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}"
-            )
+    Retries are partial rebuilds: branches whose expected version is already
+    COMPLETE or BUILDING in Koji are skipped via ``should_build``.
+    """
+    for attempt in range(1, MAX_RATE_LIMIT_RETRIES + 1):
+        try:
+            _run_iteration_once(rpm_name, force_build, side_tag, dry_run, workdir)
+            return
+        except Exception as e:
+            if _is_rate_limit_error(e) and attempt < MAX_RATE_LIMIT_RETRIES:
+                wait = _rate_limit_wait_time(e)
+                logger.warning(
+                    f"[{rpm_name}]: Rate limit exceeded "
+                    f"(attempt {attempt}/{MAX_RATE_LIMIT_RETRIES}). "
+                    f"Waiting {wait:.0f}s before retrying..."
+                )
+                time.sleep(wait)
+                continue
+            logger.error(f"[{rpm_name}]: Failed to run iteration: {e}")
             return
 
-        if pkg.version != pkg.tag:
-            logger.error(
-                f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting"
-            )
-            return
-        pkg.clone_fedpkg_repo()
 
-        time_before = datetime.datetime.now(datetime.timezone.utc)
-        did_build_anything = pkg.build_with_side_tag(side_tag)
-        time_after = datetime.datetime.now(datetime.timezone.utc)
+def _run_iteration_once(
+    rpm_name: str,
+    force_build: bool,
+    side_tag: str,
+    dry_run: bool,
+    workdir: Path,
+):
+    # Note: exceptions (e.g. rate limit errors) are intentionally
+    # re-raised so that run_iteration can wait and retry the iteration.
+    working_directory = workdir
+    Path.mkdir(working_directory, exist_ok=True, parents=True)
+    logger.debug(working_directory)
+    pkg = PackageBuilder(rpm_name, force_build, dry_run, working_directory)
 
-        elapsed = time_after - time_before
-        logger.info(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
+    if pkg.tag == "":
+        logger.error(
+            f"[{pkg.package}]: Could not get latest tag from https://github.com/pop-os/{PACKAGES[rpm_name]}"
+        )
+        return
 
-        if not did_build_anything:
-            logger.info(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
-    except Exception as e:
-        logger.error(f"[{rpm_name}]: Failed to run iteration: {e}")
-        errored.append(f"{rpm_name} all")
+    if pkg.version != pkg.tag:
+        logger.error(
+            f"[{pkg.package}]: Latest version does not equal the latest tag. Aborting"
+        )
+        return
+    pkg.clone_fedpkg_repo()
+
+    time_before = datetime.datetime.now(datetime.timezone.utc)
+    did_build_anything = pkg.build_with_side_tag(side_tag)
+    time_after = datetime.datetime.now(datetime.timezone.utc)
+
+    elapsed = time_after - time_before
+    logger.info(f"[{pkg.package}]: === Done in {elapsed} seconds ===\n")
+
+    if not did_build_anything:
+        logger.info(f"[{pkg.package}]: {rpm_name}: Nothing was rebuilt.")
 
 
 # ---------------------------------------------------------------------------
@@ -917,31 +1037,65 @@ def build_package(
 
 
 def run_builds(
-    packages: dict[str, str],
+    target_packages: dict[str, str],
     side_tag: str,
-    force_build: bool = False,
+    force_map: dict[str, bool] | None = None,
     dry_run: bool = False,
-    rpm_name: str | None = None,
 ) -> None:
-    """Run builds for one or all COSMIC packages using the side tag."""
-    if rpm_name:
-        target_packages = {rpm_name: packages[rpm_name]}
-    else:
-        target_packages = packages
+    """Queue builds for the given packages using the side tag.
+
+    ``force_map`` lists packages that must be rebuilt even if a build with
+    the expected version is already BUILDING or COMPLETE.
+    """
+    if not target_packages:
+        logger.info("No packages need building.")
+        return
+    force_map = force_map or {}
 
     with tempfile.TemporaryDirectory() as tmpdir:
         workdir = Path(tmpdir)
         with ThreadPoolExecutor() as executor:
             futures = []
             for pkg_name in target_packages:
-                force = force_build or (rpm_name is not None and pkg_name == rpm_name)
                 futures.append(
                     executor.submit(
-                        build_package, pkg_name, force, workdir, side_tag, dry_run
+                        build_package,
+                        pkg_name,
+                        force_map.get(pkg_name, False),
+                        workdir,
+                        side_tag,
+                        dry_run,
                     )
                 )
             for future in futures:
                 future.result()
+
+
+def _packages_needing_builds(
+    status: dict[str, dict[str, tuple[str, str]]],
+    packages: dict[str, str],
+    expected_version: str | None,
+) -> dict[str, str]:
+    """Return the packages that still need (re)building.
+
+    A package needs building unless every tracked branch already has a
+    BUILDING or COMPLETE build at the expected version. Packages missing
+    from ``status`` (e.g. never built) always need building.
+    """
+    needed: dict[str, str] = {}
+    for pkg_name, package in packages.items():
+        branches = status.get(pkg_name)
+        if branches is None:
+            needed[pkg_name] = package
+            continue
+        all_building_or_complete = all(
+            version_str.split("-")[0] == expected_version
+            and task_status in ("BUILDING", "COMPLETE")
+            for version_str, task_status in branches.values()
+        )
+        if not all_building_or_complete:
+            needed[pkg_name] = package
+    return needed
 
 
 # ---------------------------------------------------------------------------
@@ -1005,15 +1159,9 @@ def main() -> None:
 
     # Monitoring
     parser.add_argument(
-        "--error-wait-time",
-        type=int,
-        default=5,
-        help="Time in minutes to wait before retrying on errors (default: 5)",
-    )
-    parser.add_argument(
         "--koji-wait-time",
         type=int,
-        default=10,
+        default=5,
         help="Time in minutes to wait between Koji status checks (default: 10)",
     )
 
@@ -1037,7 +1185,7 @@ def main() -> None:
     parser.add_argument(
         "--koji-status",
         action="store_true",
-        help="Show all cosmic packages with per-Fedora-version build status (fc43/fc44/fc45). "
+        help="Show all cosmic packages with per-Fedora-version build status (fc44/fc45/fc46). "
         "Highlights non-latest versions and non-COMPLETE statuses.",
     )
     parser.add_argument(
@@ -1091,6 +1239,14 @@ def main() -> None:
     if args.force_package:
         for pkg in args.force_package:
             force_map[pkg] = True
+    if args.rpm_name:
+        force_map[args.rpm_name] = True
+
+    # The set of packages this run is responsible for
+    if args.rpm_name:
+        scoped_packages = {args.rpm_name: PACKAGES[args.rpm_name]}
+    else:
+        scoped_packages = PACKAGES
 
     # ------------------------------------------------------------------
     # Step 1 & 2: Setup (SSH agent + Kerberos)
@@ -1122,45 +1278,30 @@ def main() -> None:
     print()
 
     # ------------------------------------------------------------------
-    # Step 4: Build packages
+    # Step 4: Build & monitor loop
     # ------------------------------------------------------------------
     print("=" * 60)
-    print("Step 4: Building packages...")
+    print("Step 4: Building packages & monitoring Koji status...")
     print("=" * 60)
-    run_builds(
-        PACKAGES,
-        side_tag,
-        force_build=bool(args.force_package),
-        dry_run=args.dry_run,
-        rpm_name=args.rpm_name,
-    )
-    print()
-
-    # ------------------------------------------------------------------
-    # Step 5: Monitor Koji status
-    # ------------------------------------------------------------------
-    print("=" * 60)
-    print("Step 5: Monitoring Koji build status...")
-    print("=" * 60)
-    wait_minutes = args.koji_wait_time
-    wait_seconds = wait_minutes * 60
+    wait_seconds = args.koji_wait_time * 60
     max_koji_checks = 100
 
     for check_num in range(1, max_koji_checks + 1):
         print(f"\n--- Koji status check #{check_num} ---")
-        check_koji_status(PACKAGES, args.latest_version)
 
-        # Capture output for parsing
-        f = io.StringIO()
-        with contextlib.redirect_stdout(f):
+        # Check Koji status once; capture the output so it can be
+        # displayed and parsed in the same pass.
+        status_buffer = io.StringIO()
+        with contextlib.redirect_stdout(status_buffer):
             check_koji_status(PACKAGES, args.latest_version)
-        parse_output = f.getvalue()
+        status_output = status_buffer.getvalue()
+        print(status_output)
 
-        result = evaluate_koji_status(parse_output)
+        result = evaluate_koji_status(status_output)
 
         if result == "complete":
             expected_version = determine_expected_version(
-                parse_koji_status(parse_output)
+                parse_koji_status(status_output)
             )
 
             print()
@@ -1168,11 +1309,11 @@ def main() -> None:
             print("SUCCESS: All packages are COMPLETE!")
             print("=" * 60)
 
-            # Step 6: Submit to Bodhi (optional)
+            # Step 5: Submit to Bodhi (optional)
             if args.bodhi:
                 print()
                 print("=" * 60)
-                print("Step 6: Creating Bodhi updates...")
+                print("Step 5: Creating Bodhi updates...")
                 print("=" * 60)
                 nvrs_by_release = get_completed_build_nvrs(PACKAGES, expected_version)
 
@@ -1190,25 +1331,30 @@ def main() -> None:
                 )
 
             sys.exit(0)
-        elif result == "building":
+
+        # Queue builds for packages that are NOT in BUILDING or COMPLETE
+        # at the target version
+        status = parse_koji_status(status_output)
+        expected_version = args.latest_version or determine_expected_version(status)
+        packages_to_build = _packages_needing_builds(
+            status, scoped_packages, expected_version
+        )
+        if packages_to_build:
             print(
-                f"Some packages are still building. "
-                f"Waiting {wait_minutes} minutes before next check..."
+                f"Queuing builds for {len(packages_to_build)} package(s) not yet "
+                f"BUILDING/COMPLETE at {expected_version}:"
             )
-            time.sleep(wait_seconds)
+            for pkg_name in sorted(packages_to_build):
+                print(f"  - {pkg_name}")
+            run_builds(packages_to_build, side_tag, force_map, args.dry_run)
         else:
             print(
-                "Packages detected with unexpected status or wrong version. "
-                "Re-running builds..."
+                "Nothing to queue: no scoped package is missing a BUILDING/COMPLETE "
+                "build at the target version."
             )
-            run_builds(
-                PACKAGES,
-                side_tag,
-                force_build=True,
-                dry_run=args.dry_run,
-                rpm_name=args.rpm_name,
-            )
-            time.sleep(wait_seconds)
+
+        print(f"Waiting {args.koji_wait_time} minutes before next check...")
+        time.sleep(wait_seconds)
 
     print(
         f"ERROR: Max Koji checks ({max_koji_checks}) reached without completion.",

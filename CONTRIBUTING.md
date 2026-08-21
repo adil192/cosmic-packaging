@@ -26,3 +26,25 @@ To verify python3 syntax is correct, use `py_compile`
 ```sh
 python3 -m py_compile /path/to/script.py
 ```
+
+### Static type checking
+
+All scripts in `scripts/` are expected to pass **strict** static type checking with
+mypy. The configuration lives in [pyproject.toml](pyproject.toml) (strict mode,
+checked paths: `scripts/`). Run the checker from the repo root:
+
+```sh
+python3 -m mypy
+```
+
+Requirements for python scripts in this repo:
+
+- Every function and method must have fully typed parameters and a return annotation
+  (no untyped or partially-typed definitions).
+- Module-level containers (e.g. `builds: list[str]`) should carry explicit type
+  annotations when the type is not obvious.
+- Third-party libraries without type information (`koji`, `rpm`, `bodhi`, ...) are
+  allowed via the per-module overrides in `pyproject.toml`; everything else must be
+  typed.
+
+Run `python3 -m mypy` before committing any change to a python script.

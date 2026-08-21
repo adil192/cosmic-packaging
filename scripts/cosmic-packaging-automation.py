@@ -26,7 +26,11 @@ import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import Any
 from urllib.request import urlopen, urlretrieve
+
+# Koji build info is returned as a plain dict with mixed value types
+KojiBuild = dict[str, Any]
 
 import koji
 import requests
@@ -58,21 +62,21 @@ logging.basicConfig(
 
 KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
 
-FEDORA_TAGS = {
+FEDORA_TAGS: dict[str, str] = {
     "Rawhide": "fc46",
     "F45": "fc45",
     "F44": "fc44",
     "F43": "fc43",
 }
 
-FEDORA_RELEASES = {
+FEDORA_RELEASES: dict[str, str] = {
     "fc46": "Rawhide",
     "fc45": "F45",
     "fc44": "F44",
     "fc43": "F43",
 }
 
-TASK_STATES = {
+TASK_STATES: dict[int, str] = {
     koji.TASK_STATES["FREE"]: "QUEUED",
     koji.TASK_STATES["OPEN"]: "BUILDING",
     koji.TASK_STATES["ASSIGNED"]: "BUILDING",
@@ -99,7 +103,7 @@ BODHI_SAVE_RETRY_DELAY_SECONDS = 10
 
 def run_cmd(
     cmd: list[str], input_data: str | None = None, check: bool = True
-) -> subprocess.CompletedProcess:
+) -> subprocess.CompletedProcess[str]:
     """Run a command and return the CompletedProcess result."""
     env = dict(os.environ)
     result = subprocess.run(
@@ -182,7 +186,7 @@ def create_side_tag() -> str:
     print("Requesting a new side tag...")
 
     result = run_cmd(["fedpkg", "request-side-tag"], check=True)
-    output = result.stdout.strip()
+    output = (result.stdout or "").strip()
 
     match = re.search(r"Side tag '([^']+)'", output)
     if not match:
@@ -202,7 +206,7 @@ def create_side_tag() -> str:
 # ---------------------------------------------------------------------------
 
 
-def _get_task_status(session, build):
+def _get_task_status(session: koji.ClientSession, build: KojiBuild) -> str:
     """Get human-readable task status for a build."""
     task_id = build.get("task_id")
     if not task_id:
@@ -211,20 +215,22 @@ def _get_task_status(session, build):
     return TASK_STATES.get(task["state"], str(task["state"]))
 
 
-def _compare_builds(a, b):
+def _compare_builds(a: KojiBuild, b: KojiBuild) -> int:
     """Compare two Koji builds using RPM version ordering."""
-    return rpm.labelCompare(  # type: ignore[no-any-return]
-        (str(a.get("epoch") or 0), a["version"], a["release"]),
-        (str(b.get("epoch") or 0), b["version"], b["release"]),
+    return int(
+        rpm.labelCompare(
+            (str(a.get("epoch") or 0), a["version"], a["release"]),
+            (str(b.get("epoch") or 0), b["version"], b["release"]),
+        )
     )
 
 
-def _newest_build(builds):
+def _newest_build(builds: list[KojiBuild]) -> KojiBuild:
     """Return the newest build from a list using RPM version ordering."""
     return max(builds, key=functools.cmp_to_key(_compare_builds))
 
 
-def _branch_for_release(release):
+def _branch_for_release(release: str) -> str | None:
     """Map a Koji build release string to a branch name."""
     for branch, marker in FEDORA_TAGS.items():
         if marker in release:
@@ -232,9 +238,10 @@ def _branch_for_release(release):
     return None
 
 
-def _version_matches(build, expected_version):
+def _version_matches(build: KojiBuild, expected_version: str) -> bool:
     """Check if a build's version matches the expected version string."""
-    return build["version"] == expected_version
+    version: str = build["version"]
+    return version == expected_version
 
 
 def _status_color(status: str) -> str:
@@ -292,14 +299,14 @@ def check_koji_status(
                 print()
                 continue
 
-            branch_builds: dict[str, list[dict]] = {
+            branch_builds: dict[str, list[KojiBuild]] = {
                 branch: [] for branch in FEDORA_TAGS
             }
 
             for build in all_builds:
-                branch = _branch_for_release(build["release"])
-                if branch:
-                    branch_builds[branch].append(build)
+                build_branch = _branch_for_release(build["release"])
+                if build_branch:
+                    branch_builds[build_branch].append(build)
 
             all_branch_builds = [b for builds in branch_builds.values() for b in builds]
 
@@ -570,7 +577,9 @@ def get_completed_build_nvrs(
 # ---------------------------------------------------------------------------
 
 
-def _in_progress_updates_for(client, release: str, nvrs: list[str]) -> dict[str, dict]:
+def _in_progress_updates_for(
+    client: Any, release: str, nvrs: list[str]
+) -> dict[str, dict[str, Any]]:
     """Find in-progress Bodhi updates containing any of the given builds.
 
     Returns a dict mapping alias -> {"builds": set of the given builds
@@ -578,7 +587,7 @@ def _in_progress_updates_for(client, release: str, nvrs: list[str]) -> dict[str,
     that are not finished (status pending, testing or unpushed) and
     belong to ``release`` are considered.
     """
-    result: dict[str, dict] = {}
+    result: dict[str, dict[str, Any]] = {}
     try:
         query = client.query(builds=" ".join(nvrs))
     except Exception as e:
@@ -607,13 +616,13 @@ def _in_progress_updates_for(client, release: str, nvrs: list[str]) -> dict[str,
 
 
 def _save_bodhi_update(
-    client,
+    client: Any,
     release: str,
     nvrs: list[str],
     notes: str,
     existing_alias: str | None = None,
     from_tag: str | None = None,
-) -> tuple[dict, list[str]]:
+) -> tuple[dict[str, Any], list[str]]:
     """Create (or extend) a Bodhi update, dropping builds that already have
     an update.
 
@@ -752,7 +761,7 @@ def create_bodhi_updates(
         from_tag = side_tag if side_tag and release.lower() == "rawhide" else None
 
         if not missing:
-            if primary_info["status"] == "unpushed":
+            if primary_info is not None and primary_info["status"] == "unpushed":
                 # The update was revoked (or never pushed): re-request it to
                 # testing so the builds actually get released.
                 print(
@@ -852,7 +861,7 @@ def create_bodhi_updates(
 class PackageBuilder:
     def __init__(
         self, package: str, force_build: bool, dry_run: bool, working_directory: Path
-    ):
+    ) -> None:
         self.package = package
         self.force_build = force_build
         self.dry_run = dry_run
@@ -909,12 +918,13 @@ class PackageBuilder:
         with requests.get(url) as response:
             data = response.json()
         source_package = data["builds"]["latest_succeeded"]["source_package"]["url"]
+        version: str = data["builds"]["latest_succeeded"]["source_package"]["version"]
 
         logger.debug(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
         urlretrieve(source_package, output_path)
-        return data["builds"]["latest_succeeded"]["source_package"]["version"]
+        return version
 
-    def clone_fedpkg_repo(self):
+    def clone_fedpkg_repo(self) -> None:
         max_attempts = 5
         i = 0
         while not self.repo_dir.exists():
@@ -945,8 +955,8 @@ class PackageBuilder:
             stderr=subprocess.PIPE,
             text=True,
             check=True,
-        ).stdout.strip()
-        return old_commit_msg != self.commit_msg
+        ).stdout or ""
+        return old_commit_msg.strip() != self.commit_msg
 
     def should_build(self, branch: str) -> bool:
         if self.force_build:
@@ -964,7 +974,7 @@ class PackageBuilder:
             text=True,
             check=False,
         )
-        check2 = subprocess.run(
+        check2: subprocess.CompletedProcess[str] = subprocess.run(
             [
                 "koji",
                 "list-builds",
@@ -977,8 +987,8 @@ class PackageBuilder:
             text=True,
             check=False,
         )
-        currently_finished = check.stdout.strip()
-        currently_building = check2.stdout.strip()
+        currently_finished = (check.stdout or "").strip()
+        currently_building = (check2.stdout or "").strip()
         if currently_finished != "":
             logger.info(
                 f"[{self.package}, {branch}]: Found finished builds: {currently_finished.split('\n')}\n"
@@ -988,10 +998,10 @@ class PackageBuilder:
                 f"[{self.package}, {branch}]: Found currently building builds: {currently_building.split('\n')}\n"
             )
         return (
-            check.stdout.strip() == ""
-            and check2.stdout.strip() == ""
-            and check.stderr.strip() == ""
-            and check2.stderr.strip() == ""
+            (check.stdout or "") == ""
+            and (check2.stdout or "") == ""
+            and (check.stderr or "") == ""
+            and (check2.stderr or "") == ""
         )
 
     @staticmethod
@@ -1148,7 +1158,7 @@ def run_iteration(
     side_tag: str,
     dry_run: bool,
     workdir: Path,
-):
+) -> None:
     """Run one package's build, retrying after HTTP 403 rate limit errors.
 
     Retries are partial rebuilds: branches whose expected version is already
@@ -1178,7 +1188,7 @@ def _run_iteration_once(
     side_tag: str,
     dry_run: bool,
     workdir: Path,
-):
+) -> None:
     # Note: exceptions (e.g. rate limit errors) are intentionally
     # re-raised so that run_iteration can wait and retry the iteration.
     working_directory = workdir
@@ -1217,7 +1227,7 @@ def _run_iteration_once(
 
 def build_package(
     package: str, force_build: bool, workdir: Path, side_tag: str, dry_run: bool
-):
+) -> None:
     working_directory = workdir.joinpath(package)
     try:
         logger.debug(f"[{package}]: Building package {package}")

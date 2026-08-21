@@ -8,7 +8,10 @@ import subprocess
 import time
 from http.client import HTTPResponse
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
+
+# Koji build info is returned as a plain dict with mixed value types
+KojiBuild = dict[str, Any]
 from urllib.request import urlopen, urlretrieve
 
 import koji
@@ -28,13 +31,13 @@ import glob
 
 from cosmic_common import FEDORA_BRANCHES, PACKAGES, RAWHIDE_BRANCH, SIDE_TAG_BRANCHES
 
-builds = []
-errored = []
+builds: list[str] = []
+errored: list[str] = []
 
 KOJI_HUB = "https://koji.fedoraproject.org/kojihub"
 
 # Fedora release markers used in Koji build release strings (e.g. "1.fc46")
-FEDORA_TAGS = {
+FEDORA_TAGS: dict[str, str] = {
     "Rawhide": "fc46",
     "F45": "fc45",
     "F44": "fc44",
@@ -42,7 +45,7 @@ FEDORA_TAGS = {
 }
 
 
-TASK_STATES = {
+TASK_STATES: dict[int, str] = {
     koji.TASK_STATES["FREE"]: "QUEUED",
     koji.TASK_STATES["OPEN"]: "BUILDING",
     koji.TASK_STATES["ASSIGNED"]: "BUILDING",
@@ -52,7 +55,7 @@ TASK_STATES = {
 }
 
 
-def _get_task_status(session, build):
+def _get_task_status(session: koji.ClientSession, build: KojiBuild) -> str:
     """Get human-readable task status for a build."""
     task_id = build.get("task_id")
     if not task_id:
@@ -61,20 +64,22 @@ def _get_task_status(session, build):
     return TASK_STATES.get(task["state"], str(task["state"]))
 
 
-def _compare_builds(a, b):
+def _compare_builds(a: KojiBuild, b: KojiBuild) -> int:
     """Compare two Koji builds using RPM version ordering."""
-    return rpm.labelCompare(
-        (str(a.get("epoch") or 0), a["version"], a["release"]),
-        (str(b.get("epoch") or 0), b["version"], b["release"]),
+    return int(
+        rpm.labelCompare(
+            (str(a.get("epoch") or 0), a["version"], a["release"]),
+            (str(b.get("epoch") or 0), b["version"], b["release"]),
+        )
     )
 
 
-def _newest_build(builds):
+def _newest_build(builds: list[KojiBuild]) -> KojiBuild:
     """Return the newest build from a list using RPM version ordering."""
     return max(builds, key=functools.cmp_to_key(_compare_builds))
 
 
-def _branch_for_release(release):
+def _branch_for_release(release: str) -> str | None:
     """Map a Koji build release string to a branch name."""
     for branch, marker in FEDORA_TAGS.items():
         if marker in release:
@@ -82,9 +87,10 @@ def _branch_for_release(release):
     return None
 
 
-def _version_matches(build, expected_version):
+def _version_matches(build: KojiBuild, expected_version: str) -> bool:
     """Check if a build's version matches the expected version string."""
-    return build["version"] == expected_version
+    version: str = build["version"]
+    return version == expected_version
 
 
 def _status_color(status: str) -> str:
@@ -139,14 +145,14 @@ def check_koji_status(
                 continue
 
             # Group builds by branch using release field
-            branch_builds: dict[str, list[dict]] = {
+            branch_builds: dict[str, list[KojiBuild]] = {
                 branch: [] for branch in FEDORA_TAGS
             }
 
             for build in all_builds:
-                branch = _branch_for_release(build["release"])
-                if branch:
-                    branch_builds[branch].append(build)
+                build_branch = _branch_for_release(build["release"])
+                if build_branch:
+                    branch_builds[build_branch].append(build)
 
             # Find newest version across all branches
             all_branch_builds = [b for builds in branch_builds.values() for b in builds]
@@ -235,7 +241,7 @@ def check_koji_status_for_package(
 class PackageBuilder:
     def __init__(
         self, package: str, force_build: bool, dry_run: bool, working_directory: Path
-    ):
+    ) -> None:
         self.package = package
         self.force_build = force_build
         self.dry_run = dry_run
@@ -284,6 +290,7 @@ class PackageBuilder:
         self.commit_msg = f"Update to {self.version}"
 
     # Get the latest tag from the pop-os repo
+    @staticmethod
     def get_latest_tag(package: str) -> str:
         repo_name = PACKAGES[package]
         url = f"https://api.github.com/repos/pop-os/{repo_name}/tags"
@@ -294,18 +301,20 @@ class PackageBuilder:
             return res.split("epoch-", 1)[1].replace("-", "~")
 
     # Download the source rpm to the specified path
+    @staticmethod
     def download_package(rpm_name: str, output_path: Path) -> str:
         # Get package download link
         url = f"https://copr.fedorainfracloud.org/api_3/package/?ownername=ryanabx&projectname=cosmic-epoch-tagged&packagename={rpm_name}&with_latest_succeeded_build=true"
         with requests.get(url) as response:
             data = response.json()
         source_package = data["builds"]["latest_succeeded"]["source_package"]["url"]
+        version: str = data["builds"]["latest_succeeded"]["source_package"]["version"]
         logger.debug(f"[{rpm_name}]: Downloading {source_package} to {output_path}...")
         urlretrieve(source_package, output_path)
-        return data["builds"]["latest_succeeded"]["source_package"]["version"]
+        return version
 
     # Clones the relevant repo from https://src.fedoraproject.org
-    def clone_fedpkg_repo(self):
+    def clone_fedpkg_repo(self) -> None:
         max_attempts = 5
         i = 0
         while not self.repo_dir.exists():
@@ -339,8 +348,8 @@ class PackageBuilder:
             stderr=subprocess.PIPE,
             text=True,
             check=True,
-        ).stdout.strip()
-        return old_commit_msg != self.commit_msg
+        ).stdout or ""
+        return old_commit_msg.strip() != self.commit_msg
 
     # True if we should build, false otherwise
     def should_build(self, branch: str) -> bool:
@@ -370,8 +379,8 @@ class PackageBuilder:
             capture_output=True,
             text=True,
         )
-        currently_finished = check.stdout.strip()
-        currently_building = check2.stdout.strip()
+        currently_finished = (check.stdout or "").strip()
+        currently_building = (check2.stdout or "").strip()
         if currently_finished != "":
             logger.info(
                 f"[{self.package}, {branch}]: Found finished builds: {currently_finished.split('\n')}\n"
@@ -381,13 +390,14 @@ class PackageBuilder:
                 f"[{self.package}, {branch}]: Found currently building builds: {currently_building.split('\n')}\n"
             )
         return (
-            check.stdout.strip() == ""
-            and check2.stdout.strip() == ""
-            and check.stderr.strip() == ""
-            and check2.stderr.strip() == ""
+            (check.stdout or "") == ""
+            and (check2.stdout or "") == ""
+            and (check.stderr or "") == ""
+            and (check2.stderr or "") == ""
         )
 
     # Convert the branch string to a number
+    @staticmethod
     def branch_to_number(branch: str) -> str:
         return branch[1:] if branch != "rawhide" else RAWHIDE_BRANCH[1:]
 
@@ -460,7 +470,7 @@ class PackageBuilder:
             except subprocess.TimeoutExpired:
                 logger.info(f"[{self.package}, {branch}]: Building version {branch}\n")
                 builds.append(f"{self.package} {branch}")
-                return True
+            return True
         else:
             logger.info(
                 f"[{self.package}, {branch}]: Build skipped. A build was found with matching version {self.version}\n"
@@ -488,7 +498,7 @@ def run_iteration(
     side_tag: str,
     dry_run: bool,
     workdir: Path,
-):
+) -> None:
     try:
         working_directory = workdir
         Path.mkdir(working_directory, exist_ok=True, parents=True)
@@ -578,7 +588,7 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 
-def build_package(package: str, force_build: bool, workdir: Path):
+def build_package(package: str, force_build: bool, workdir: Path) -> None:
     working_directory = workdir.joinpath(package)
     try:
         logger.debug(f"[{package}]: Building package {package}")
@@ -590,7 +600,7 @@ def build_package(package: str, force_build: bool, workdir: Path):
         shutil.rmtree(working_directory)
 
 
-package_force = []
+package_force: list[bool] = []
 
 workdir = args.workdir if args.workdir else Path(tempfile.mkdtemp())
 

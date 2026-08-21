@@ -28,7 +28,7 @@ NON_RUST_PACKAGES = {
 # Normalize legacy/non-SPDX license identifiers to SPDX-compatible forms.
 # Negative lookahead (?!\s*(?:-only|-or-later)) ensures GPL-3.0-only is not
 # turned into GPL-3.0-only-only, and GPL-2.0-or-later is not corrupted.
-LICENSE_NORMALIZATION = [
+LICENSE_NORMALIZATION: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"LGPL-3\.0(?!\s*(?:-only|-or-later))"), "LGPL-3.0-only"),
     (re.compile(r"GPL-3\.0(?!\s*(?:-only|-or-later))"), "GPL-3.0-only"),
     (re.compile(r"LGPL-2\.0(?!\s*(?:-only|-or-later))"), "LGPL-2.0-only"),
@@ -227,10 +227,10 @@ def create_git_patch(
         patch_files[0].rename(patch_path)
 
 
-def parse_spec_file(spec_path: pathlib.Path) -> tuple[str, str | None]:
+def parse_spec_file(spec_path: pathlib.Path) -> tuple[str | None, str | None]:
     """Parse a spec file to extract the package name and URL.
 
-    Returns (name, url) tuple. URL may be None if not found.
+    Returns (name, url) tuple. Name and URL may be None if not found.
     """
     name = None
     url = None

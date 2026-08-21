@@ -89,7 +89,7 @@ class ProjectInfo:
         upstream_tag: str = "",
         release_override: str | None = None,
         latest_tag: str | None = None,
-    ):
+    ) -> None:
         self.rpm_name = rpm_name
         self.crate_name = crate_name if crate_name else rpm_name
         self.vendor = vendor
@@ -106,7 +106,7 @@ class ProjectInfo:
     def clone_upstream_git(
         self,
         base_dir: pathlib.Path,
-    ):
+    ) -> None:
         info(f"Cloning upstream git: {self.upstream_git}")
         subprocess.run(
             [
@@ -122,7 +122,7 @@ class ProjectInfo:
     def clone_fedora_git(
         self,
         base_dir: pathlib.Path,
-    ):
+    ) -> None:
         info(f"Cloning fedora git: {self.fedora_git}")
         if self.staging:
             info("Using staging layout")
@@ -176,7 +176,7 @@ class DirectoryInfo:
         output_dir: pathlib.Path,
         fedora_dir: pathlib.Path | None,
         upstream_project_dir: pathlib.Path | None,
-    ):
+    ) -> None:
         self.input_dir = input_dir.absolute()
         self.output_dir = output_dir.absolute()
         # Create output directory if it doesn't exist
@@ -237,26 +237,29 @@ class TagInfo:
 
     def __init__(
         self, directory_info: DirectoryInfo, tag: str | None, minver_tag: str | None
-    ):
+    ) -> None:
         # Nightly specified if tag not specified
         self.nightly = tag is None
         # If nightly
-        commit = "" if self.nightly else str("epoch-" + tag).replace("~", "-")  # type: ignore
+        commit = "" if tag is None else ("epoch-" + tag).replace("~", "-")
 
-        if self.nightly:
+        if tag is None:
             info("Nightly build – tag resolved via rev-parse")
-            commit = subprocess.run(
-                ["git", "rev-parse", "HEAD"],
-                capture_output=True,
-                text=True,
-                cwd=directory_info.upstream_project_directory,
-                check=True,
-            ).stdout.strip()
+            commit = (
+                subprocess.run(
+                    ["git", "rev-parse", "HEAD"],
+                    capture_output=True,
+                    text=True,
+                    cwd=directory_info.upstream_project_directory,
+                    check=True,
+                ).stdout
+                or ""
+            ).strip()
             info(f"Commit: {commit}")
             tag = commit[:7]
 
         self.tag = tag
-        self.tag_no_tilde = self.tag.replace("~", "-")  # type: ignore
+        self.tag_no_tilde = tag.replace("~", "-")
         self.minver_tag = minver_tag
 
         info("Git reset")
@@ -272,28 +275,34 @@ class TagInfo:
         )
 
         info("Git rev-parse")
-        self.commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            cwd=directory_info.upstream_project_directory,
-            check=True,
-        ).stdout.strip()
+        self.commit = (
+            subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                cwd=directory_info.upstream_project_directory,
+                check=True,
+            ).stdout or ""
+        ).strip()
 
-        self.commit_date = subprocess.run(
-            ["git", "log", "-1", "--format=%cd", "--date=format:%Y%m%d"],
-            capture_output=True,
-            text=True,
-            cwd=directory_info.upstream_project_directory,
-            check=True,
-        ).stdout.strip()
-        self.commit_date_string = subprocess.run(
-            ["git", "log", "-1", "--format=%cd", "--date=iso"],
-            capture_output=True,
-            text=True,
-            cwd=directory_info.upstream_project_directory,
-            check=True,
-        ).stdout.strip()
+        self.commit_date = (
+            subprocess.run(
+                ["git", "log", "-1", "--format=%cd", "--date=format:%Y%m%d"],
+                capture_output=True,
+                text=True,
+                cwd=directory_info.upstream_project_directory,
+                check=True,
+            ).stdout or ""
+        ).strip()
+        self.commit_date_string = (
+            subprocess.run(
+                ["git", "log", "-1", "--format=%cd", "--date=iso"],
+                capture_output=True,
+                text=True,
+                cwd=directory_info.upstream_project_directory,
+                check=True,
+            ).stdout or ""
+        ).strip()
 
         info(f"tag: {self.tag}")
         info(f"tag_no_tilde: {self.tag_no_tilde}")
@@ -308,13 +317,13 @@ class ProjectOperations:
         project_info: ProjectInfo,
         directory_info: DirectoryInfo,
         tag_info: TagInfo,
-    ):
+    ) -> None:
         self.project_info = project_info
         self.directory_info = directory_info
         self.tag_info = tag_info
 
     # Patches crates that are known to have bad executable bits
-    def patch_vendored_crates(self, vendoring_repo):
+    def patch_vendored_crates(self, vendoring_repo: pathlib.Path) -> None:
         info("patch_vendored_crates")
 
         # remove executable bit of some .rs files
@@ -400,7 +409,7 @@ class ProjectOperations:
         ok(f"Successfully applied {len(patch_files)} patch(es)")
 
     # This function prepares the vendored artifacts for the package
-    def vendor(self):
+    def vendor(self) -> None:
         info("vendor")
         # Clone upstream to a temporary directory for patching and vendoring
         vendoring_temp_dir = tempfile.mkdtemp()
@@ -446,7 +455,11 @@ class ProjectOperations:
                 cwd=vendoring_repo,
                 check=True,
             )
-            info("Cargo vendor output\n" + cargo_vendor_output.stderr.strip() + "\n")
+            info(
+                "Cargo vendor output\n"
+                + (cargo_vendor_output.stderr or "").strip()
+                + "\n"
+            )
 
             # Write the vendor config to the output directory
             with open(
@@ -455,7 +468,7 @@ class ProjectOperations:
                 ),
                 "w",
             ) as f:
-                f.write(cargo_vendor_output.stdout.strip())
+                f.write((cargo_vendor_output.stdout or "").strip())
 
             # Patch crates that need patching
             self.patch_vendored_crates(vendoring_repo)
@@ -482,7 +495,7 @@ class ProjectOperations:
             shutil.rmtree(vendoring_temp_dir)
 
     # This function copies files from the fedora upstream rpm source to the output directory
-    def copy_fedora_files_to_output(self):
+    def copy_fedora_files_to_output(self) -> None:
         info("copy_fedora_files_to_output")
         for root, _dirs, files in os.walk(self.directory_info.fedora_project_directory):
             # Skip .git
@@ -516,7 +529,7 @@ class ProjectOperations:
         ).unlink(missing_ok=True)
 
     # Prepare the rpm spec repo by applying patches and modifying the spec file
-    def prepare_spec_repo(self):
+    def prepare_spec_repo(self) -> None:
         info("prepare_spec_repo")
         info(f"Patches to ignore: {self.project_info.ignore_patches}")
         spec_path = self.directory_info.fedora_project_directory.joinpath(
@@ -567,8 +580,10 @@ class ProjectOperations:
 
     @staticmethod
     def _download_text(url: str, encoding: str = "utf-8") -> str:
+        data: bytes
         with urlopen(url) as response:
-            return response.read().decode(encoding)
+            data = response.read()
+        return data.decode(encoding)
 
     @staticmethod
     def _apply_patch_from_url(url: str, repo: pathlib.Path) -> None:
@@ -594,7 +609,7 @@ class ProjectOperations:
         ProjectOperations._apply_patch(path, repo)
 
     # Performs the remainder of setup needed to build the rpm
-    def setup(self):
+    def setup(self) -> None:
         info("setup")
         # Prepare the Fedora spec side
         self.prepare_spec_repo()
@@ -616,12 +631,14 @@ class ProjectOperations:
                 capture_output=True,
                 check=True,
             )
-            info(zip_result.stdout.strip())
+            info((zip_result.stdout or "").strip())
 
 
 # Spec file processing class
 class SpecFile:
-    def __init__(self, project_info: ProjectInfo, tag_info: TagInfo, spec_in: str):
+    def __init__(
+        self, project_info: ProjectInfo, tag_info: TagInfo, spec_in: str
+    ) -> None:
         if tag_info.nightly:
             self.spec_out = self.process_nightly(project_info, tag_info, spec_in)
         else:
@@ -791,7 +808,7 @@ PACKAGE_INFO: dict[str, ProjectInfo] = {
 # CLI ARGUMENTS #
 #################
 
-parser = argparse.ArgumentParser(
+parser: argparse.ArgumentParser = argparse.ArgumentParser(
     prog="cosmic-packaging-bootstrap",
     description="Setup a nightly build of cosmic-packaging",
 )

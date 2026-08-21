@@ -1,0 +1,24 @@
+# Static type checking configuration for the python scripts in scripts/
+#
+# Run the checker from the repo root:
+#
+#   python3 -m mypy
+#
+# (mypy picks up this configuration and checks the scripts/ directory.)
+[tool.mypy]
+files = ["scripts"]
+strict = true
+
+# Third-party modules that do not ship type information.
+# (koji/rpm/requests are available through typeshed stubs where possible;
+# anything mypy still cannot resolve is treated as untyped/Any.)
+[[tool.mypy.overrides]]
+module = [
+    "koji.*",
+    "rpm",
+    "requests.*",
+    "bodhi.*",
+    "license_expression.*",
+    "spdx_tools.*",
+]
+ignore_missing_imports = true

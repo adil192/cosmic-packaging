@@ -7,9 +7,11 @@ import sys
 
 from cosmic_common import PACKAGES, RAWHIDE_NUMBER
 
-script_directory = pathlib.Path(__file__).parent.resolve()
+script_directory: pathlib.Path = pathlib.Path(__file__).parent.resolve()
 
-parser = argparse.ArgumentParser(prog="Local COSMIC RPM Build")
+parser: argparse.ArgumentParser = argparse.ArgumentParser(
+    prog="Local COSMIC RPM Build"
+)
 
 parser.add_argument(
     "rpm_name", choices=list(PACKAGES.keys()), help="Name of the RPM to build"
@@ -38,11 +40,13 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+work_dir: pathlib.Path
 if args.work_dir is None:
     work_dir = pathlib.Path.home().joinpath("workdir").joinpath("work").absolute()
 else:
     work_dir = args.work_dir.absolute()
 
+output_dir: pathlib.Path
 if args.output_dir is None:
     output_dir = pathlib.Path.home().joinpath("workdir").joinpath("output").absolute()
 else:

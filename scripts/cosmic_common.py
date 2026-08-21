@@ -30,7 +30,7 @@ PACKAGES: dict[str, str] = {
 }
 
 # Possible versions
-FEDORA_BRANCHES = ["rawhide", "f45", "f44", "f43"]  # 42 is now EOL
-SIDE_TAG_BRANCHES = ["rawhide"]
-RAWHIDE_NUMBER = "46"
-RAWHIDE_BRANCH = f"f{RAWHIDE_NUMBER}"
+FEDORA_BRANCHES: list[str] = ["rawhide", "f45", "f44", "f43"]  # 42 is now EOL
+SIDE_TAG_BRANCHES: list[str] = ["rawhide"]
+RAWHIDE_NUMBER: str = "46"
+RAWHIDE_BRANCH: str = f"f{RAWHIDE_NUMBER}"

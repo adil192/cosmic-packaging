@@ -570,9 +570,7 @@ def get_completed_build_nvrs(
 # ---------------------------------------------------------------------------
 
 
-def _in_progress_updates_for(
-    client, release: str, nvrs: list[str]
-) -> dict[str, dict]:
+def _in_progress_updates_for(client, release: str, nvrs: list[str]) -> dict[str, dict]:
     """Find in-progress Bodhi updates containing any of the given builds.
 
     Returns a dict mapping alias -> {"builds": set of the given builds
@@ -681,9 +679,7 @@ def _save_bodhi_update(
                 return response, skipped
             except Exception as e:
                 offending = [
-                    nvr
-                    for nvr in remaining
-                    if f"for {nvr} already exists" in str(e)
+                    nvr for nvr in remaining if f"for {nvr} already exists" in str(e)
                 ]
                 if offending:
                     skipped.extend(offending)
@@ -753,11 +749,7 @@ def create_bodhi_updates(
         # server pulls (and refreshes) the build list from the tag, so
         # the builds do not need the release build tag. (Bodhi names the
         # release "F46"; note RAWHIDE_BRANCH is the Koji tag "f46".)
-        from_tag = (
-            side_tag
-            if side_tag and release.lower() == "rawhide"
-            else None
-        )
+        from_tag = side_tag if side_tag and release.lower() == "rawhide" else None
 
         if not missing:
             if primary_info["status"] == "unpushed":
@@ -831,8 +823,7 @@ def create_bodhi_updates(
 
         if not response:
             print(
-                f"    Nothing to create for {release}: all builds already "
-                "have updates."
+                f"    Nothing to create for {release}: all builds already have updates."
             )
             continue
 

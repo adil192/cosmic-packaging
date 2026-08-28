@@ -1,0 +1,25 @@
+From 0fc99c54eb2f22b5d41c135e38ac21e40438e123 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Thu, 27 Aug 2026 23:23:34 -0500
+Subject: [PATCH] spec: set APP_ID for build.rs
+
+---
+ cosmic-app-library.spec | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/cosmic-app-library.spec b/cosmic-app-library.spec
+index a53db0e..6ebc142 100644
+--- a/cosmic-app-library.spec
++++ b/cosmic-app-library.spec
+@@ -61,6 +61,8 @@ else
+ fi
+ 
+ %build
++# Used by build.rs to expand the .desktop and .metainfo.xml files
++export APP_ID="com.system76.CosmicAppLibrary"
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+-- 
+2.55.0
+

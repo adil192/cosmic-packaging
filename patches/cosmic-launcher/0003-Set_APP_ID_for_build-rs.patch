@@ -1,0 +1,25 @@
+From ea05532d5ae7257aa2dc76a60eeeefc25c0ea900 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Thu, 27 Aug 2026 23:23:34 -0500
+Subject: [PATCH] spec: set APP_ID for build.rs
+
+---
+ cosmic-launcher.spec | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/cosmic-launcher.spec b/cosmic-launcher.spec
+index 0912b15..2f105f1 100644
+--- a/cosmic-launcher.spec
++++ b/cosmic-launcher.spec
+@@ -64,6 +64,8 @@ else
+ fi
+ 
+ %build
++# Used by build.rs to expand the .desktop and .metainfo.xml files
++export APP_ID="com.system76.CosmicLauncher"
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+-- 
+2.55.0
+

@@ -9,5 +9,4 @@ venv/
 
 *__pycache__*
 
-cosmic-packaging-new-release.log
-cosmic-packaging-automation.log
+*.log

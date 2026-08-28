@@ -1,0 +1,28 @@
+From fed724def05eda1e0749cf1ff3e14ba995e6e7bb Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Thu, 27 Aug 2026 21:59:01 -0500
+Subject: [PATCH] spec: set LOCKSTEP_XML_PATH for atspi-common
+
+---
+ cosmic-app-library.spec | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/cosmic-app-library.spec b/cosmic-app-library.spec
+index a53db0e..325f8cc 100644
+--- a/cosmic-app-library.spec
++++ b/cosmic-app-library.spec
+@@ -64,6 +64,11 @@ fi
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
++# The zbus-lockstep #[validate] macro resolves the AT-SPI XML directory to
++# "vendor/xml" (the vendored xml crate) instead of atspi-common's own
++# "xml" directory, which makes it panic on files without an extension.
++# Explicitly point it at the right directory.
++export LOCKSTEP_XML_PATH="$PWD/vendor/atspi-common/xml"
+ %cargo_build
+ %{cargo_license_summary}
+ %{cargo_license} > LICENSE.dependencies
+-- 
+2.55.0
+

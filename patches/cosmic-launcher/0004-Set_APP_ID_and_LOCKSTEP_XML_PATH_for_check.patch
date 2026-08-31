@@ -1,0 +1,27 @@
+From f11d016338498a2bc69fad53b6f862499bd9ebb1 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Mon, 31 Aug 2026 15:36:57 -0500
+Subject: [PATCH] spec: set APP_ID and LOCKSTEP_XML_PATH in %check
+
+---
+ cosmic-launcher.spec | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cosmic-launcher.spec b/cosmic-launcher.spec
+index a50aaa6..e44cac1 100644
+--- a/cosmic-launcher.spec
++++ b/cosmic-launcher.spec
+@@ -90,6 +90,10 @@ just rootdir=%{buildroot} prefix=%{_prefix} install
+ %check
+ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicLauncher.desktop
+ %if %{with check}
++# Used by build.rs to expand the .desktop and .metainfo.xml files
++export APP_ID="com.system76.CosmicLauncher"
++# Required by zbus-lockstep to resolve the AT-SPI XML directory
++export LOCKSTEP_XML_PATH="$PWD/vendor/atspi-common/xml"
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+-- 
+2.55.0
+

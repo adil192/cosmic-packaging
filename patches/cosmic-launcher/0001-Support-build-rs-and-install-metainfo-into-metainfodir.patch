@@ -1,66 +1,53 @@
-From acd84716261d7b5c14e65d1d7310171b7e58c051 Mon Sep 17 00:00:00 2001
+From 5062156a50f9553a0d5373c8856dc994df2c127b Mon Sep 17 00:00:00 2001
 From: Ryan Brue <ryanbrue.dev@gmail.com>
-Date: Thu, 27 Aug 2026 16:12:22 -0500
-Subject: [PATCH] Add patch to switch from xdgen build script to build.rs
+Date: Fri, 4 Sep 2026 13:07:19 -0500
+Subject: [PATCH] spec: support build.rs and install metainfo into metainfodir
 
 ---
- ...-from-xdgen-build-script-to-build.rs.patch | 677 ++++++++++++++++++
- cosmic-app-library.spec                       |   1 +
- 2 files changed, 678 insertions(+)
+ ...-from-xdgen-build-script-to-build.rs.patch | 554 ++++++++++++++++++
+ cosmic-launcher.spec                          |  19 +
+ 2 files changed, 573 insertions(+)
  create mode 100644 0001-fix-switch-from-xdgen-build-script-to-build.rs.patch
 
 diff --git a/0001-fix-switch-from-xdgen-build-script-to-build.rs.patch b/0001-fix-switch-from-xdgen-build-script-to-build.rs.patch
 new file mode 100644
-index 0000000..d9bcf95
+index 0000000..6df5faf
 --- /dev/null
 +++ b/0001-fix-switch-from-xdgen-build-script-to-build.rs.patch
-@@ -0,0 +1,677 @@
-+From f0f1c98c0ff277799fa4832378fd03e7a4bc7845 Mon Sep 17 00:00:00 2001
+@@ -0,0 +1,554 @@
++From fc54f797bfb3f0ccae36462852eb007fc5f62675 Mon Sep 17 00:00:00 2001
 +From: Michael Aaron Murphy <michael@mmurphy.dev>
-+Date: Wed, 26 Aug 2026 19:45:58 +0200
++Date: Wed, 26 Aug 2026 19:35:21 +0200
 +Subject: [PATCH] fix: switch from xdgen build script to build.rs
 +
 +Requires manually setting `LOCKSTEP_XML_PATH` to fix the atspi-common
 +build error in zbus-lockstep.
 +---
-+ Cargo.lock                |  81 +++++++---
-+ Cargo.toml                |   7 +-
-+ build.rs                  |  24 +++
++ Cargo.lock                |  38 +++++
++ Cargo.toml                |   3 +
++ build.rs                  |  25 ++-
 + justfile                  |  10 +-
 + scripts/xdgen/Cargo.lock  | 316 --------------------------------------
 + scripts/xdgen/Cargo.toml  |   7 -
 + scripts/xdgen/src/main.rs |  28 ----
-+ 7 files changed, 92 insertions(+), 381 deletions(-)
-+ create mode 100644 build.rs
++ 7 files changed, 69 insertions(+), 358 deletions(-)
 + delete mode 100644 scripts/xdgen/Cargo.lock
 + delete mode 100644 scripts/xdgen/Cargo.toml
 + delete mode 100644 scripts/xdgen/src/main.rs
 +
 +diff --git a/Cargo.lock b/Cargo.lock
-+index 97b6dba..35f12b4 100644
++index a2f9e67..c873514 100644
 +--- a/Cargo.lock
 ++++ b/Cargo.lock
-+@@ -1028,6 +1028,7 @@ dependencies = [
-+  "switcheroo-control",
-+  "tokio",
-+  "url",
++@@ -1201,6 +1201,7 @@ dependencies = [
++  "tracing",
++  "tracing-journald",
++  "tracing-subscriber",
 ++ "xdgen",
 +  "zbus",
 + ]
 + 
-+@@ -1867,9 +1868,9 @@ dependencies = [
-+ 
-+ [[package]]
-+ name = "freedesktop-desktop-entry"
-+-version = "0.8.1"
-++version = "0.8.2"
-+ source = "registry+https://github.com/rust-lang/crates.io-index"
-+-checksum = "28273c5c6b97a5f07724f6652f064c0c7f637f9aa5e7c09c83bc3bc4ad4ea245"
-++checksum = "1f805583a11d4b14f17370a74731e93433c5740d8c401ca8605d3476f4d31fc0"
-+ dependencies = [
-+  "bstr",
-+  "gettext-rs",
-+@@ -1880,6 +1881,16 @@ dependencies = [
++@@ -1981,6 +1982,16 @@ dependencies = [
 +  "xdg",
 + ]
 + 
@@ -77,117 +64,9 @@ index 0000000..d9bcf95
 + [[package]]
 + name = "fsevent-sys"
 + version = "4.1.0"
-+@@ -2036,9 +2047,9 @@ dependencies = [
-+ 
-+ [[package]]
-+ name = "gettext-rs"
-+-version = "0.7.7"
-++version = "0.8.0"
++@@ -7291,6 +7302,18 @@ version = "3.0.0"
 + source = "registry+https://github.com/rust-lang/crates.io-index"
-+-checksum = "5d5857dc1b7f0fee86961de833f434e29494d72af102ce5355738c0664222bdf"
-++checksum = "9df5e3fa8c077b15fdfa8ce130e2bc73d663b8aaa6d51b71421b8659980b1d80"
-+ dependencies = [
-+  "gettext-sys",
-+  "locale_config",
-+@@ -2203,12 +2214,6 @@ dependencies = [
-+  "foldhash 0.2.0",
-+ ]
-+ 
-+-[[package]]
-+-name = "hashbrown"
-+-version = "0.17.1"
-+-source = "registry+https://github.com/rust-lang/crates.io-index"
-+-checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
-+-
-+ [[package]]
-+ name = "heck"
-+ version = "0.4.1"
-+@@ -2763,12 +2768,12 @@ dependencies = [
-+ 
-+ [[package]]
-+ name = "indexmap"
-+-version = "2.14.0"
-++version = "2.11.4"
-+ source = "registry+https://github.com/rust-lang/crates.io-index"
-+-checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
-++checksum = "4b0f83760fb341a774ed326568e19f5a863af4a952def8c39f9ab92fd95b88e5"
-+ dependencies = [
-+  "equivalent",
-+- "hashbrown 0.17.1",
-++ "hashbrown 0.16.1",
-+  "serde",
-+  "serde_core",
-+ ]
-+@@ -3425,7 +3430,7 @@ dependencies = [
-+  "half",
-+  "hashbrown 0.16.1",
-+  "hexf-parse",
-+- "indexmap 2.14.0",
-++ "indexmap 2.11.4",
-+  "libm",
-+  "log",
-+  "num-traits",
-+@@ -3478,6 +3483,15 @@ dependencies = [
-+  "libc",
-+ ]
-+ 
-++[[package]]
-++name = "nom"
-++version = "8.0.0"
-++source = "registry+https://github.com/rust-lang/crates.io-index"
-++checksum = "df9761775871bdef83bee530e60050f7e54b1105350d6884eb0fb4f46c2f9405"
-++dependencies = [
-++ "memchr",
-++]
-++
-+ [[package]]
-+ name = "notify"
-+ version = "8.2.0"
-+@@ -4699,7 +4713,7 @@ version = "1.0.151"
-+ source = "registry+https://github.com/rust-lang/crates.io-index"
-+ checksum = "c841b55ecdae098c80dcae9cf767f6f8a0c2cdb3416bbef72181df4d0fe73f14"
-+ dependencies = [
-+- "indexmap 2.14.0",
-++ "indexmap 2.11.4",
-+  "itoa",
-+  "memchr",
-+  "serde",
-+@@ -4729,7 +4743,7 @@ dependencies = [
-+  "chrono",
-+  "hex",
-+  "indexmap 1.9.3",
-+- "indexmap 2.14.0",
-++ "indexmap 2.11.4",
-+  "jiff",
-+  "schemars 0.9.0",
-+  "schemars 1.2.2",
-+@@ -5325,11 +5339,11 @@ dependencies = [
-+ 
-+ [[package]]
-+ name = "toml_edit"
-+-version = "0.25.13+spec-1.1.0"
-++version = "0.25.6+spec-1.1.0"
-+ source = "registry+https://github.com/rust-lang/crates.io-index"
-+-checksum = "6975367e4d2ef766d86af01ffad14b622fecc8d4357a998fbc4deb6e9bacaf9b"
-++checksum = "0db3bae107c9522f86d361697dee1d7386a2ddcf659d5aea5159819a21a3c4a7"
-+ dependencies = [
-+- "indexmap 2.14.0",
-++ "indexmap 2.11.4",
-+  "toml_datetime",
-+  "toml_parser",
-+  "winnow",
-+@@ -5900,7 +5914,7 @@ dependencies = [
-+  "cfg_aliases",
-+  "document-features",
-+  "hashbrown 0.16.1",
-+- "indexmap 2.14.0",
-++ "indexmap 2.11.4",
-+  "log",
-+  "naga",
-+  "once_cell",
-+@@ -6772,6 +6786,18 @@ dependencies = [
-+  "wayland-protocols-wlr",
-+ ]
++ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
 + 
 ++[[package]]
 ++name = "xdgen"
@@ -204,7 +83,7 @@ index 0000000..d9bcf95
 + [[package]]
 + name = "xkbcommon"
 + version = "0.7.0"
-+@@ -6827,12 +6853,27 @@ dependencies = [
++@@ -7346,12 +7369,27 @@ dependencies = [
 +  "bytemuck",
 + ]
 + 
@@ -233,40 +112,32 @@ index 0000000..d9bcf95
 + name = "xmlwriter"
 + version = "0.1.0"
 +diff --git a/Cargo.toml b/Cargo.toml
-+index e830e6f..cac814e 100644
++index 251c689..ea803e6 100644
 +--- a/Cargo.toml
 ++++ b/Cargo.toml
-+@@ -5,14 +5,13 @@ authors = ["Ashley Wulber <ashley@system76.com>"]
-+ edition = "2024"
-+ rust-version = "1.93"
-+ 
-+-[workspace]
-+-members = []
-+-exclude = ["scripts/xdgen"]
-+-
-+ [features]
-+ default = ["wgpu"]
++@@ -10,6 +10,9 @@ default = []
 + wgpu = ["libcosmic/wgpu"]
++ console = ["tokio/tracing"]
 + 
 ++[build-dependencies]
 ++xdgen = "0.1.0"
 ++
 + [dependencies]
-+ zbus = "5.12"
-+ libcosmic = { git = "https://github.com/pop-os/libcosmic", features = [
++ console-subscriber = "0.5.0"
++ futures = "0.3.31"
 +diff --git a/build.rs b/build.rs
-+new file mode 100644
-+index 0000000..35f46f0
-+--- /dev/null
++index f328e4d..26db6bb 100644
++--- a/build.rs
 ++++ b/build.rs
-+@@ -0,0 +1,24 @@
++@@ -1 +1,24 @@
++-fn main() {}
 ++use std::{env, fs, path::PathBuf};
 ++use xdgen::{App, Context, FluentString};
 ++
 ++fn main() {
 ++    let id = env::var("APP_ID").unwrap();
 ++    let ctx = Context::new("i18n", env::var("CARGO_PKG_NAME").unwrap()).unwrap();
-++    let app = App::new(FluentString("xdg-title"))
+++    let app = App::new(FluentString("xdg-name"))
 ++        .comment(FluentString("xdg-comment"))
 ++        .keywords(FluentString("xdg-keywords"));
 ++    let output = PathBuf::from("target/xdgen");
@@ -285,21 +156,23 @@ index 0000000..d9bcf95
 ++    .unwrap();
 ++}
 +diff --git a/justfile b/justfile
-+index 43505fe..43a1f11 100644
++index 4cdfeb9..ccf0d89 100644
 +--- a/justfile
 ++++ b/justfile
-+@@ -1,7 +1,8 @@
-+ name := 'cosmic-app-library'
-+ appid := 'com.system76.CosmicAppLibrary'
++@@ -2,6 +2,7 @@ mod cargo 'cargo.just'
 + 
-+-export APPID := 'com.system76.CosmicAppLibrary'
-++export APP_ID := 'com.system76.CosmicAppLibrary'
-++export LOCKSTEP_XML_PATH := absolute_path('vendor/atspi-common/xml')
++ name := 'cosmic-launcher'
++ appid := 'com.system76.CosmicLauncher'
+++export APP_ID := appid
 + 
 + rootdir := ''
 + prefix := '/usr'
-+@@ -24,7 +25,7 @@ icon := appid + '.svg'
-+ icon-dst := base-dir / 'share' / 'icons' / 'hicolor' / 'scalable' / 'apps' / icon
++@@ -18,10 +19,11 @@ appdata-dst := base-dir / 'share' / 'appdata' / appdata
++ desktop-dst := base-dir / 'share' / 'applications' / desktop
++ icon-dst := base-dir / 'share' / 'icons' / 'hicolor' / 'scalable' / 'apps' / appid + '.svg'
++ 
+++export LOCKSTEP_XML_PATH := absolute_path('vendor/atspi-common/xml')
++ export RUSTFLAGS := env_var_or_default('RUSTFLAGS', '') + ' --cfg tokio_unstable '
 + 
 + # Default recipe which runs `just build-release`
 +-default: xdgen build-release
@@ -307,8 +180,8 @@ index 0000000..d9bcf95
 + 
 + # Runs `cargo clean`
 + clean: cargo::clean
-+@@ -62,11 +63,8 @@ uninstall:
-+     rm {{bin-dst}} {{desktop-dst}} {{appdata-dst}} {{icon-dst}}
++@@ -50,15 +52,11 @@ check *args: (cargo::check args)
++ check-json: (check '--message-format=json')
 + 
 + # Vendor dependencies locally
 +-vendor: xdgen cargo::vendor
@@ -320,9 +193,13 @@ index 0000000..d9bcf95
 +-# Generate desktop entries and appstream metadata with translations
 +-xdgen:
 +-    env APP_ID={{appid}} APP_NAME={{name}} cargo run --manifest-path scripts/xdgen/Cargo.toml
++-
++ # Build and run with tokio-console enabled
++ tokio-console: (build-release '--features console')
++     env TOKIO_CONSOLE=1 {{bin-src}}
 +diff --git a/scripts/xdgen/Cargo.lock b/scripts/xdgen/Cargo.lock
 +deleted file mode 100644
-+index 7cd7da5..0000000
++index 8bb49f2..0000000
 +--- a/scripts/xdgen/Cargo.lock
 ++++ /dev/null
 +@@ -1,316 +0,0 @@
@@ -400,13 +277,6 @@ index 0000000..d9bcf95
 +-dependencies = [
 +- "indexmap",
 +- "nom",
-+-]
-+-
-+-[[package]]
-+-name = "generate"
-+-version = "0.1.0"
-+-dependencies = [
-+- "xdgen",
 +-]
 +-
 +-[[package]]
@@ -613,6 +483,13 @@ index 0000000..d9bcf95
 +-]
 +-
 +-[[package]]
++-name = "xdgen-generate"
++-version = "0.1.0"
++-dependencies = [
++- "xdgen",
++-]
++-
++-[[package]]
 +-name = "xml"
 +-version = "1.4.0"
 +-source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -657,7 +534,7 @@ index 0000000..d9bcf95
 +-xdgen = "0.1.0"
 +diff --git a/scripts/xdgen/src/main.rs b/scripts/xdgen/src/main.rs
 +deleted file mode 100644
-+index f3a8969..0000000
++index 1fff622..0000000
 +--- a/scripts/xdgen/src/main.rs
 ++++ /dev/null
 +@@ -1,28 +0,0 @@
@@ -667,7 +544,7 @@ index 0000000..d9bcf95
 +-
 +-fn main() {
 +-    let ctx = Context::new("i18n", env::var("APP_NAME").unwrap()).unwrap();
-+-    let app = App::new(FluentString("xdg-title"))
++-    let app = App::new(FluentString("xdg-name"))
 +-        .comment(FluentString("xdg-comment"))
 +-        .keywords(FluentString("xdg-keywords"));
 +-
@@ -692,18 +569,57 @@ index 0000000..d9bcf95
 +-- 
 +2.55.0
 +
-diff --git a/cosmic-app-library.spec b/cosmic-app-library.spec
-index a53db0e..9428202 100644
---- a/cosmic-app-library.spec
-+++ b/cosmic-app-library.spec
-@@ -29,6 +29,7 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
+diff --git a/cosmic-launcher.spec b/cosmic-launcher.spec
+index 0912b15..a2ad6ac 100644
+--- a/cosmic-launcher.spec
++++ b/cosmic-launcher.spec
+@@ -32,6 +32,8 @@ Source1:        vendor-%{version_no_tilde}.tar.gz
  # * mv vendor-config-%%{version_no_tilde}.toml ..
  Source2:        vendor-config-%{version_no_tilde}.toml
  
 +Patch1: 0001-fix-switch-from-xdgen-build-script-to-build.rs.patch
- 
++
  BuildRequires:  cargo-rpm-macros >= 26
  BuildRequires:  rustc
+ BuildRequires:  lld
+@@ -64,9 +66,16 @@ else
+ fi
+ 
+ %build
++# Used by build.rs to expand the .desktop and .metainfo.xml files
++export APP_ID="com.system76.CosmicLauncher"
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
++# The zbus-lockstep #[validate] macro resolves the AT-SPI XML directory to
++# "vendor/xml" (the vendored xml crate) instead of atspi-common's own
++# "xml" directory, which makes it panic on files without an extension.
++# Explicitly point it at the right directory.
++export LOCKSTEP_XML_PATH="$PWD/vendor/atspi-common/xml"
+ %cargo_build
+ %{cargo_license_summary}
+ %{cargo_license} > LICENSE.dependencies
+@@ -79,10 +88,20 @@ sed 's/^\([^+]*\)+.*+\([^+]*\)$/\1+\2/' -i cargo-vendor.txt
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+ just rootdir=%{buildroot} prefix=%{_prefix} install
++# The justfile installs the generated metainfo file into
++# %{_datadir}/appdata, but the files section expects it in %{_metainfodir}
++# (%{_datadir}/metainfo). Move it to the correct location.
++mkdir -p %{buildroot}%{_metainfodir}
++mv %{buildroot}%{_datadir}/appdata/com.system76.CosmicLauncher.metainfo.xml \
++    %{buildroot}%{_metainfodir}/
+ 
+ %check
+ desktop-file-validate %{buildroot}%{_datadir}/applications/com.system76.CosmicLauncher.desktop
+ %if %{with check}
++# Used by build.rs to expand the .desktop and .metainfo.xml files
++export APP_ID="com.system76.CosmicLauncher"
++# Required by zbus-lockstep to resolve the AT-SPI XML directory
++export LOCKSTEP_XML_PATH="$PWD/vendor/atspi-common/xml"
+ # Set vergen environment variables
+ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
 -- 
 2.55.0
 

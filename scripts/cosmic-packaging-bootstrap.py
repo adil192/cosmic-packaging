@@ -867,18 +867,14 @@ directory_info = DirectoryInfo(
     upstream_project_dir=pathlib.Path(args.upstream_dir) if args.upstream_dir else None,
     fedora_dir=pathlib.Path(args.fedora_dir) if args.fedora_dir else None,
 )
-# Normalize tag argument from the command line
-tag = args.tag
 
 if project_info.latest_tag is None:
     latest_tag = TagInfo.get_latest_tag(project_info.crate_name)
 else:
     latest_tag = project_info.latest_tag
 
-if args.tag == "latest":
-    tag = latest_tag
-elif tag == "nightly":
-    tag = None
+LATEST_TAG = "1.8.0"
+tag = LATEST_TAG
 # Get information about tags, using the cloned project
 # This also gets the git project into the correct revision by checking out the proper rev
 tag_info = TagInfo(directory_info=directory_info, tag=tag, minver_tag=latest_tag)

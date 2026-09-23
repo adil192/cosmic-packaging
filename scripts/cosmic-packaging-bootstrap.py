@@ -76,7 +76,7 @@ class ProjectInfo:
     POP_OS_GIT = "https://github.com/pop-os/"
     FEDORA_GIT = "https://src.fedoraproject.org/rpms/"
 
-    COSMIC_PACKAGING_GIT = "https://forge.fedoraproject.org/cosmic/cosmic-packaging.git"
+    COSMIC_PACKAGING_GIT = "https://github.com/adil192/cosmic-packaging.git"
 
     def __init__(
         self,
@@ -688,7 +688,7 @@ class SpecFile:
         for in_line in spec_in.splitlines():
             out_line = in_line
             if in_line.startswith("# Generated using the scripts"):
-                out_line = "# Generated using the scripts at # Generated using the scripts at https://forge.fedoraproject.org/cosmic/cosmic-packaging/src/branch/main/scripts"
+                out_line = "# Generated using the scripts at https://github.com/adil192/cosmic-packaging/src/branch/main/scripts"
             elif in_line == "%bcond_without check":
                 # make tests opt-in rather than opt-out, to speed up builds
                 out_line = "%bcond_with check"

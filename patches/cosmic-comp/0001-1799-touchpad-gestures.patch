@@ -1,6 +1,6 @@
-From 5319a182478685b92709f29b6aaae737c9c9573d Mon Sep 17 00:00:00 2001
+From 196c83e00e97125208ffe9e904c461127b9a11f7 Mon Sep 17 00:00:00 2001
 From: Adil Hanney <adilhanney@disroot.org>
-Date: Thu, 10 Sep 2026 01:55:13 +0100
+Date: Thu, 24 Sep 2026 00:04:11 +0100
 Subject: [PATCH] 1799-touchpad-gestures
 
 ---
@@ -11,11 +11,11 @@ Subject: [PATCH] 1799-touchpad-gestures
 
 diff --git a/1799-touchpad-gestures.patch b/1799-touchpad-gestures.patch
 new file mode 100644
-index 0000000..ef7d775
+index 0000000..9cc72bc
 --- /dev/null
 +++ b/1799-touchpad-gestures.patch
 @@ -0,0 +1,302 @@
-+From 0a265691e5e1d61026c28576634a2da9566946c9 Mon Sep 17 00:00:00 2001
++From 6f2663f4c873a480692e0a4f727cb8a18d3f69d6 Mon Sep 17 00:00:00 2001
 +From: Frederic Laing <frederic.laing.development@gmail.com>
 +Date: Tue, 11 Nov 2025 12:03:21 +0100
 +Subject: [PATCH] implement four finger gestures to hide/show the cosmic app
@@ -73,7 +73,7 @@ index 0000000..ef7d775
 + 
 + #[derive(Debug, Clone)]
 +diff --git a/src/input/mod.rs b/src/input/mod.rs
-+index 45586b03..f52da386 100644
++index af160ae2..7c1ee58b 100644
 +--- a/src/input/mod.rs
 ++++ b/src/input/mod.rs
 +@@ -26,7 +26,10 @@ use crate::{

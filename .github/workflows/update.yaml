@@ -1,0 +1,46 @@
+name: Update spec files
+on:
+  workflow_dispatch:
+  schedule:
+    # every day at 2:09am (random time to avoid spikes in GitHub Actions usage)
+    - cron: "09 2 * * *"
+
+jobs:
+  update-cosmic:
+    name: Update COSMIC
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Get previous tag
+        id: previous_tag
+        run: |
+          PREVIOUS_TAG=$(grep -oP 'LATEST_TAG = "\K[^"]+' scripts/cosmic-packaging-bootstrap.py)
+          echo "TAG=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/pop-os/cosmic-epoch/tags | jq -r '.[0].name')
+          # Remove the `epoch-` prefix
+          LATEST_TAG=${LATEST_TAG#epoch-}
+          echo "TAG=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Write latest tag to script using sed
+        if: steps.latest_tag.outputs.TAG != steps.previous_tag.outputs.TAG
+        env:
+          LATEST_TAG: ${{ steps.latest_tag.outputs.TAG }}
+        run: |
+          sed -i "s/LATEST_TAG = \"[^\"]*\"/LATEST_TAG = \"$LATEST_TAG\"/" scripts/cosmic-packaging-bootstrap.py
+
+      - name: Create Pull Request
+        if: steps.latest_tag.outputs.TAG != steps.previous_tag.outputs.TAG
+        uses: peter-evans/create-pull-request@v8
+        env:
+          SUMMARY: "Update COSMIC to ${{ steps.latest_tag.outputs.TAG }}"
+        with:
+          title: ${{ env.SUMMARY }}
+          commit-message: ${{ env.SUMMARY }}
+          branch: "update/cosmic/${{ steps.latest_tag.outputs.TAG }}"
+          body: "Update COSMIC from ${{ steps.previous_tag.outputs.TAG }} to ${{ steps.latest_tag.outputs.TAG }}"
+          assignees: adil192

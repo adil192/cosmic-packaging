@@ -1,0 +1,36 @@
+From b289a533fac3a079673abfcdfd5fae9f6d161486 Mon Sep 17 00:00:00 2001
+From: Adil Hanney <adilhanney@disroot.org>
+Date: Thu, 24 Sep 2026 01:52:04 +0100
+Subject: [PATCH] cosmic-files-thumbnailer
+
+---
+ cosmic-files.spec | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cosmic-files.spec b/cosmic-files.spec
+index 32a99fb..20182c0 100644
+--- a/cosmic-files.spec
++++ b/cosmic-files.spec
+@@ -75,6 +75,7 @@ export VERGEN_GIT_COMMIT_DATE="date --utc '%{commitdatestring}'"
+ export VERGEN_GIT_SHA="%{commit}"
+ %cargo_build
+ %cargo_build -- --package cosmic-files-applet
++%cargo_build -- --package cosmic-files-thumbnailer
+ %{cargo_license_summary}
+ %{cargo_license} > LICENSE.dependencies
+ %{cargo_vendor_manifest}
+@@ -103,9 +104,11 @@ export VERGEN_GIT_SHA="%{commit}"
+ %doc README.md
+ %{_bindir}/cosmic-files
+ %{_bindir}/cosmic-files-applet
++%{_bindir}/cosmic-files-thumbnailer
+ %{_datadir}/applications/com.system76.CosmicFiles.desktop
+ %{_metainfodir}/com.system76.CosmicFiles.metainfo.xml
+ %{_datadir}/icons/hicolor/*/apps/com.system76.CosmicFiles.svg
++%{_datadir}/thumbnailers/com.system76.CosmicFiles.thumbnailer
+ 
+ %changelog
+ %autochangelog
+-- 
+2.55.0
+

@@ -32,6 +32,7 @@ Requires:       cosmic-settings
 Requires:       cosmic-settings-daemon
 Requires:       cosmic-store
 Requires:       cosmic-term
+Requires:       cosmic-viewer
 Requires:       cosmic-wallpapers
 Requires:       cosmic-workspaces
 Requires:       pop-launcher

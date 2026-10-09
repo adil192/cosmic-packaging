@@ -781,6 +781,7 @@ PACKAGE_INFO: dict[str, ProjectInfo] = {
     "cosmic-settings-daemon": ProjectInfo(rpm_name="cosmic-settings-daemon"),
     "cosmic-store": ProjectInfo(rpm_name="cosmic-store"),
     "cosmic-term": ProjectInfo(rpm_name="cosmic-term"),
+    "cosmic-viewer": ProjectInfo(rpm_name="cosmic-viewer", staging=True),
     "cosmic-wallpapers": ProjectInfo(
         rpm_name="cosmic-wallpapers", vendor=False, zip_self=True
     ),

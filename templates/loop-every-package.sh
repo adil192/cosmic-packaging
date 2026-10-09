@@ -26,6 +26,7 @@ list=(
     "cosmic-settings-daemon"
     "cosmic-store"
     "cosmic-term"
+    "cosmic-viewer"
     "cosmic-wallpapers"
     "cosmic-workspaces"
     "pop-launcher"

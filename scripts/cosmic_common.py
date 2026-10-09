@@ -24,6 +24,7 @@ PACKAGES: dict[str, str] = {
     "cosmic-settings-daemon": "cosmic-settings-daemon",
     "cosmic-store": "cosmic-store",
     "cosmic-term": "cosmic-term",
+    "cosmic-viewer": "cosmic-viewer",
     "cosmic-wallpapers": "cosmic-wallpapers",
     "cosmic-workspaces": "cosmic-workspaces-epoch",
     "xdg-desktop-portal-cosmic": "xdg-desktop-portal-cosmic",

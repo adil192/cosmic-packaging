@@ -25,7 +25,7 @@ Atomic (Using Fedora 44 as an example):
 
 ```sh
 sudo curl https://copr.fedorainfracloud.org/coprs/ryanabx/cosmic-epoch/repo/fedora-44/ryanabx-cosmic-epoch-fedora-44.repo -o /etc/yum.repos.d/ryanabx-cosmic-epoch-fedora-44.repo
-sudo rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:ryanabx:cosmic-epoch cosmic-app-library cosmic-applets cosmic-bg cosmic-comp cosmic-edit cosmic-files cosmic-greeter cosmic-icon-theme cosmic-idle cosmic-initial-setup cosmic-launcher cosmic-monitor cosmic-notifications cosmic-osd cosmic-panel cosmic-player cosmic-randr cosmic-screenshot cosmic-session cosmic-settings cosmic-settings-daemon cosmic-store cosmic-term cosmic-wallpapers cosmic-workspaces xdg-desktop-portal-cosmic pop-launcher
+sudo rpm-ostree override replace --experimental --from repo=copr:copr.fedorainfracloud.org:ryanabx:cosmic-epoch cosmic-app-library cosmic-applets cosmic-bg cosmic-comp cosmic-edit cosmic-files cosmic-greeter cosmic-icon-theme cosmic-idle cosmic-initial-setup cosmic-launcher cosmic-monitor cosmic-notifications cosmic-osd cosmic-panel cosmic-player cosmic-randr cosmic-screenshot cosmic-session cosmic-settings cosmic-settings-daemon cosmic-store cosmic-term cosmic-viewer cosmic-wallpapers cosmic-workspaces xdg-desktop-portal-cosmic pop-launcher
 ```
 
 ## COSMIC Upstream Packaging Workflow

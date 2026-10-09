@@ -1,0 +1,24 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 01adfe3..eb7d1f3 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -3425,7 +3425,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f554864c5f34c7f285ff6acdcadb64bcc2a3de1609e9135cec702c5edc703864"
+ dependencies = [
+  "cfg-if",
+- "cmake",
+  "libc",
+  "system-deps",
+  "vcpkg",
+diff --git a/Cargo.toml b/Cargo.toml
+index 7a81c41..37545a3 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -41,7 +41,6 @@ image = { version = "0.25.9", features = [
+ ] }
+ kamadak-exif = "0.6.1"
+ libheif-rs = { version = "2.7.0", default-features = false, features = [
+-  "embedded-libheif",
+   "v1_17",
+ ] }
+ lru = "0.16.3"

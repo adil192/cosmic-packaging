@@ -1,0 +1,56 @@
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/iced-rs/cryoglyph.git?rev=e429a025df36ab8145708acb309080ae3deec17a"]
+git = "https://github.com/iced-rs/cryoglyph.git"
+rev = "e429a025df36ab8145708acb309080ae3deec17a"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/jackpot51/rust-atomicwrites"]
+git = "https://github.com/jackpot51/rust-atomicwrites"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/cosmic-protocols?rev=c0cff4d"]
+git = "https://github.com/pop-os/cosmic-protocols"
+rev = "c0cff4d"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/dbus-settings-bindings"]
+git = "https://github.com/pop-os/dbus-settings-bindings"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/freedesktop-icons"]
+git = "https://github.com/pop-os/freedesktop-icons"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/libcosmic.git"]
+git = "https://github.com/pop-os/libcosmic.git"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/smithay-clipboard?tag=sctk-0.20"]
+git = "https://github.com/pop-os/smithay-clipboard"
+tag = "sctk-0.20"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/softbuffer?tag=cosmic-4.0"]
+git = "https://github.com/pop-os/softbuffer"
+tag = "cosmic-4.0"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/window_clipboard.git?tag=sctk-0.20"]
+git = "https://github.com/pop-os/window_clipboard.git"
+tag = "sctk-0.20"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/pop-os/winit.git?rev=9567503"]
+git = "https://github.com/pop-os/winit.git"
+rev = "9567503"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/wash2/accesskit?rev=6c20249"]
+git = "https://github.com/wash2/accesskit"
+rev = "6c20249"
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"

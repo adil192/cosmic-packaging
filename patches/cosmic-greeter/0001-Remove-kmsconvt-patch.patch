@@ -1,0 +1,59 @@
+From 1c172f32c5749755adadf5526109f14b6b3cf637 Mon Sep 17 00:00:00 2001
+From: Ryan Brue <ryanbrue.dev@gmail.com>
+Date: Tue, 20 Oct 2026 17:34:19 -0500
+Subject: [PATCH] Remove kmsconvt patch
+
+Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
+---
+ 568.patch           | 25 -------------------------
+ cosmic-greeter.spec |  2 --
+ 2 files changed, 27 deletions(-)
+ delete mode 100644 568.patch
+
+diff --git a/568.patch b/568.patch
+deleted file mode 100644
+index 67a22f0..0000000
+--- a/568.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From 4ebfa3bcfc16cda22706ec0838302fad545a4eb1 Mon Sep 17 00:00:00 2001
+-From: Kumiko as a Service <Dreista@users.noreply.github.com>
+-Date: Wed, 14 Oct 2026 16:03:49 +0800
+-Subject: [PATCH] Fix typo / wrong service name
+-
+-Signed-off-by: Kumiko as a Service <Dreista@users.noreply.github.com>
+----
+- debian/cosmic-greeter.service | 4 ++--
+- 1 file changed, 2 insertions(+), 2 deletions(-)
+-
+-diff --git a/debian/cosmic-greeter.service b/debian/cosmic-greeter.service
+-index 3abbb33..679ffa3 100644
+---- a/debian/cosmic-greeter.service
+-+++ b/debian/cosmic-greeter.service
+-@@ -1,8 +1,8 @@
+- [Unit]
+- Description=COSMIC Greeter
+- After=systemd-user-sessions.service plymouth-quit-wait.service cosmic-greeter-daemon.service
+--After=getty@tty1.service ksmcon@tty1.service
+--Conflicts=getty@tty1.service kmscon@tty1.service
+-+After=getty@tty1.service kmsconvt@tty1.service
+-+Conflicts=getty@tty1.service kmsconvt@tty1.service
+- Wants=cosmic-greeter-daemon.service
+- 
+- [Service]
+diff --git a/cosmic-greeter.spec b/cosmic-greeter.spec
+index b2ae94f..487aab2 100644
+--- a/cosmic-greeter.spec
++++ b/cosmic-greeter.spec
+@@ -34,8 +34,6 @@ Source2:        vendor-config-%{version_no_tilde}.toml
+ Source10:       %{name}.pam
+ 
+ Patch:          0001-Make-service-a-display-manager.patch
+-# Backport kmscon conflict fix
+-Patch:          https://github.com/pop-os/cosmic-greeter/pull/568.patch
+ 
+ BuildRequires:  cargo-rpm-macros >= 25
+ BuildRequires:  rustc
+-- 
+2.56.0
+
